@@ -43,7 +43,7 @@ const server = app.listen(PORT,()=>{
 })
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
     },
 });
 global.onlineUsers = new Map();
@@ -56,15 +56,31 @@ io.on("connection", (socket) => {
         onlineUsers.set(userId, socket.id)
     })
 
-    socket.on("send-msg", (data) => {
-        console.log("send-msg")
+    socket.on("send-msg-private", (data) => {
+        console.log("send-msg-private")
         console.log(data)
         console.log(data.receiveId)
         const sendUserSocket = onlineUsers.get(data.receiveId)
         console.log(onlineUsers.get(data.receiveId))
         console.log(onlineUsers.get(data.receiveId))
         // if (sendUserSocket){
-        socket.to(sendUserSocket).emit("msg-recieve", {
+        socket.to(sendUserSocket).emit("msg-recieve-private", {
+            from: data.newMessage.senderId,
+            newMessage:{
+                senderId: data.newMessage.senderId,
+                type: data.newMessage.type,
+                content: data.newMessage.content,
+                timestamp: data.newMessage.timestamp
+            }
+        })
+        // }
+    });
+    socket.on("join-room-public",(chatId)=>{
+        socket.join(chatId)
+    })
+    socket.on("send-msg-public", (chatId, data) => {
+        // if (sendUserSocket){
+        socket.to(chatId).emit("msg-recieve-public", {
             from: data.newMessage.senderId,
             newMessage:{
                 senderId: data.newMessage.senderId,
@@ -76,5 +92,3 @@ io.on("connection", (socket) => {
         // }
     });
 })
-// chatEvent(io);
-// callEvent(io)

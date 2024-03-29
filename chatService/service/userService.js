@@ -131,6 +131,7 @@ const findById = async (id) => {
 
 const addFriend = async (id,data) => {
     console.log(data)
+    const user = await findById(id);
     const result = await db.collection('Users')
         .doc(id)
         .update({
@@ -142,7 +143,7 @@ const addFriend = async (id,data) => {
         });
     const privateChatData = {
             chatId: data.id,
-            name: data.display_name,
+            name: data.display_name + "/"+user.display_name,
             participants: [id, data.id],
             type: "private",
             deleteId: null,
