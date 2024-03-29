@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFriendModal from './contact/modal/AddFriendModal';
 import CreateGroupModal from './contact/modal/CreateGroupModal';
-import avatar from "../assets/2Q.png"
+import { useLogout } from "../apis/useLogout";
 
 import {
   faAddressBook,
@@ -79,19 +79,7 @@ const SideBar = () => {
 
     fetchData();
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
 
-        setFriendList1(data.data?.friends);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const ref = useRef();
   const loggedInUS = {
@@ -118,13 +106,6 @@ const SideBar = () => {
 
     // Ví dụ: Cập nhật trạng thái hoặc làm bất kỳ điều gì bạn cần với dữ liệu này
   };
-  useEffect(() => {
-    console.log("receiveFriendData updated:", receiveFriendData);
-
-    // Thực hiện các thao tác dựa trên giá trị mới của receiveFriendData ở đây
-    // Ví dụ: Cập nhật trạng thái hoặc làm bất kỳ điều gì bạn cần với dữ liệu này
-
-  }, [receiveFriendData]);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -134,27 +115,51 @@ const SideBar = () => {
   }, []);
   const [activeTab, setActiveTab] = useState('first');
   useEffect(() => {
-    if (activeTab === "first") {
-      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false });
-    } else if (activeTab === "second") {
-      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: true });
-    }
-  }, [activeTab, dispatch]);
+    const fetchData = async () => {
+      try {
+        if (activeTab === "first") {
+          dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false });
+          const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
+              const lastMessageA = a.messages[a.messages.length - 1];
+              const lastMessageB = b.messages[b.messages.length - 1];
+              return lastMessageB.timestamp - lastMessageA.timestamp;
+            })
+          });
+        } else if (activeTab === "second") {
+          // Fetch other data based on the second tab if needed
+          dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: true });
+          const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
+              const lastMessageA = a.messages[a.messages.length - 1];
+              const lastMessageB = b.messages[b.messages.length - 1];
+              return lastMessageB.timestamp - lastMessageA.timestamp;
+            })
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [activeTab, dispatch, userInfo?.id]);
+  const logOut = useLogout();
+
+  const onLogout = () => {
+    const data = localStorage.getItem('accessToken');
+    logOut(data);
+  };
 
   useEffect(() => {
     // Nếu contactsPage là true, chọn tab "second", ngược lại chọn tab "first"
     setActiveTab(contactsPage ? 'second' : 'first');
-    console.log(contactsPage)
+
   }, [contactsPage]);
 
   return (
-    // <Tab.Container id="left-tabs-example" defaultActiveKey="first" >
-    // <Tab.Container
-    //   id="left-tabs-example"
-    //   defaultActiveKey="first"
-    //   activeKey={activeTab}
-    //   onSelect={handleTabSelect}>
-    //   <div className="d-flex">
     <Tab.Container
       id="left-tabs-example"
       defaultActiveKey="first"
@@ -278,11 +283,11 @@ const SideBar = () => {
                 setFriendList={setFriendList}
                 sendFriendDataToSidebar={receiveFriendDataFromModal}
               />
-              <CreateGroupModal showModal={showFormCreateGroup} handleCloseModal={handleCloseCreateGroupModal} friendList={friendList1} />
+              <CreateGroupModal showModal={showFormCreateGroup} handleCloseModal={handleCloseCreateGroupModal} />
 
             </Nav.Item>
             <Nav.Item className="mt-3 mb-3">
-              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="first" onClick={() => { setActiveKey('first'); console.log(activeTab); }}>
+              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="first" onClick={() => { setActiveKey('first'); }}>
                 <div className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg" style={{ backgroundColor: activeTab === 'first' ? 'gray' : 'transparent' }}>
                   <FontAwesomeIcon
                     icon={faMessage}
@@ -293,7 +298,7 @@ const SideBar = () => {
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mt-3 mb-3">
-              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="second" onClick={() => { setActiveKey('second'); console.log(activeTab); }}>
+              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="second" onClick={() => { setActiveKey('second'); }}>
                 <div className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg" style={{ backgroundColor: activeTab === 'second' ? 'gray' : 'transparent' }}>
                   <FontAwesomeIcon
                     icon={faAddressBook}
@@ -323,7 +328,7 @@ const SideBar = () => {
                   <Button variant="secondary" onClick={handleCloseFormLogOut}>
                     Không
                   </Button>
-                  <Button variant="primary" onClick={handleCloseFormLogOut}>
+                  <Button variant="primary" onClick={onLogout}>
                     Đăng xuất
                   </Button>
                 </Modal.Footer>
