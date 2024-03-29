@@ -16,9 +16,15 @@ import { useState } from "react";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 import avatar from "../assets/2Q.png"
+import { useEffect } from "react";
+import { reducerCases } from "../context/constants";
+import { useStateProvider } from "../context/StateContext";
+import { GET_CHAT_BY_PARTICIPANTS } from "../router/ApiRoutes";
+import axios from "axios";
 const Contact = ({ data }) => {
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+  const [{ userInfo }, dispatch] = useStateProvider()
   const handleAddFriend = () => {
     setShowAddFriendModal(true);
   };
@@ -42,8 +48,33 @@ const Contact = ({ data }) => {
     console.log("Searching...");
   };
 
+  const [activeTab, setActiveTab] = useState('first');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+
+        dispatch({
+          type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
+            const lastMessageA = a.messages[a.messages.length - 1];
+            const lastMessageB = b.messages[b.messages.length - 1];
+            return lastMessageB.timestamp - lastMessageA.timestamp;
+          })
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [activeTab, dispatch, userInfo?.id]);
+
+
   return (
-    <Tab.Container>
+    <Tab.Container
+      defaultActiveKey={"first"}
+      activeKey={activeTab}
+      onSelect={(selectedTab) => setActiveTab(selectedTab)}>
       <div
         className="d-flex"
       >

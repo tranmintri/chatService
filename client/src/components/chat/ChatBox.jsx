@@ -14,11 +14,24 @@ import { reducerCases } from "../../context/constants";
 import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
 import { MdDeleteForever } from "react-icons/md";
+import ChatImage from "../contact/card/ChatImage";
+import { IoEllipsisVerticalSharp, IoIosArrowForward } from "react-icons/io";
+import Loading from "./Loading";
+
+
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
-  const [{ messages, userInfo, currentChat, socket }, dispatch] = useStateProvider()
+  const [isHovered, setIsHovered] = useState(false);
+  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
+
+  const imageList = ["https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
+    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
+    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
+    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
+    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"]
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedImages((prevImages) => [...prevImages, ...files]);
@@ -26,9 +39,28 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleRemoveImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
+  useEffect(() => {
+    // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
+    const timer = setTimeout(() => {
+      setIsLoading(true)
+    }, 2000);
+
+    // Clear timeout khi component unmount để tránh memory leak
+    return () => clearTimeout(timer);
+  }, [])
   const handleSendMessage = async () => {
-    if (sendMessages.trim().length > 0) {
+    if (sendMessages.trim().length > 0 || selectedImages.length > 0) {
       try {
+        const formData = new FormData();
+
+        // formData.append("message", sendMessages);
+
+        // // Option 1 (Direct Access):
+        // const message = formData.get("message");
+        // console.log(message);
+
+        // Option 2 (Conditional Check):
+
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
             senderId: userInfo?.id,
@@ -37,14 +69,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             timestamp: Date.now()
           }
         })
+
+
+
         const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
           if (participantId !== userInfo?.id) {
             acc = participantId;
           }
           return acc;
         }, null) : "";
-        console.log(receiveId)
-        socket.current.emit("send-msg", {
+
+        socket.current.emit("send-msg-private", {
           receiveId: receiveId,
           newMessage: {
             senderId: userInfo?.id,
@@ -53,7 +88,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             timestamp: Date.now()
           }
         })
-        console.log(data.data)
+
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -61,28 +96,40 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           },
           fromSelf: true
         })
-        console.log(sendMessages)
-        console.log(
-          {
-            senderId: userInfo?.id,
-            type: "text",
-            content: sendMessages,
-            timestamp: Date.now()
-          })
+        let group = [
+          ...groups.filter(chat => chat.chatId === currentChat.chatId),
+          ...groups.filter(chat => chat.chatId !== currentChat.chatId)
+        ];
+        console.log("ChatBox")
+        console.log(group)
+        dispatch({
+          type: reducerCases.SET_ALL_GROUP,
+          groups: group
+        })
         setSendMessages("")
       } catch (error) {
         console.log(error)
       }
     }
   }
+  const convertName = () => {
+    if (chat.type == "private") {
+      const splitName = chat.name.split("/");
+      const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+
+      return displayName
+    }
+    return chat.name
+  }
 
   return (
+
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
       <div className="chat-header justify-content-between align-items-center">
         <div className="d-flex">
           <img src={avatar} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
           <div>
-            <strong style={{ fontSize: '20px' }}>{chat ? chat.name : 'Default Name'}</strong>
+            <strong style={{ fontSize: '20px' }}>{convertName()}</strong>
             <p className="chat-header-condition">online</p>
           </div>
         </div>
@@ -98,22 +145,36 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
       </div>
 
-      {messages && (
-        <Stack gap={3} className="messages tw-max-h-60">
-          {messages && messages.map((message, index) => (
-            <Stack
-              key={index}
-              className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
-            >
-              <span >{message.content}</span>
 
-              <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit ">
-                {calculateTime(message.timestamp)}
-              </span>
+      {messages && isLoading ? (
+        <Stack gap={3} className="messages tw-max-h-60"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {messages && messages.map((message, index) => (
+            <Stack>
+              <Stack
+                key={index}
+                className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
+              >
+                <span >{message.content}</span>
+
+                <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit ">
+                  {calculateTime(message.timestamp)}
+                </span>
+
+              </Stack >
+              <div className="tw-flex tw-mr-3 tw-max-w-72 tw-flex-wrap">
+                {imageList.map((i, index) => (
+                  <div className="tw-flex ">
+                    <ChatImage imageUrl={i} />
+                  </div>
+                ))}
+              </div>
             </Stack>
           ))}
         </Stack>
-      )}
+      ) : <Loading />}
 
 
       <div className="chat-input">

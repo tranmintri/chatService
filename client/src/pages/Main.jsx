@@ -7,14 +7,17 @@ import axios from "axios";
 import { reducerCases } from "../context/constants";
 import { io } from "socket.io-client";
 import { HOST } from '../router/ApiRoutes';
+import Loading from "../components/chat/Loading";
 
 const Main = () => { // State để kiểm soát việc gọi fetchData
   const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef()
   const [socketEvent, setSocketEvent] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     if (!userInfo) {
+
       navigate("/signin");
     }
   }, [navigate, userInfo]);
@@ -24,7 +27,13 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       try {
         const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
 
-        dispatch({ type: reducerCases.SET_ALL_GROUP, groups: data });
+        dispatch({
+          type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
+            const lastMessageA = a.messages[a.messages.length - 1];
+            const lastMessageB = b.messages[b.messages.length - 1];
+            return lastMessageB.timestamp - lastMessageA.timestamp;
+          })
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -43,9 +52,8 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   }, [userInfo])
   useEffect(() => {
     if (socket.current && !socketEvent) {
-      socket.current.on("msg-recieve", (data) => {
-        console.log("msg-recieve")
-        console.log(data)
+      socket.current.on("msg-recieve-private", (data) => {
+
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -56,6 +64,16 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       setSocketEvent(true)
     }
   }, [socket.current])
+
+  useEffect(() => {
+    // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
+    const timer = setTimeout(() => {
+      setIsLoading(true)
+    }, 2000);
+
+    // Clear timeout khi component unmount để tránh memory leak
+    return () => clearTimeout(timer);
+  }, [])
   useEffect(() => {
     const getMessage = async () => {
       const { data } = await axios.get(CHAT_API + currentChat?.chatId + "/messages")
@@ -71,7 +89,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
 
 
 
-  return <SideBar />;
+  return isLoading ? <SideBar /> : <Loading />;
 };
 
 export default Main;

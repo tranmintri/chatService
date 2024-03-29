@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import { calculateTime } from "../../utils/CalculateTime";
 import { reducerCases } from "../../context/constants";
+import { useEffect } from "react";
 
-const UserChat = ({ chats }) => {
-    console.log(chats)
-    const [{ userInfo }, dispatch] = useStateProvider();
+const UserChat = () => {
+
+    const [groupList, setGroupList] = useState([])
+    const [{ userInfo, groups }, dispatch] = useStateProvider();
 
     const handleSelectChat = (chat) => {
         dispatch({
@@ -16,13 +18,41 @@ const UserChat = ({ chats }) => {
         });
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setGroupList(groups ? groups : [])
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+
+    }, [groups]);
+
+    // Tạo một mảng mới chứa tin nhắn cuối cùng từ mỗi người gửi có senderID khác userInfo?.id
+
+
+    // Nếu bạn muốn trả về newLastMessages, hãy thay đổi thành:
+
     return (
         <div className="tw-mt-16">
-            {chats.map((chat, index) => {
+            {groupList.map((chat, index) => {
                 // Lấy tin nhắn cuối cùng từ mỗi người gửi có senderID khác 1
                 const lastMessage = chat.messages.slice().reverse().find((contentItem) => contentItem.senderID !== userInfo?.id);
 
-                if (lastMessage) {
+                if (lastMessage && chat.name) {
+                    const convertName = () => {
+                        if (chat.type == "private") {
+                            const splitName = chat.name.split("/");
+                            const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+
+                            return displayName
+                        }
+                        return chat.name
+                    }
                     return (
                         <Stack
                             key={index}
@@ -37,7 +67,7 @@ const UserChat = ({ chats }) => {
                                     <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
                                 </div>
                                 <div className="text-content">
-                                    <div className="name">{chat.name}</div>
+                                    <div className="name">{convertName()}</div>
                                     <div className="text">{lastMessage.content}</div>
                                 </div>
                             </div>

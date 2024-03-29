@@ -24,7 +24,8 @@ const Chat = () => {
     const fetchChatData = async () => {
       try {
         const response = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id); // Gọi API để lấy dữ liệu chat
-        setChats(response.data); // Cập nhật dữ liệu chat vào state
+        setChats(response.data);
+        console.log(chats) // Cập nhật dữ liệu chat vào state
       } catch (error) {
         console.error("Error fetching chat data:", error);
       }
