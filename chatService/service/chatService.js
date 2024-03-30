@@ -8,14 +8,11 @@ const save = async (data) => {
         throw new Error('Conversation is empty.');
     }
     console.log("chat service")
-
-
     // Thêm dữ liệu vào Firestore nếu có dữ liệu messages
     await db.collection('Chats').doc(data.chatId).set(data);
-
-
     return "success";
 };
+
 const findAll = async () => {
 
     const chats = await db.collection('Chats');
