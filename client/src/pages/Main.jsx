@@ -53,7 +53,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
-
+        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {

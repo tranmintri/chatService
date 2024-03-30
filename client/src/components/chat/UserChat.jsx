@@ -68,7 +68,7 @@ const UserChat = () => {
                                 </div>
                                 <div className="text-content">
                                     <div className="name">{convertName()}</div>
-                                    <div className="text">{lastMessage.content}</div>
+                                    {lastMessage.type == "image" ? `Friend sent a image for you` : <div className="text">{lastMessage.content}</div>}
                                 </div>
                             </div>
                             <div className="d-flex flex-column align-items-end">
