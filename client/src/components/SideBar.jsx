@@ -120,24 +120,46 @@ const SideBar = () => {
         if (activeTab === "first") {
           dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false });
           const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
-          dispatch({
-            type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
-              const lastMessageA = a.messages[a.messages.length - 1];
-              const lastMessageB = b.messages[b.messages.length - 1];
-              return lastMessageB.timestamp - lastMessageA.timestamp;
-            })
-          });
+          if (data) {
+            dispatch({
+              type: reducerCases.SET_ALL_GROUP,
+              groups: data.sort((a, b) => {
+                const lastMessageA = a.messages?.[a.messages.length - 1];
+                const lastMessageB = b.messages?.[b.messages.length - 1];
+                if (lastMessageA && lastMessageB) {
+                  return lastMessageB.timestamp - lastMessageA.timestamp;
+                } else {
+                  // Handle cases where lastMessageA or lastMessageB is undefined
+                  // For example, you might want to handle these cases differently
+                  return 0; // For simplicity, assuming equal timestamp for now
+                }
+              })
+            });
+          } else {
+            console.error("Data is undefined");
+          }
         } else if (activeTab === "second") {
           // Fetch other data based on the second tab if needed
           dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: true });
           const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
-          dispatch({
-            type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
-              const lastMessageA = a.messages[a.messages.length - 1];
-              const lastMessageB = b.messages[b.messages.length - 1];
-              return lastMessageB.timestamp - lastMessageA.timestamp;
-            })
-          });
+          if (data) {
+            dispatch({
+              type: reducerCases.SET_ALL_GROUP,
+              groups: data.sort((a, b) => {
+                const lastMessageA = a.messages?.[a.messages.length - 1];
+                const lastMessageB = b.messages?.[b.messages.length - 1];
+                if (lastMessageA && lastMessageB) {
+                  return lastMessageB.timestamp - lastMessageA.timestamp;
+                } else {
+                  // Handle cases where lastMessageA or lastMessageB is undefined
+                  // For example, you might want to handle these cases differently
+                  return 0; // For simplicity, assuming equal timestamp for now
+                }
+              })
+            });
+          } else {
+            console.error("Data is undefined");
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);

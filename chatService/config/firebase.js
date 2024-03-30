@@ -1,11 +1,12 @@
 const admin = require('firebase-admin');
 const credentials = require("../key.json");
+require("dotenv").config();
 
-admin.initializeApp({credential : admin.credential.cert(credentials)});
+admin.initializeApp({
+    credential : admin.credential.cert(credentials),
+    storageBucket: process.env.BUCKET_NAME
+});
 const db = admin.firestore()
-const bucketName ="gs://chatservice-d1f1c.appspot.com"
-
-const bucket = admin.storage().bucket(bucketName);
-
+const bucket = admin.storage().bucket();
 
 module.exports = {db,bucket };

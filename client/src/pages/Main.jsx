@@ -29,9 +29,9 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
 
         dispatch({
           type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
-            const lastMessageA = a.messages[a.messages.length - 1];
-            const lastMessageB = b.messages[b.messages.length - 1];
-            return lastMessageB.timestamp - lastMessageA.timestamp;
+            const lastMessageA = a.messages?.[a.messages.length - 1];
+            const lastMessageB = b.messages?.[b.messages.length - 1];
+            return (lastMessageB?.timestamp || 0) - (lastMessageA?.timestamp || 0);
           })
         });
       } catch (error) {
@@ -53,7 +53,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
-
+        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -76,16 +76,19 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   }, [])
   useEffect(() => {
     const getMessage = async () => {
-      const { data } = await axios.get(CHAT_API + currentChat?.chatId + "/messages")
+      try {
+        if (currentChat?.chatId) {
+          const { data } = await axios.get(`${CHAT_API}${currentChat.chatId}/messages`);
+          dispatch({ type: reducerCases.SET_MESSAGES, messages: data });
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+        // Handle the error, e.g., display an error message to the user
+      }
+    };
 
-      dispatch({
-        type: reducerCases.SET_MESSAGES, messages: data
-      })
-    }
-    if (currentChat?.chatId) {
-      getMessage()
-    }
-  }, [currentChat])
+    getMessage();
+  }, [currentChat]);
 
 
 

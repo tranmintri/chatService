@@ -53,14 +53,26 @@ const Contact = ({ data }) => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
-
-        dispatch({
-          type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
-            const lastMessageA = a.messages[a.messages.length - 1];
-            const lastMessageB = b.messages[b.messages.length - 1];
-            return lastMessageB.timestamp - lastMessageA.timestamp;
-          })
-        });
+        if (data && Array.isArray(data)) { // Ensure data exists and is an array
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: data.sort((a, b) => {
+              // Ensure a.messages and b.messages exist before accessing their length
+              const lastMessageA = a.messages?.[a.messages.length - 1];
+              const lastMessageB = b.messages?.[b.messages.length - 1];
+              // Ensure lastMessageA and lastMessageB are not undefined before accessing their timestamp
+              if (lastMessageA && lastMessageB) {
+                return lastMessageB.timestamp - lastMessageA.timestamp;
+              } else {
+                // Handle cases where lastMessageA or lastMessageB is undefined
+                // For example, you might want to handle these cases differently
+                return 0; // For simplicity, assuming equal timestamp for now
+              }
+            })
+          });
+        } else {
+          console.error("Data is undefined or not in the expected format");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }

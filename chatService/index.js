@@ -5,8 +5,7 @@ const bodyParser = require('body-parser');
 const chatRoutes = require('./routes/chat-routes');
 const messageRoutes = require('./routes/message-routes')
 const userRoutes = require('./routes/user-routes')
-const chatEvent = require('./socketIO/chatEvent');
-const callEvent = require('./socketIO/callEvent');
+
 
 const app = express();
 const http = require("http");
@@ -30,7 +29,7 @@ const PORT = process.env.PORT || 8081;
 
 
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({extended:false}))
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
@@ -43,7 +42,7 @@ const server = app.listen(PORT,()=>{
 })
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "http://localhost:3000",
     },
 });
 global.onlineUsers = new Map();
@@ -57,12 +56,11 @@ io.on("connection", (socket) => {
     })
 
     socket.on("send-msg-private", (data) => {
-        console.log("send-msg-private")
+        console.log("send-msg")
         console.log(data)
         console.log(data.receiveId)
         const sendUserSocket = onlineUsers.get(data.receiveId)
-        console.log(onlineUsers.get(data.receiveId))
-        console.log(onlineUsers.get(data.receiveId))
+
         // if (sendUserSocket){
         socket.to(sendUserSocket).emit("msg-recieve-private", {
             from: data.newMessage.senderId,
@@ -75,20 +73,6 @@ io.on("connection", (socket) => {
         })
         // }
     });
-    socket.on("join-room-public",(chatId)=>{
-        socket.join(chatId)
-    })
-    socket.on("send-msg-public", (chatId, data) => {
-        // if (sendUserSocket){
-        socket.to(chatId).emit("msg-recieve-public", {
-            from: data.newMessage.senderId,
-            newMessage:{
-                senderId: data.newMessage.senderId,
-                type: data.newMessage.type,
-                content: data.newMessage.content,
-                timestamp: data.newMessage.timestamp
-            }
-        })
-        // }
-    });
 })
+// chatEvent(io);
+// callEvent(io)

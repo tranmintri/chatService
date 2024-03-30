@@ -38,47 +38,52 @@ const UserChat = () => {
     // Nếu bạn muốn trả về newLastMessages, hãy thay đổi thành:
 
     return (
-        <div className="tw-mt-16">
+        <div className="tw-mt-20">
             {groupList.map((chat, index) => {
-                // Lấy tin nhắn cuối cùng từ mỗi người gửi có senderID khác 1
-                const lastMessage = chat.messages.slice().reverse().find((contentItem) => contentItem.senderID !== userInfo?.id);
+                if (chat.messages && chat.messages.length > 0) {
 
-                if (lastMessage && chat.name) {
-                    const convertName = () => {
-                        if (chat.type == "private") {
-                            const splitName = chat.name.split("/");
-                            const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+                    const lastMessage = chat.messages.slice().reverse().find((contentItem) => contentItem.senderID !== userInfo?.id);
 
-                            return displayName
+                    if (lastMessage && chat.name) {
+                        const convertName = () => {
+                            if (chat.type == "private") {
+                                const splitName = chat.name.split("/");
+                                const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+
+                                return displayName
+                            }
+                            return chat.name
                         }
-                        return chat.name
+                        return (
+                            <Stack
+                                key={index}
+                                onClick={() => handleSelectChat(chat)}
+                                direction="horizontal"
+                                gap={3}
+                                className="user-card align-items-center p-2 justify-content-between"
+                                role="button"
+                            >
+                                <div className="d-flex">
+                                    <div className="m-2">
+                                        <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
+                                    </div>
+                                    <div className="text-content">
+                                        <div className="name">{convertName()}</div>
+                                        {lastMessage.type == "image" ? `Friend sent a image for you` : <div className="text">{lastMessage.content}</div>}
+                                    </div>
+                                </div>
+                                <div className="d-flex flex-column align-items-end">
+                                    <div className="date">{calculateTime(lastMessage.timestamp)}</div>
+                                    <div className="this-user-notifications">{1}</div>
+                                    <span className="user-online mt-1"></span>
+                                </div>
+                            </Stack>
+                        );
                     }
-                    return (
-                        <Stack
-                            key={index}
-                            onClick={() => handleSelectChat(chat)}
-                            direction="horizontal"
-                            gap={3}
-                            className="user-card align-items-center p-2 justify-content-between"
-                            role="button"
-                        >
-                            <div className="d-flex">
-                                <div className="m-2">
-                                    <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
-                                </div>
-                                <div className="text-content">
-                                    <div className="name">{convertName()}</div>
-                                    <div className="text">{lastMessage.content}</div>
-                                </div>
-                            </div>
-                            <div className="d-flex flex-column align-items-end">
-                                <div className="date">{calculateTime(lastMessage.timestamp)}</div>
-                                <div className="this-user-notifications">{1}</div>
-                                <span className="user-online mt-1"></span>
-                            </div>
-                        </Stack>
-                    );
+
                 }
+                // Lấy tin nhắn cuối cùng từ mỗi người gửi có senderID khác 1
+
             })}
         </div>
     );

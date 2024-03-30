@@ -8,7 +8,6 @@ const {findById,save} = require("./chatService");
 const addMessageOneByOne = async (chatId,messageData) => {
     const messageId = uuidv4();
     const getUser = onlineUsers.get(messageData.receiveId)
-    console.log(messageData)
     await db.collection('Chats')
         .doc(chatId)
         .update({
@@ -23,6 +22,7 @@ const addMessageOneByOne = async (chatId,messageData) => {
         });
     return 'Record saved successfully'
 };
+
 const findAll = async (chatId) => {
 
     const chatData = await getChatData('Chats', chatId);
