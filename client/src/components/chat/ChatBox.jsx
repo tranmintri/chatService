@@ -75,6 +75,27 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       }
     }
   }
+  const openNewWindow = () => {
+    const width = 600;
+    const height = 400;
+    const left = 300;
+    const top = 200;
+
+    const options = `
+      width=${width},
+      height=${height},
+      top=${top},
+      left=${left},
+      resizable=yes,
+      scrollbars=yes,
+      status=yes,
+      toolbar=yes,
+      menubar=yes,
+      location=yes
+    `;
+
+    window.open('localhost:3000', '_blank', options);
+  };
 
   return (
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
@@ -87,11 +108,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </div>
         </div>
         <div className="d-flex">
-          <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" />
-          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
-          {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
-            : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
+          <IoMdSearch className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Search" onClick={openNewWindow} />
+          <IoIosCall className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Call" />
+          <IoIosVideocam className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Video Call" />
+          {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 tw-bg-opacity-100" color="blue" onClick={toggleConversationInfo} />)
+            : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 tw-bg-opacity-100" color="white" onClick={toggleConversationInfo} />)}
         </div>
       </div>
       <div >
@@ -144,7 +165,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           ))}
 
         </div>
-        <div className="d-flex w-100">
+        <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea
             type="text"
             placeholder="Type your message here..."
@@ -152,7 +173,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             onChange={(e) => setSendMessages(e.target.value)}
             value={sendMessages}
           />
-          <PiPaperPlaneRightFill className="send-btn tw-cursor-pointer" onClick={handleSendMessage} />
+          <PiPaperPlaneRightFill className="send-btn tw-cursor-pointer ms-3" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22' }} />
         </div>
       </div>
     </Stack>

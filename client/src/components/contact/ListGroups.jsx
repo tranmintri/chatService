@@ -39,14 +39,14 @@ const ListGroups = ({ data }) => {
     console.log(`Selected filter: ${selectedFilter}`);
   };
   return (
-    <Container className="group-list">
+    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
       <div className="group-list-header">
         <h2>
           {" "}
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="black"
+            color="white"
           />{" "}
           Group list
         </h2>
@@ -92,7 +92,7 @@ const ListGroups = ({ data }) => {
         }
         return null;
       })}
-    </Container>
+    </div>
   );
 };
 export default ListGroups;

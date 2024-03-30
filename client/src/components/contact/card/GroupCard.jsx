@@ -33,7 +33,7 @@ const GroupCard = ({ chat }) => {
     }, [currentChat]);
 
     return (
-        <div className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2'>
+        <div className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2 tw-text-white'>
             <div>
                 <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className='tw-w-14' />
             </div>

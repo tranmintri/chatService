@@ -69,13 +69,13 @@ const ListContact = ({ data }) => {
   };
 
   return (
-    <Container>
+    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
       <div className="friend-list-header">
         <h2>
           <FontAwesomeIcon
             icon={faUsers}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="black"
+            color="white"
           />
           Friends list
         </h2>
@@ -140,7 +140,7 @@ const ListContact = ({ data }) => {
         }
         return null;
       })}
-    </Container>
+    </div>
   );
 };
 

@@ -17,7 +17,7 @@ const UserChat = ({ chats }) => {
     };
 
     return (
-        <div className="tw-mt-16">
+        <div className="tw-mt-20">
             {chats.map((chat, index) => {
                 // Lấy tin nhắn cuối cùng từ mỗi người gửi có senderID khác 1
                 const lastMessage = chat.messages.slice().reverse().find((contentItem) => contentItem.senderID !== userInfo?.id);
