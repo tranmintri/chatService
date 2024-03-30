@@ -1,0 +1,88 @@
+'use strict';
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const userRoutes = require('./routes/user-routes')
+const friendRequestRoutes = require('./routes/friendRequest-routes')
+const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
+const dotenv = require("dotenv")
+
+dotenv.config()
+app.use(cors());
+
+app.use(function(req, res, next) {
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+});
+
+
+const PORT = process.env.PORT;
+
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
+
+// app.use('/api', userRoutes.routes);
+app.use('/api', friendRequestRoutes.routes);
+const server = app.listen(PORT,()=>{
+    console.log(`App is listening on ${PORT}`)
+})
+// const io = new Server(server, {
+//     cors: {
+//         origin: "*",
+//     },
+// });
+// global.onlineUsers = new Map();
+// io.on("connection", (socket) => {
+
+//     global.chatSocket = socket;
+//     socket.on("add-user", (userId) => {
+//         console.log("add-user")
+//         console.log(userId)
+//         onlineUsers.set(userId, socket.id)
+//     })
+
+//     socket.on("send-msg-private", (data) => {
+//         console.log("send-msg-private")
+//         console.log(data)
+//         console.log(data.receiveId)
+//         const sendUserSocket = onlineUsers.get(data.receiveId)
+//         console.log(onlineUsers.get(data.receiveId))
+//         console.log(onlineUsers.get(data.receiveId))
+//         // if (sendUserSocket){
+//         socket.to(sendUserSocket).emit("msg-recieve-private", {
+//             from: data.newMessage.senderId,
+//             newMessage:{
+//                 senderId: data.newMessage.senderId,
+//                 type: data.newMessage.type,
+//                 content: data.newMessage.content,
+//                 timestamp: data.newMessage.timestamp
+//             }
+//         })
+//         // }
+//     });
+//     socket.on("join-room-public",(chatId)=>{
+//         socket.join(chatId)
+//     })
+//     socket.on("send-msg-public", (chatId, data) => {
+//         // if (sendUserSocket){
+//         socket.to(chatId).emit("msg-recieve-public", {
+//             from: data.newMessage.senderId,
+//             newMessage:{
+//                 senderId: data.newMessage.senderId,
+//                 type: data.newMessage.type,
+//                 content: data.newMessage.content,
+//                 timestamp: data.newMessage.timestamp
+//             }
+//         })
+//         // }
+//     });
+// })
