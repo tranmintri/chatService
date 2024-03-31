@@ -54,7 +54,6 @@ io.on("connection", (socket) => {
         console.log(userId)
         onlineUsers.set(userId, socket.id)
     })
-
     socket.on("send-msg-private", (data) => {
         console.log("send-msg")
         console.log(data)
