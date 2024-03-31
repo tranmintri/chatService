@@ -37,7 +37,7 @@ const checkSendRequestController = async (req, res) => {
 
 const requestAddFriendController = async (req, res) => {
     try {
-        const { userId, id_UserWantAdd } = req.body;
+        const { userId, id_UserWantAdd,  } = req.body;
         const result = await requestAddFriend(userId, id_UserWantAdd);
         res.status(200).json(result);
     } catch (error) {

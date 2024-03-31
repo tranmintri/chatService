@@ -159,6 +159,18 @@ const acceptFriend = async (userId, requestId) => {
         }
         user.friends = [...user.friends, request.sender];
         await userRef.update(user);
+
+
+        const chatsData = {
+            chatId: uuidv4(),
+            deleteId: null,
+            name: user.name + ' & ' + sender.name,
+            participants: [userId, request.sender],
+            type: 'private'
+        };
+        //test
+        await db.collection('Chats').doc(chatsData.chatId).set(chatsData);
+        //test
         await db.collection('FriendRequests').doc(requestId).delete();
         // Emit events to sockets here if necessary
         return { message: "Yêu cầu kết bạn được chấp nhận", user: sender };
