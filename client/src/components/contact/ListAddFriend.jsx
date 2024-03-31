@@ -52,14 +52,14 @@ const ListAddFriend = () => {
 
 
   return (
-    <Container>
+    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
       <div className="friend-requests-header">
         <h2>
           {" "}
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="black"
+            color="white"
           />
           Friend Requests List
         </h2>
@@ -71,6 +71,7 @@ const ListAddFriend = () => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
+          color: 'white'
         }}
       >
         <u>Lời mời kết bạn đã nhận</u>{" "}
@@ -82,7 +83,7 @@ const ListAddFriend = () => {
           <FontAwesomeIcon
             icon={faEnvelopeOpen}
             style={{ fontSize: "100px", margin: 15 }}
-            color="black"
+            color="white"
           />
           <Alert variant="info">Oops, this is no friend requests.</Alert>
         </div>
@@ -166,7 +167,7 @@ const ListAddFriend = () => {
           ))}
         </ListGroup>
       )}
-    </Container>
+    </div>
   );
 };
 

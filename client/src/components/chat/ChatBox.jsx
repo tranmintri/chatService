@@ -2,7 +2,7 @@ import { Stack } from "react-bootstrap";
 // import InputEmoji from "react-input-emoji";
 import { Input } from 'antd';
 import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@ant-design/icons'
-import { PiPaperPlaneRightFill } from "react-icons/pi";
+import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import avatar from "../../assets/2Q.png"
@@ -15,8 +15,6 @@ import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
 import { MdDeleteForever } from "react-icons/md";
 import ChatImage from "../contact/card/ChatImage";
-import { IoEllipsisVerticalSharp, IoIosArrowForward } from "react-icons/io";
-import Loading from "./Loading";
 
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
@@ -24,14 +22,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
-  const [dataSendImage, setDataSendImage] = useState("")
 
-  const imageList = ["https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
-    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
-    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
-    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"
-    , "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c"]
+
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedImages((prevImages) => [...prevImages, ...files]);
@@ -39,15 +31,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleRemoveImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-  useEffect(() => {
-    // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
-    const timer = setTimeout(() => {
-      setIsLoading(true)
-    }, 2000);
 
-    // Clear timeout khi component unmount để tránh memory leak
-    return () => clearTimeout(timer);
-  }, [])
   const handleSendMessage = async () => {
     if (sendMessages.length > 0 || selectedImages.length > 0) {
       let type = "text";
@@ -135,6 +119,28 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
     return chat.name
   }
+  const openNewWindow = () => {
+    const width = 600;
+    const height = 400;
+    const left = 300;
+    const top = 200;
+
+    const options = `
+      width=${width},
+      height=${height},
+      top=${top},
+      left=${left},
+      resizable=yes,
+      scrollbars=yes,
+      status=yes,
+      toolbar=yes,
+      menubar=yes,
+      location=yes
+    `;
+
+    window.open('localhost:3000', '_blank', options);
+  };
+
 
   return (
 
@@ -149,7 +155,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" />
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow} />
           <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
@@ -160,7 +166,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       </div>
 
 
-      {messages && isLoading ? (
+      {messages && (
         <Stack gap={3} className="messages tw-max-h-60"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -194,7 +200,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             </Stack>
           ))}
         </Stack>
-      ) : <Loading />}
+      )}
 
 
       <div className="chat-input">
@@ -233,7 +239,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             onChange={(e) => setSendMessages(e.target.value)}
             value={sendMessages}
           />
-          <PiPaperPlaneRightFill className="send-btn tw-cursor-pointer" onClick={handleSendMessage} />
+          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22', color: '#fffffff' }} />
         </div>
       </div>
     </Stack>

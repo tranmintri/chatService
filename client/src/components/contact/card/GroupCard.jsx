@@ -8,7 +8,7 @@ import { CHAT_API } from '../../../router/ApiRoutes';
 
 const GroupCard = ({ chat }) => {
     const [{ userInfo, contactsPage, currentChat, currentChatUser }, dispatch] = useStateProvider()
-    const [isLoading, setIsLoading] = useState(false)
+
     const DeleteFriend = () => {
         console.log("delete")
     }

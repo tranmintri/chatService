@@ -12,14 +12,21 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 .custom-modal {
-  width: 90%; /* Chiếm 4/5 màn hình theo chiều ngang */
-  height: 90%; /* Chiếm 4/5 màn hình theo chiều dọc */
+  width: 90%;
+  /* Chiếm 4/5 màn hình theo chiều ngang */
+  height: 90%;
+  /* Chiếm 4/5 màn hình theo chiều dọc */
   /* Hiệu ứng blur */
-  background-color: transparent !important; /* Loại bỏ màu nền */
-  box-shadow: none; /* Loại bỏ shadow */
-  border: none; /* Loại bỏ border */
+  background-color: transparent !important;
+  /* Loại bỏ màu nền */
+  box-shadow: none;
+  /* Loại bỏ shadow */
+  border: none;
+  /* Loại bỏ border */
 }
+
 body {
   margin: 0;
   font-family: "Nunito", sans-serif, -apple-system, BlinkMacSystemFont,
@@ -48,10 +55,10 @@ html,
 
 /* User Card */
 .user-card {
-  color: black;
   position: relative;
   border-bottom: 1px solid rgb(100, 100, 100);
   width: 100%;
+  background-color: #6c6f73;
 }
 
 .user-card .text-content {
@@ -67,7 +74,7 @@ html,
 .user-card .date {
   top: 0px;
   font-size: 14px;
-  color: black;
+  color: white;
 }
 
 .user-online {
@@ -85,7 +92,7 @@ html,
 /* Message Box */
 .message-box {
   height: 100vh;
-  background-color: #ffffff;
+  background-color: #2b2d31;
   border: solid 1px black;
 }
 
@@ -103,18 +110,24 @@ html,
   align-items: center;
   justify-content: center;
 }
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px; /* Độ rộng của thanh cuộn */
+  width: 12px;
+  /* Độ rộng của thanh cuộn */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888; /* Màu của thanh cuộn */
-  border-radius: 5px; /* Bo tròn viền của thanh cuộn */
+  background: #888;
+  /* Màu của thanh cuộn */
+  border-radius: 5px;
+  /* Bo tròn viền của thanh cuộn */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Màu của thanh cuộn khi di chuột qua */
+  background: #555;
+  /* Màu của thanh cuộn khi di chuột qua */
 }
+
 /* Chat Box */
 .chat-box {
   position: relative;
@@ -131,9 +144,9 @@ html,
   display: flex;
   align-items: start;
   justify-content: start;
-  padding: 0.75rem;
-  color: black;
-  background: rgb(255, 255, 255);
+  padding: 0.85rem;
+  color: white;
+  background: #1e1f22;
   border-bottom: 1px solid black;
 }
 
@@ -161,11 +174,11 @@ html,
   background: rgb(207, 207, 207);
   background: linear-gradient(
     225deg,
-    #e9eae5ff,
-    #c3c4c5ff,
-    #d5cfcaff,
-    #97acb4ff,
-    #dfded8ff
+    rgb(124, 124, 124),
+    rgb(66, 66, 66),
+    rgb(0, 0, 0),
+    rgb(28, 42, 48),
+    rgb(139, 139, 139)
   );
 }
 
@@ -187,6 +200,7 @@ html,
   align-self: flex-end;
   font-weight: 400;
 }
+
 .image-wrapper {
   position: relative;
   display: inline-block;
@@ -202,12 +216,14 @@ html,
   padding: 4px;
   cursor: pointer;
 }
+
 /* Chat Input  */
 .chat-input {
+  color: white;
   border-top: solid 1px black;
   margin-top: auto;
   width: 100%;
-  background: rgb(255, 255, 255);
+  background: #1e1f22;
   padding: 1rem;
   padding-top: 0px;
   display: block;
@@ -256,7 +272,8 @@ html,
 }
 
 .friend-list-header {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
+  color: white;
 
   span {
     font-size: 14px;
@@ -264,7 +281,8 @@ html,
 }
 
 .group-list-header {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
+  color: white;
 
   span {
     font-size: 14px;
@@ -276,7 +294,8 @@ html,
 }
 
 .friend-requests-header {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
+  color: white;
 
   span {
     font-size: 14px;
@@ -337,6 +356,7 @@ html,
   width: 100%;
   z-index: 999;
 }
+
 .lds-ring {
   position: absolute;
   top: 50%;
@@ -346,6 +366,7 @@ html,
   width: 80px;
   height: 80px;
 }
+
 .lds-ring div {
   box-sizing: border-box;
   display: block;
@@ -358,19 +379,24 @@ html,
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: black transparent transparent transparent;
 }
+
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;
 }
+
 .lds-ring div:nth-child(2) {
   animation-delay: -0.3s;
 }
+
 .lds-ring div:nth-child(3) {
   animation-delay: -0.15s;
 }
+
 @keyframes lds-ring {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
