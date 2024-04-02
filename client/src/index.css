@@ -205,6 +205,10 @@ html,
   position: relative;
   display: inline-block;
 }
+.file-wrapper {
+  position: relative;
+  display: inline-block;
+}
 
 .delete-btn {
   position: absolute;
