@@ -22,6 +22,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
@@ -131,6 +132,20 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   };
 
 
+
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+  };
+  const handleRemoveFile = (index) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  // const handleAttachFiles = () => {
+  //   document.getElementById('file-input').click();
+  // };
+
+
   return (
 
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
@@ -215,7 +230,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             <FileImageOutlined className="chat-input-icon px-2" title="Send Image" />
 
           </label>
-          <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
+          <input
+            type="file"
+            accept=".doc, .docx, .xls, .xlsx, .pdf"
+            className="d-none"
+            onChange={handleFileInputChange}
+            multiple
+            id="file-input"
+          />
+          <label htmlFor="file-input" >
+            <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
+          </label>
         </div>
 
         <div className="selected-images">
@@ -225,7 +250,19 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
               <button className="delete-btn " onClick={() => handleRemoveImage(index)}><MdDeleteForever className="" /></button>
             </div>
           ))}
+        </div>
+        <div className=" tw-flex tw-flex-wrap">
+          {selectedFiles.map((file, index) => (
+            <div key={index} className="file-wrapper tw-p-3 tw-mr-2">
+              <button onClick={() => handleRemoveFile(index)} className="tw-absolute -tw-right-2 -tw-top-4 tw-p-2">
+                <MdDeleteForever className="tw-bg-[#1e1f22] tw-rounded-full tw-p-1 tw-text-3xl" />
+              </button>
+              <div className="tw-bg-slate-500 tw-p-2 tw-rounded-full">
+                <div className="tw-text-white tw-text-sm ">{file.name}</div>
+              </div>
 
+            </div>
+          ))}
         </div>
         <div className="d-flex w-100">
           <TextArea
