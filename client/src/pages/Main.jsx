@@ -79,7 +79,8 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       try {
         if (currentChat?.chatId) {
           const { data } = await axios.get(`${CHAT_API}${currentChat.chatId}/messages`);
-          dispatch({ type: reducerCases.SET_MESSAGES, messages: data });
+          console.log(data)
+          dispatch({ type: reducerCases.SET_MESSAGES, messages: data ? data : [] });
         }
       } catch (error) {
         console.error("Error fetching messages:", error);

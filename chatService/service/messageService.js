@@ -14,6 +14,8 @@ const addMessageOneByOne = async (chatId,messageData) => {
             messages: admin.firestore.FieldValue.arrayUnion({
                 messageId: messageId,
                 senderId: messageData.newMessage.senderId,
+                senderName: messageData.newMessage.senderName,
+                senderPicture:messageData.newMessage.senderPicture,
                 type:messageData.newMessage.type,
                 content: messageData.newMessage.content,
                 timestamp: messageData.newMessage.timestamp,
@@ -26,12 +28,18 @@ const addMessageOneByOne = async (chatId,messageData) => {
 const findAll = async (chatId) => {
 
     const chatData = await getChatData('Chats', chatId);
+    if(!chatData.messages){
+
+        return [];
+    }
     const messagesArray = [];
         chatData.messages.forEach(doc => {
             const message = new Message(
                 doc.messageId,
                 doc.type,
                 doc.senderId,
+                doc.senderName,
+                doc.senderPicture,
                 doc.content,
                 doc.timestamp,
                 doc.status

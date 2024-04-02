@@ -22,8 +22,10 @@ import { useStateProvider } from '../context/StateContext';
 import axios from 'axios';
 import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from '../router/ApiRoutes';
 import { reducerCases } from '../context/constants';
+import GroupCard from './contact/card/GroupCard';
+import { chain } from 'lodash';
 const SideBar = () => {
-  const [{ userInfo, contactsPage, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, contactsPage, currentChat, groups }, dispatch] = useStateProvider();
   const [activeKey, setActiveKey] = useState('first');
 
   const [showFormUser, setShowFormUser] = useState(false);
@@ -394,21 +396,16 @@ const SideBar = () => {
             </div>
           </div>
           {showSearchTable && (
-            <div className='tw-bg-white tw-h[90%] tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r'>
-              <div className='tw-h-full'>
-                {userList.map((user, index) => (
-                  <div className='tw-flex tw-items-center tw-p-2 tw-border-b tw-border-gray-200 tw-cursor-pointer'>
-                    <div className='tw-w-1/4 tw-flex tw-justify-center'>
-                      <img src={user.profilePicture} alt="User Avatar" className="tw-w-16 tw-h-16 tw-rounded-full" />
-                    </div>
-                    <div className='tw-w-3/4'>
-                      <div className='tw-text-lg tw-font-bold'>{user.display_name}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className='tw-bg-white tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r'>
+
+              {groups.map((chat, index) => (
+                <GroupCard chat={chat} />
+              ))}
+
+
             </div>
           )}
+
           {showFormUser && (
             <div className="tooltip-content col-2 tw-w-2/5 absolute" ref={ref}>
               <div
