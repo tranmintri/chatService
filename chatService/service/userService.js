@@ -131,13 +131,24 @@ const findById = async (id) => {
 
 const addFriend = async (id,data) => {
     console.log(data)
-    const result = await db.collection('Users')
+    // add receive requset
+    await db.collection('Users')
         .doc(id)
         .update({
             friends: admin.firestore.FieldValue.arrayUnion({
                 id: data.id,
                 displayName: data.display_name,
                 profilePicture: data.profilePicture,
+            })
+        });
+    // add sender request
+    await db.collection('Users')
+        .doc(data.id)
+        .update({
+            friends: admin.firestore.FieldValue.arrayUnion({
+                id: id,
+                displayName: data.user.display_name,
+                profilePicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
             })
         });
     const privateChatData = {

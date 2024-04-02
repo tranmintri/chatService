@@ -12,7 +12,6 @@ const getAllMessageInChat = async (req, res, next) => {
     const { chatId } = req.params;
     try {
         const result = await findAll(chatId)
-
         res.status(200).send(result);
     } catch (error) {
         res.status(400).send('Error');

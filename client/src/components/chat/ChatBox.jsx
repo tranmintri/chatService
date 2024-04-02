@@ -23,7 +23,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
 
-
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedImages((prevImages) => [...prevImages, ...files]);
@@ -58,11 +57,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
       try {
         content += sendMessages
-        console.log(content)
+        console.log(userInfo)
         // Gửi tin nhắn đến server
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
             senderId: userInfo?.id,
+            senderName: userInfo?.display_name,
+            senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
             type: type,
             content: content,
             timestamp: Date.now()
@@ -97,7 +98,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           ...groups.filter(chat => chat.chatId === currentChat.chatId),
           ...groups.filter(chat => chat.chatId !== currentChat.chatId)
         ];
-        console.log("ChatBox")
         console.log(group)
         dispatch({
           type: reducerCases.SET_ALL_GROUP,
@@ -111,34 +111,23 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   }
   const convertName = () => {
-    if (chat.type == "private") {
-      const splitName = chat.name.split("/");
-      const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
-
-      return displayName
+    if (currentChat) {
+      if (chat.type == "private") {
+        const splitName = chat.name.split("/");
+        const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+        return displayName
+      }
+      return chat.name
     }
-    return chat.name
+    else {
+      return ""
+    }
   }
-  const openNewWindow = () => {
-    const width = 600;
-    const height = 400;
-    const left = 300;
-    const top = 200;
-
-    const options = `
-      width=${width},
-      height=${height},
-      top=${top},
-      left=${left},
-      resizable=yes,
-      scrollbars=yes,
-      status=yes,
-      toolbar=yes,
-      menubar=yes,
-      location=yes
-    `;
-
-    window.open('localhost:3000', '_blank', options);
+  const openNewWindow = (chatId) => {
+    return () => {
+      console.log(chatId)
+      socket.current.emit("get-browser", chatId);
+    };
   };
 
 
@@ -155,7 +144,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow} />
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(currentChat?.chatId)} />
           <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
@@ -172,31 +161,38 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           onMouseLeave={() => setIsHovered(false)}
         >
           {messages && messages.map((message, index) => (
+
             <Stack key={index}>
-              <Stack
-                className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
-              >
+              <div className={`align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} tw-text-white tw-ml-4 tw-mb-1`}>
+                {"Trần Minh Trí"}
+              </div>
+              <div className={`tw-flex tw-justify-center tw-items-center align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'}`}>
 
-
-                {message.type === "text" ? (
-                  <span>{message.content}</span>
-                ) : (
-                  <div className="tw-flex tw-mr-3 tw-max-w-72 tw-flex-wrap">
-                    {message.content && message.content.split('|').map((content, index) => (
-                      <div className="tw-flex" key={index}>
-                        {content.startsWith("https://") ? (
-                          <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
-                        ) : (
-                          <span>{content}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
-                  {calculateTime(message.timestamp)}
-                </span>
-              </Stack>
+                {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
+                <Stack
+                  className={` message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
+                >
+                  {message.type === "text" ? (
+                    <span>{message.content}</span>
+                  ) : (
+                    <div className="tw-flex tw-mr-3 tw-max-w-72 tw-flex-wrap">
+                      {message.content && message.content.split('|').map((content, index) => (
+                        <div className="tw-flex" key={index}>
+                          {content.startsWith("https://") ? (
+                            <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
+                          ) : (
+                            <span>{content}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
+                    {calculateTime(message.timestamp)}
+                  </span>
+                </Stack>
+                {message.senderId == userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-ml-2" />) : ""}
+              </div>
             </Stack>
           ))}
         </Stack>

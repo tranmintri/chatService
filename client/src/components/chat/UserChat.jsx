@@ -9,7 +9,7 @@ import { useEffect } from "react";
 const UserChat = () => {
 
     const [groupList, setGroupList] = useState([])
-    const [{ userInfo, groups }, dispatch] = useStateProvider();
+    const [{ userInfo, groups, socket }, dispatch] = useStateProvider();
 
     const handleSelectChat = (chat) => {
         dispatch({
@@ -80,10 +80,8 @@ const UserChat = () => {
                             </Stack>
                         );
                     }
-
                 }
                 // Lấy tin nhắn cuối cùng từ mỗi người gửi có senderID khác 1
-
             })}
         </div>
     );

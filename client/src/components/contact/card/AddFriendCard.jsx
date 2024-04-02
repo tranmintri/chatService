@@ -34,7 +34,8 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
         const postData = {
             id: searchResults.id,
             display_name: searchResults.display_name,
-            profilePicture: searchResults.profilePicture
+            profilePicture: searchResults.profilePicture,
+            user: userInfo
         };
 
         try {

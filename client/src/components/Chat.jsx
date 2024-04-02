@@ -12,13 +12,17 @@ const Chat = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
 
-  const [{ userInfo, currentChat }] = useStateProvider()
+  const [{ userInfo, currentChat, socket }] = useStateProvider()
   const [chat, setChat] = useState({});
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
-    setChat(currentChat); // Cập nhật giá trị của chat khi currentChat thay đổi
-  }, [currentChat]);
+    socket.current.emit("get-online-user")
+
+    socket.current.on("online-users", (userList) => {
+      console.log("Online users:", userList);
+    });
+  }, [socket.current])
 
   useEffect(() => {
     const fetchChatData = async () => {
@@ -35,9 +39,9 @@ const Chat = () => {
   }, []);
 
 
-  useEffect(() => {
-    console.log(chats) // Cập nhật giá trị của chat khi currentChat thay đổi
-  }, [chats]);
+  // useEffect(() => {
+  //   setChat // Cập nhật giá trị của chat khi currentChat thay đổi
+  // }, [chats]);
   const toggleConversationInfo = () => {
     setShowInfo(!showInfo)
   };
@@ -53,21 +57,21 @@ const Chat = () => {
           <UserChat chats={chats ? chats : []} />
         </Stack>
       </div>
-      {chat ? (
+      {currentChat ? (
         showInfo ? (
           <div className="col-9 d-flex">
             <div className="col-8">
-              <ChatBox chat={chat} toggleConversationInfo={toggleConversationInfo} showInfo={showInfo} />
+              <ChatBox chat={currentChat} toggleConversationInfo={toggleConversationInfo} showInfo={showInfo} />
             </div>
             <div className="col-4">
-              <ConversationInfo chat={chat} />
+              <ConversationInfo chat={currentChat} />
             </div>
           </div>
 
 
         ) : (
           <div className="col-9">
-            <ChatBox chat={chat} toggleConversationInfo={toggleConversationInfo} showInfo={showInfo} />
+            <ChatBox chat={currentChat} toggleConversationInfo={toggleConversationInfo} showInfo={showInfo} />
           </div>
           // <div>aaaaaa</div>
         )
