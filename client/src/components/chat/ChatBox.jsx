@@ -2,7 +2,7 @@ import { Stack } from "react-bootstrap";
 // import InputEmoji from "react-input-emoji";
 import { Input } from 'antd';
 import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@ant-design/icons'
-import { PiPaperPlaneRightFill } from "react-icons/pi";
+import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import avatar from "../../assets/2Q.png"
@@ -14,10 +14,16 @@ import { reducerCases } from "../../context/constants";
 import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
 import { MdDeleteForever } from "react-icons/md";
+import ChatImage from "../contact/card/ChatImage";
+import ChatLand from "./ChatLand";
+
+
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
-  const [{ messages, userInfo, currentChat, socket }, dispatch] = useStateProvider()
+  const [isHovered, setIsHovered] = useState(false);
+  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
+
 
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
@@ -26,34 +32,61 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleRemoveImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
+
   const handleSendMessage = async () => {
-    if (sendMessages.trim().length > 0) {
+    if (sendMessages.length > 0 || selectedImages.length > 0) {
+      let type = "text";
+      let content = "";
+
+      // Nếu có hình ảnh được chọn, gửi hình ảnh trước
+      if (selectedImages.length > 0) {
+        try {
+          const formData = new FormData();
+          selectedImages.forEach((image, index) => {
+            formData.append(`images`, image);
+          });
+
+          const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/images", formData);
+          console.log(data.data);
+
+          content = data.data;
+          type = "image";
+        } catch (error) {
+          console.log("Error uploading images:", error);
+          return;
+        }
+      }
+
       try {
+        content += sendMessages
+        console.log(content)
+        // Gửi tin nhắn đến server
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
             senderId: userInfo?.id,
-            type: "text",
-            content: sendMessages,
+            type: type,
+            content: content,
             timestamp: Date.now()
           }
-        })
+        });
+        console.log(data.data.newMessage)
         const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
           if (participantId !== userInfo?.id) {
             acc = participantId;
           }
           return acc;
         }, null) : "";
-        console.log(receiveId)
-        socket.current.emit("send-msg", {
+
+        socket.current.emit("send-msg-private", {
           receiveId: receiveId,
           newMessage: {
             senderId: userInfo?.id,
-            type: "text",
-            content: data.data.newMessage.content,
+            type: type,
+            content: content,
             timestamp: Date.now()
           }
         })
-        console.log(data.data)
+
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -61,19 +94,31 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           },
           fromSelf: true
         })
-        console.log(sendMessages)
-        console.log(
-          {
-            senderId: userInfo?.id,
-            type: "text",
-            content: sendMessages,
-            timestamp: Date.now()
-          })
+        let group = [
+          ...groups.filter(chat => chat.chatId === currentChat.chatId),
+          ...groups.filter(chat => chat.chatId !== currentChat.chatId)
+        ];
+        console.log("ChatBox")
+        console.log(group)
+        dispatch({
+          type: reducerCases.SET_ALL_GROUP,
+          groups: group
+        })
+        setSelectedImages([])
         setSendMessages("")
       } catch (error) {
         console.log(error)
       }
     }
+  }
+  const convertName = () => {
+    if (chat.type == "private") {
+      const splitName = chat.name.split("/");
+      const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+
+      return displayName
+    }
+    return chat.name
   }
   const openNewWindow = () => {
     const width = 600;
@@ -98,44 +143,34 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   };
 
   return (
-    <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
+
+    <Stack className={`chat-box  ${showInfo ? 'w-full' : ''}`}>
       <div className="chat-header justify-content-between align-items-center">
         <div className="d-flex">
-          <img src={avatar} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
+          <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
           <div>
-            <strong style={{ fontSize: '20px' }}>{chat ? chat.name : 'Default Name'}</strong>
+            <strong style={{ fontSize: '20px' }}>{convertName()}</strong>
             <p className="chat-header-condition">online</p>
           </div>
         </div>
         <div className="d-flex">
-          <IoMdSearch className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Search" onClick={openNewWindow} />
-          <IoIosCall className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Call" />
-          <IoIosVideocam className="chat-header-icon px-2 tw-bg-opacity-100" color="white" title="Video Call" />
-          {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 tw-bg-opacity-100" color="blue" onClick={toggleConversationInfo} />)
-            : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 tw-bg-opacity-100" color="white" onClick={toggleConversationInfo} />)}
+          <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow} />
+          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
+          {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
+            : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
         </div>
       </div>
       <div >
 
       </div>
 
-      {messages && (
-        <Stack gap={3} className="messages tw-max-h-60">
-          {messages && messages.map((message, index) => (
-            <Stack
-              key={index}
-              className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
-            >
-              <span >{message.content}</span>
 
-              <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit ">
-                {calculateTime(message.timestamp)}
-              </span>
-            </Stack>
-          ))}
-        </Stack>
-      )}
-
+      <div className="messages" style={{ height: '100vh' }}>
+        {messages && (
+          <ChatLand messages={messages} userInfo={userInfo} />
+        )}
+      </div>
 
       <div className="chat-input">
         <div className="w-100 items-center">
@@ -173,7 +208,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             onChange={(e) => setSendMessages(e.target.value)}
             value={sendMessages}
           />
-          <PiPaperPlaneRightFill className="send-btn tw-cursor-pointer ms-3" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22' }} />
+          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22', color: '#fffffff' }} />
         </div>
       </div>
     </Stack>

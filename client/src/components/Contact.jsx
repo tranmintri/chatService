@@ -47,12 +47,12 @@ const Contact = ({ data }) => {
       <div
         className="d-flex"
       >
-        <Col md={3} style={{ backgroundColor: '#2b2d31' }}>
-          <Nav className="nav-contact flex-column gap-2 " variant="light">
+        <Col md={3} style={{ backgroundColor: 'white' }}>
+          <Nav className="nav-contact flex-column gap-2" variant="light">
             <Nav.Item className="tab-link  tw-mt-20">
               <Nav.Link
                 eventKey="first"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'first' ? '#9ea6af' : 'transparent' }}
               >
                 <div className="d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
@@ -67,7 +67,7 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="second"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'second' ? '#9ea6af' : 'transparent' }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
@@ -82,7 +82,7 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="third"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'third' ? '#9ea6af' : 'transparent' }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon

@@ -332,13 +332,13 @@ const SideBar = () => {
           </Nav>
         </Col>
         <Col style={{ width: '90%' }} className='tw-relative'>
-          <div className=' col-3 tw-h-20 tw-border tw-border-gray-500 tw-absolute' style={{ backgroundColor: '#2b2d31' }}>
+          <div className=' col-3 tw-h-20 tw-border  tw-absolute' style={{ backgroundColor: 'white', border: '1px solid #dde0e2' }}>
             <div className='tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full'>
               <div className='tw-flex tw-w-full tw-items-center'>
                 <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500' style={{ backgroundColor: '#6f7276' }} />
                 <div className='tw-w-1/5 tw-flex-1 tw-flex'>
                   {showSearchTable ? (
-                    <button className="tw-font-bold tw-text-black tw-rounded tw-flex-1 tw-m-1 tw-text-white hover:tw-bg-gray-300" onClick={() => setShowSearchTable(false)}>
+                    <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1  hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
                       Đóng
                     </button>
 
@@ -367,8 +367,8 @@ const SideBar = () => {
             </div>
           </div>
           {showSearchTable && (
-            <div className='tw-bg-white tw-h[90%] tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r tw-text-white' style={{ backgroundColor: '#2b2d31' }}>
-              <div className='tw-h-full'>
+            <div className='tw-bg-white tw-h[90%] tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r '>
+              <div className='tw-h-full' style={{ backgroundColor: 'white' }}>
                 {userList.map((user, index) => (
                   <div className='tw-flex tw-items-center tw-p-2 tw-border-b tw-border-gray-200 tw-cursor-pointer'>
                     <div className='tw-w-1/4 tw-flex tw-justify-center'>
