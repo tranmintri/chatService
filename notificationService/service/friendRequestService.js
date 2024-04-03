@@ -16,11 +16,11 @@ const getListSenderRequest = async (senderId) => {
             });
             return requests;
         } else {
-            throw new Error("No friend requests found");
+            return [];
         }
     } catch (error) {
         console.error('Error:', error);
-        throw new Error('Internal Server Error');
+        return { message: 'Internal Server Error' };
     }
 }
 // lay ds yeu cau KB nhan ve
@@ -36,11 +36,11 @@ const getListReceiverRequest = async (receiverId) => {
             });
             return requests;
         } else {
-            throw new Error("No friend requests found");
+            return [];
         }
     } catch (error) {
         console.error('Error:', error);
-        throw new Error('Internal Server Error');
+        return { message: 'Internal Server Error' };
     }
 }
 // kiem tra da gui yc KB chua
@@ -62,37 +62,39 @@ const checkSendRequest = async (senderId, receiverId) => {
     }
 }
 //gui YC
-const requestAddFriend = async (userId, id_UserWantAdd) => {
+const requestAddFriend = async (data) => {
+    console.log(data)
     try {
-        const userRef = db.collection('Users').doc(userId);
+        const userRef = db.collection('Users').doc(data.userId);
         console.log(userRef)
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("ng dung k ton tai");
         }
         const userData = userDoc.data();
-        if (userId == id_UserWantAdd) {
+        if (data.userId == data.id_UserWantAdd) {
             throw new Error("bn k the gui loi moi kb cho chinh minh");
         }
-        if (userData.friends && userData.friends.includes(id_UserWantAdd)) {
+        if (userData.friends && userData.friends.includes(data.id_UserWantAdd)) {
             throw new Error("add fen roi");
         }
         const friendRequestSnapshot = await db.collection('FriendRequests')
-            .where('sender', '==', userId)
-            .where('receiver', '==', id_UserWantAdd)
+            .where('sender', '==', data.userId)
+            .where('receiver', '==', data.id_UserWantAdd)
             .get();
 
         if (!friendRequestSnapshot.empty) {
             throw new Error("Yêu cầu kết bạn đã được gửi");
         }
         const newFriendRequest = {
+            senderName: data.senderName,
+            receiverName: data.receiverName,
             requestId: uuidv4(),
             isAccepted: false,
-            sender: userId,
-            receiver: id_UserWantAdd,
+            sender: data.userId,
+            receiver: data.id_UserWantAdd,
         };
         await db.collection('FriendRequests').doc(newFriendRequest.requestId).set(newFriendRequest);
-
         return { message: "Yêu cầu kết bạn đã được gửi" };
     } catch (error) {
         console.error('Error:', error);
