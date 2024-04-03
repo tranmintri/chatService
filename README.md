@@ -1,4 +1,4 @@
-# dowload kafka 
+# dowload kafka : https://kafka.apache.org/downloads
 # rename file to kafka
 # Go to kafka/bin/windows and type cmd
   # run : zookeeper-server-start.bat ../../config/zookeeper.properties
