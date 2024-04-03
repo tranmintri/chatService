@@ -8,6 +8,7 @@ const upload = multer();
 
 // const  upload1
 const uploadImages = upload.array('images');
+
 const getAllMessageInChat = async (req, res, next) => {
     const { chatId } = req.params;
     try {
@@ -28,9 +29,8 @@ const saveImageInChat = async (req, res, next) => {
             }
             // Lấy thông tin ảnh và tin nhắn từ request
             const images = req.files;
-            const message = req.body.message;
 
-            if (!message && images.length === 0) {
+            if (images.length === 0) {
                 return res.status(400).json({ error: 'Message and images are missing' });
             }
             const { chatId } = req.params;
@@ -64,6 +64,51 @@ const saveImageInChat = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const uploadFiles = upload.array('files');
+const saveFileInChat = async (req, res, next) => {
+    try {
+        // Thực hiện xử lý upload file từ client
+        uploadFiles(req, res, async (err) => {
+            if (err) {
+                console.error('Error uploading files:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+            // Kiểm tra xem có tệp được tải lên không
+            if (!req.files || req.files.length === 0) {
+                console.error('No files uploaded');
+                return res.status(400).json({ error: 'No files uploaded' });
+            }
+            // Lấy thông tin các file từ request
+            const files = req.files;
+            console.log(files)
+            const fileUrls = [];
+            let fileContent = ""
+            // Lưu các file vào Firebase Storage và lấy đường dẫn
+            for (let file of files) {
+                const fileUploadPath = `files/${file.originalname}`; // Đường dẫn tới thư mục "files"
+                const fileRef = bucket.file(fileUploadPath);
+
+                await fileRef.save(file.buffer, {
+                    metadata: {
+                        contentType: file.mimetype
+                    }
+                });
+
+                const [url] = await fileRef.getSignedUrl({ action: 'read', expires: '03-09-2491' });
+                console.log(url)
+                fileContent += url + "|"
+            }
+
+            // Trả về mảng các URL của các file đã được tải lên
+            res.status(200).json({ data: fileContent });
+        });
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
 const saveMessageInChat = async (req, res, next) => {
 
     try {
@@ -100,5 +145,6 @@ module.exports = {
     saveImageInChat,
     saveMessageInChat,
     getAllMessageInChat,
-    deleteMessageByIdInChat
+    deleteMessageByIdInChat,
+    saveFileInChat
 }

@@ -64,6 +64,22 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       setSocketEvent(true)
     }
   }, [socket.current])
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("msg-recieve-public", (data) => {
+        console.log("public")
+        console.log(data)
+        dispatch({
+          type: reducerCases.ADD_MESSAGES,
+          newMessage: {
+            ...data.newMessage,
+          }
+        })
+      })
+      setSocketEvent(true)
+    }
+  }, [socket.current])
+
 
   useEffect(() => {
     // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
