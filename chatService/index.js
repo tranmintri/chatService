@@ -115,57 +115,90 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send-msg-private", (data) => {
-        console.log("send-msg")
+        console.log("send-msg-private")
         console.log(data)
         console.log(data.receiveId)
-        const sendUserSocket = onlineUsers.get(data.receiveId)
+        const receiveUserSocket = onlineUsers.get(data.receiveId)
 
-        // if (sendUserSocket){
-        socket.to(sendUserSocket).emit("msg-recieve-private", {
-            from: data.newMessage.senderId,
-            newMessage: {
-                senderId: data.newMessage.senderId,
-                senderName: data.newMessage.senderName,
-                senderPicture:data.newMessage.senderPicture,
-                type: data.newMessage.type,
-                content: data.newMessage.content,
-                timestamp: data.newMessage.timestamp
+        if (receiveUserSocket) {
+            socket.to(receiveUserSocket).emit("msg-recieve-private", {
+                from: data.newMessage.senderId,
+                newMessage: {
+                    senderId: data.newMessage.senderId,
+                    senderName: data.newMessage.senderName,
+                    senderPicture: data.newMessage.senderPicture,
+                    type: data.newMessage.type,
+                    content: data.newMessage.content,
+                    timestamp: data.newMessage.timestamp
+                }
+            })
+        }
+    })
+    socket.on("send-msg-public", (data) => {
+        console.log("send-msg-public")
+        console.log(data)
+        data.receiveId.forEach(p => {
+            const receiveUserSocket = onlineUsers.get(p)
+            if (receiveUserSocket) {
+                socket.to(receiveUserSocket).emit("msg-recieve-public", {
+                    from: data.newMessage.senderId,
+                    newMessage: {
+                        senderId: data.newMessage.senderId,
+                        senderName: data.newMessage.senderName,
+                        senderPicture: data.newMessage.senderPicture,
+                        type: data.newMessage.type,
+                        content: data.newMessage.content,
+                        timestamp: data.newMessage.timestamp
+                    }
+                })
             }
         })
+    })
 
-        socket.on("disconnect", () => {
-            console.log("A user disconnected");
-            // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-            onlineUsers.forEach((value, key) => {
-                if (value === socket.id) {
-                    onlineUsers.delete(key);
-                }
-            });
+
+    socket.on("disconnect", () => {
+        console.log("A user disconnected");
+        // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
+        onlineUsers.forEach((value, key) => {
+            if (value === socket.id) {
+                onlineUsers.delete(key);
+            }
         });
-
-        socket.on('join-call', (roomId) => {
-            socket.join(roomId);
-        });
-
-        // Listen for offer event
-        socket.on('offer', (data) => {
-            console.log(data)
-            io.to(data.roomId).emit('offer', data.offer);
-        });
-
-        // Listen for answer event
-        socket.on('answer', (data) => {
-            console.log(data)
-            io.to(data.roomId).emit('answer', data.answer);
-        });
-
-        // Listen for ICE candidates event
-        socket.on('ice-candidate', (data) => {
-            console.log(data)
-            io.to(data.roomId).emit('ice-candidate', data.candidate);
-        });
-
     });
+
+    socket.on('join-to-chat-public', (roomId) => {
+        socket.join(roomId);
+    });
+
+    socket.on('request-to-voice-call-private', (data) => {
+        console.log(data);
+        console.log("call private");
+        const receiveUserSocket = onlineUsers.get(data.receiveId);
+        const sendUserSocket = onlineUsers.get(data.senderId);
+        // if (!receiveUserSocket) {
+            console.log("res call private");
+            console.log(sendUserSocket);
+            socket.to(sendUserSocket).emit("response-from-voice-call-private", data);
+        // }
+    });
+
+
+    // Listen for offer event
+    socket.on('offer', (data) => {
+        console.log(data)
+        io.to(data.roomId).emit('offer', data.offer);
+    });
+
+    // Listen for answer event
+    socket.on('answer', (data) => {
+        console.log(data)
+        io.to(data.roomId).emit('answer', data.answer);
+    });
+
+    // Listen for ICE candidates event
+    socket.on('ice-candidate', (data) => {
+        console.log(data)
+        io.to(data.roomId).emit('ice-candidate', data.candidate);
+    });
+
 })
-// chatEvent(io);
-// callEvent(io)

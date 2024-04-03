@@ -15,7 +15,12 @@ import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
 import { MdDeleteForever } from "react-icons/md";
 import ChatImage from "../contact/card/ChatImage";
-
+import xls from "../../assets/xls.png";
+import xlsx from "../../assets/xlsx.png";
+import txt from "../../assets/txt.png";
+import pdf from "../../assets/pdf.png";
+import doc from "../../assets/doc.png";
+import docx from "../../assets/docx.png";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -31,21 +36,30 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleRemoveImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-
+  const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
+    if (participantId !== userInfo?.id) {
+      acc = participantId;
+    }
+    return acc;
+  }, null) : "";
   const handleSendMessage = async () => {
-    if (sendMessages.length > 0 || selectedImages.length > 0) {
+    if (sendMessages.length > 0 || selectedImages.length > 0 || selectedFiles.length > 0) {
       let type = "text";
       let content = "";
 
+      if (selectedImages.length > 0 && selectedFiles.length > 0) {
+        alert("Can't send photos and files at the same time")
+        return
+      }
       // Nếu có hình ảnh được chọn, gửi hình ảnh trước
-      if (selectedImages.length > 0) {
+      if (selectedImages.length > 0 && selectedFiles.length == 0) {
         try {
           const formData = new FormData();
           selectedImages.forEach((image, index) => {
             formData.append(`images`, image);
           });
 
-          const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/images", formData);
+          const { data } = await axios.post(CHAT_API + currentChat?.chatId + "/images", formData);
           console.log(data.data);
 
           content = data.data;
@@ -54,6 +68,27 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           console.log("Error uploading images:", error);
           return;
         }
+      }
+      if (selectedFiles.length > 0 && selectedImages == 0) {
+        const formData = new FormData();
+        selectedFiles.forEach((file, index) => {
+          formData.append(`files`, file);
+        });
+
+        try {
+          const response = await axios.post(CHAT_API + currentChat?.chatId + "/files", formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          console.log('URLs of uploaded files:', response.data);
+          content += response.data.data;
+          type = "files";
+        } catch (error) {
+          console.error('Error uploading files:', error);
+        }
+      } else {
+        console.error('No files selected');
       }
 
       try {
@@ -71,22 +106,36 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           }
         });
         console.log(data.data.newMessage)
-        const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
-          if (participantId !== userInfo?.id) {
-            acc = participantId;
-          }
-          return acc;
-        }, null) : "";
 
-        socket.current.emit("send-msg-private", {
-          receiveId: receiveId,
-          newMessage: {
-            senderId: userInfo?.id,
-            type: type,
-            content: content,
-            timestamp: Date.now()
-          }
-        })
+
+        if (currentChat.type == "private") {
+          console.log("private")
+          socket.current.emit("send-msg-private", {
+            receiveId: receiveId,
+            newMessage: {
+              senderId: userInfo?.id,
+              senderName: userInfo?.display_name,
+              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              type: type,
+              content: content,
+              timestamp: Date.now()
+            }
+          })
+        }
+        if (currentChat.type == "public") {
+          console.log("public")
+          socket.current.emit("send-msg-public", {
+            receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
+            newMessage: {
+              senderId: userInfo?.id,
+              senderName: userInfo?.display_name,
+              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              type: type,
+              content: content,
+              timestamp: Date.now()
+            }
+          });
+        }
 
         dispatch({
           type: reducerCases.ADD_MESSAGES,
@@ -104,6 +153,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           type: reducerCases.SET_ALL_GROUP,
           groups: group
         })
+        setSelectedFiles([])
         setSelectedImages([])
         setSendMessages("")
       } catch (error) {
@@ -145,6 +195,37 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   //   document.getElementById('file-input').click();
   // };
 
+  const handleVoiceCall = () => {
+    if (currentChat.type === "private") {
+      console.log("call private");
+      socket.current.emit("request-to-voice-call-private", {
+        receiveId: receiveId,
+        senderId: userInfo?.id,
+        senderName: userInfo?.display_name
+      });
+    }
+  };
+
+  // useEffect(() => {
+  //   const handleResponse = (data) => {
+  //     console.log("res call private");
+  //     alert(data.res);
+  //   };
+
+  //   socket.current.on("response-from-voice-call-private", handleResponse);
+
+  //   // Cleanup effect to remove the listener when component unmounts
+  //   return () => {
+  //     socket.current.off("response-from-voice-call-private", handleResponse);
+  //   };
+  // }, []); // Passing an empty dependency array ensures this effect runs only once, similar to componentDidMount
+  // // Ensure this effect runs only once, similar to componentDidMount
+
+
+  const handleVideoCall = () => {
+    alert("call video")
+  }
+
 
   return (
 
@@ -159,8 +240,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(currentChat?.chatId)} />
-          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
+          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(currentChat?.chatId)} /> */}
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} />
+          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} />
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
         </div>
@@ -179,7 +261,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
             <Stack key={index}>
               <div className={`align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} tw-text-white tw-ml-4 tw-mb-1`}>
-                {"Trần Minh Trí"}
+                {message.senderName}
               </div>
               <div className={`tw-flex tw-justify-center tw-items-center align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'}`}>
 
@@ -187,11 +269,65 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                 <Stack
                   className={` message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
                 >
+
                   {message.type === "text" ? (
                     <span>{message.content}</span>
                   ) : (
-                    <div className="tw-flex tw-mr-3 tw-max-w-72 tw-flex-wrap">
-                      {message.content && message.content.split('|').map((content, index) => (
+                    message.type === "files" ? (
+                      <div>
+                        {message.content && message.content.split('|').map((content, index) => {
+                          console.log(content)
+
+                          const lastSlashIndex = content.split("?");
+                          const filenameWithExtension = lastSlashIndex[0];
+                          console.log(filenameWithExtension)
+
+                          const lastSlashIndex1 = filenameWithExtension.split("/");
+                          const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
+                          console.log(filenameWithExtension1)
+
+                          const lastSlashIndex2 = filenameWithExtension1.split(".");
+                          const filename = lastSlashIndex2[0];
+                          const extension = "." + lastSlashIndex2[1];
+
+
+                          return (
+                            <div className="tw-flex" key={index}>
+                              {content.startsWith("https://") ? (
+                                <div className="tw-flex tw-justify-center tw-items-center tw-mb-3">
+
+                                  <div className="tw-mr-3 ">
+                                    {extension === ".doc" && (
+                                      <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".xls" && (
+                                      <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".xlsx" && (
+                                      <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".pdf" && (
+                                      <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".txt" && (
+                                      <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".docx" && (
+                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                  </div>
+                                  <span><a href={content} download={filename + extension}>{filename}</a></span>
+
+                                </div>
+                              ) : (
+                                <span>{content}</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      message.content && message.content.split('|').map((content, index) => (
                         <div className="tw-flex" key={index}>
                           {content.startsWith("https://") ? (
                             <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
@@ -199,9 +335,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                             <span>{content}</span>
                           )}
                         </div>
-                      ))}
-                    </div>
+                      ))
+                    )
                   )}
+
                   <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
                     {calculateTime(message.timestamp)}
                   </span>
@@ -232,7 +369,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </label>
           <input
             type="file"
-            accept=".doc, .docx, .xls, .xlsx, .pdf"
+            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt"
             className="d-none"
             onChange={handleFileInputChange}
             multiple
