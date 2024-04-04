@@ -1,20 +1,47 @@
+import axios from "axios";
 import { faEnvelopeOpen, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, ListGroup, Alert, Button, Col } from "react-bootstrap";
-
+import { NOTI_API } from "../../router/ApiRoutes";
+import { useStateProvider } from "../../context/StateContext";
 const ListAddFriend = () => {
-  const [sentInvitations, setSentInvitations] = useState([
-    { id: 1, sender: "Hoàng Linh" },
-    { id: 2, sender: "Nhật Vy" },
-    // Thêm lời mời kết bạn khác nếu cần
-  ]);
+  const [{ userInfo, groups, socket }, dispatch] = useStateProvider()
+  const [sentInvitations, setSentInvitations] = useState([]);
+  const [receivedInvitations, setReceivedInvitations] = useState([]);
 
-  const [receivedInvitations, setReceivedInvitations] = useState([
-    { id: 3, receiver: "Công Nguyên" },
-    { id: 4, receiver: "Tấn Vũ" },
-    // Thêm lời mời kết bạn khác nếu cần
-  ]);
+  //chuan
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+        console.log(listSenderRequest.data)
+        if (listSenderRequest.data) {
+          setSentInvitations(listSenderRequest.data ? listSenderRequest.data : []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [userInfo?.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
+        console.log(listReceiverRequest.data)
+        if (listReceiverRequest.data) {
+          setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [userInfo?.id]);
+
+
 
   const handleRejectInvite = (invitationsId) => {
     // Xử lý hủy lời mời kết bạn đã gửi
@@ -59,7 +86,7 @@ const ListAddFriend = () => {
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="white"
+            color="black"
           />
           Friend Requests List
         </h2>
@@ -71,7 +98,7 @@ const ListAddFriend = () => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
-          color: 'white'
+          color: 'black'
         }}
       >
         <u>Lời mời kết bạn đã nhận</u>{" "}
@@ -95,7 +122,7 @@ const ListAddFriend = () => {
                 key={invitation.id}
                 style={{ width: "350px", fontWeight: "bold" }}
               >
-                {invitation.receiver}
+                {invitation.senderName}
                 <div className="d-flex justify-content-between">
                   <Col md={6}>
                     <Button
@@ -150,7 +177,7 @@ const ListAddFriend = () => {
                 key={invitations.id}
                 style={{ width: "350px", fontWeight: "bold" }}
               >
-                {invitations.sender}
+                {invitations.receiverName}
                 <div className="d-flex justify-content-end">
                   <Col md={12}>
                     <Button

@@ -7,7 +7,7 @@ import { FaCheck } from "react-icons/fa";
 import { reducerCases } from "../../../context/constants";
 
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
-    const [{ userInfo, groups }, dispatch] = useStateProvider()
+    const [{ userInfo, groups, socket }, dispatch ] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
 
@@ -32,20 +32,31 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
         if (!searchResults) return; // Kiểm tra nếu không có kết quả tìm kiếm thì không thực hiện gửi lời mời
 
         const postData = {
-            id: searchResults.id,
-            display_name: searchResults.display_name,
-            profilePicture: searchResults.profilePicture
+            id_UserWantAdd: searchResults.id,
+            userId: userInfo?.id,
+            profilePicture: searchResults.profilePicture,
+            senderName: userInfo?.display_name,
+            receiverName: searchResults.display_name
         };
 
+        // const newFriendRequest = {
+        //     id_UserWantAccept: userInfo?.id,
+        //     id_UserWantAdd: searchResults.id
+        // }
         try {
-            const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
+            socket.current.emit("sendFriendRequest", postData);
+            socket.on("friendRequest", (data) => {
+                console.log(data)
+                // sendFriendDataToModal(response.data.data);
+                // setFriendList(prevList => [...prevList, response.data.data]);
+                // dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
+                // const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
+
+            })
             // Xử lý dữ liệu phản hồi từ server nếu cần
             // Cập nhật danh sách bạn bè ngay sau khi gửi yêu cầu thành công
             // Send friend data back to modal
-            sendFriendDataToModal(response.data.data);
 
-            setFriendList(prevList => [...prevList, response.data.data]);
-            dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
             alert('Friend added successfully!');
             handleCloseModal();
         } catch (error) {

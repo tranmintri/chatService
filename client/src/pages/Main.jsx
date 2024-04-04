@@ -7,14 +7,18 @@ import axios from "axios";
 import { reducerCases } from "../context/constants";
 import { io } from "socket.io-client";
 import { HOST } from '../router/ApiRoutes';
+import { HOST2 } from '../router/ApiRoutes';
+import Loading from "../components/chat/Loading";
 
 const Main = () => { // State để kiểm soát việc gọi fetchData
   const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef()
   const [socketEvent, setSocketEvent] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     if (!userInfo) {
+
       navigate("/signin");
     }
   }, [navigate, userInfo]);
@@ -24,7 +28,13 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       try {
         const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
 
-        dispatch({ type: reducerCases.SET_ALL_GROUP, groups: data });
+        dispatch({
+          type: reducerCases.SET_ALL_GROUP, groups: data.sort((a, b) => {
+            const lastMessageA = a.messages?.[a.messages.length - 1];
+            const lastMessageB = b.messages?.[b.messages.length - 1];
+            return (lastMessageB?.timestamp || 0) - (lastMessageA?.timestamp || 0);
+          })
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -39,12 +49,15 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       socket.current = io(HOST)
       socket.current.emit("add-user", userInfo?.id)
       dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
+
+      socket.current = io(HOST2)
+      socket.current.emit("add-user", userInfo?.id)
+      dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
     }
   }, [userInfo])
   useEffect(() => {
     if (socket.current && !socketEvent) {
-      socket.current.on("msg-recieve", (data) => {
-        console.log("msg-recieve")
+      socket.current.on("msg-recieve-private", (data) => {
         console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
@@ -57,21 +70,51 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
     }
   }, [socket.current])
   useEffect(() => {
-    const getMessage = async () => {
-      const { data } = await axios.get(CHAT_API + currentChat?.chatId + "/messages")
-
-      dispatch({
-        type: reducerCases.SET_MESSAGES, messages: data
+    if (socket.current && !socketEvent) {
+      socket.current.on("msg-recieve-public", (data) => {
+        console.log("public")
+        console.log(data)
+        dispatch({
+          type: reducerCases.ADD_MESSAGES,
+          newMessage: {
+            ...data.newMessage,
+          }
+        })
       })
+      setSocketEvent(true)
     }
-    if (currentChat?.chatId) {
-      getMessage()
-    }
-  }, [currentChat])
+  }, [socket.current])
+
+
+  useEffect(() => {
+    // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
+    const timer = setTimeout(() => {
+      setIsLoading(true)
+    }, 2000);
+
+    // Clear timeout khi component unmount để tránh memory leak
+    return () => clearTimeout(timer);
+  }, [])
+  useEffect(() => {
+    const getMessage = async () => {
+      try {
+        if (currentChat?.chatId) {
+          const { data } = await axios.get(`${CHAT_API}${currentChat.chatId}/messages`);
+          console.log(data)
+          dispatch({ type: reducerCases.SET_MESSAGES, messages: data ? data : [] });
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+        // Handle the error, e.g., display an error message to the user
+      }
+    };
+
+    getMessage();
+  }, [currentChat]);
 
 
 
-  return <SideBar />;
+  return isLoading ? <SideBar /> : <Loading />;
 };
 
 export default Main;

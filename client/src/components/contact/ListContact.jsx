@@ -75,7 +75,7 @@ const ListContact = ({ data }) => {
           <FontAwesomeIcon
             icon={faUsers}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="white"
+            color="black"
           />
           Friends list
         </h2>

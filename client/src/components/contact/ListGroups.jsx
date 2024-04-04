@@ -17,10 +17,7 @@ const ListGroups = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [groupList, setGroupList] = useState([]);
   const [{ userInfo, groups }] = useStateProvider()
-  useEffect(() => {
-    // Fetch group list or perform any necessary initialization here
-    console.log(groups);
-  }, [groups]);
+
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = () => {
@@ -29,10 +26,6 @@ const ListGroups = ({ data }) => {
     );
     setSearchResults(results);
   };
-  useEffect(() => {
-    console.log(groups);
-    // Fetch group list or perform any necessary initialization here
-  }, []);
 
   const handleFilterSelect = (selectedFilter) => {
     // Xử lý sự kiện khi lựa chọn filter
@@ -46,7 +39,7 @@ const ListGroups = ({ data }) => {
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="white"
+            color="black"
           />{" "}
           Group list
         </h2>

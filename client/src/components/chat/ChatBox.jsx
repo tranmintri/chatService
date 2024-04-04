@@ -5,7 +5,6 @@ import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@a
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
-import avatar from "../../assets/2Q.png"
 import { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
@@ -15,14 +14,21 @@ import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
 import { MdDeleteForever } from "react-icons/md";
 import ChatImage from "../contact/card/ChatImage";
-import ChatLand from "./ChatLand";
-
+import xls from "../../assets/xls.png";
+import xlsx from "../../assets/xlsx.png";
+import txt from "../../assets/txt.png";
+import pdf from "../../assets/pdf.png";
+import doc from "../../assets/doc.png";
+import docx from "../../assets/docx.png";
+import ppt from "../../assets/ppt.png";
+import he from 'he';
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
 
   const handleImageInputChange = (e) => {
@@ -32,22 +38,31 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleRemoveImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-
+  const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
+    if (participantId !== userInfo?.id) {
+      acc = participantId;
+    }
+    return acc;
+  }, null) : "";
   const handleSendMessage = async () => {
-    if (sendMessages.length > 0 || selectedImages.length > 0) {
+    if (sendMessages.length > 0 || selectedImages.length > 0 || selectedFiles.length > 0) {
       let type = "text";
       let content = "";
 
+      if (selectedImages.length > 0 && selectedFiles.length > 0) {
+        alert("Can't send photos and files at the same time")
+        return
+      }
       // Nếu có hình ảnh được chọn, gửi hình ảnh trước
-      if (selectedImages.length > 0) {
+      if (selectedImages.length > 0 && selectedFiles.length == 0) {
         try {
           const formData = new FormData();
           selectedImages.forEach((image, index) => {
             formData.append(`images`, image);
           });
 
-          const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/images", formData);
-          console.log(data.data);
+          const { data } = await axios.post(CHAT_API + currentChat?.chatId + "/images", formData);
+
 
           content = data.data;
           type = "image";
@@ -56,36 +71,74 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           return;
         }
       }
+      if (selectedFiles.length > 0 && selectedImages == 0) {
+        const formData = new FormData();
+        selectedFiles.forEach((file, index) => {
+          const encodedFileName = encodeURIComponent(file.name);
+          formData.append(`files`, file, encodedFileName);
+
+        });
+
+        try {
+          const response = await axios.post(CHAT_API + currentChat?.chatId + "/files", formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          content += response.data.data;
+          type = "files";
+        } catch (error) {
+          console.error('Error uploading files:', error);
+        }
+      } else {
+        console.error('No files selected');
+      }
 
       try {
         content += sendMessages
-        console.log(content)
+
         // Gửi tin nhắn đến server
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
             senderId: userInfo?.id,
+            senderName: userInfo?.display_name,
+            senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
             type: type,
             content: content,
             timestamp: Date.now()
           }
         });
-        console.log(data.data.newMessage)
-        const receiveId = currentChat?.participants.length == 2 ? currentChat?.participants.reduce((acc, participantId) => {
-          if (participantId !== userInfo?.id) {
-            acc = participantId;
-          }
-          return acc;
-        }, null) : "";
 
-        socket.current.emit("send-msg-private", {
-          receiveId: receiveId,
-          newMessage: {
-            senderId: userInfo?.id,
-            type: type,
-            content: content,
-            timestamp: Date.now()
-          }
-        })
+
+
+        if (currentChat.type == "private") {
+
+          socket.current.emit("send-msg-private", {
+            receiveId: receiveId,
+            newMessage: {
+              senderId: userInfo?.id,
+              senderName: userInfo?.display_name,
+              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              type: type,
+              content: content,
+              timestamp: Date.now()
+            }
+          })
+        }
+        if (currentChat.type == "public") {
+
+          socket.current.emit("send-msg-public", {
+            receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
+            newMessage: {
+              senderId: userInfo?.id,
+              senderName: userInfo?.display_name,
+              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              type: type,
+              content: content,
+              timestamp: Date.now()
+            }
+          });
+        }
 
         dispatch({
           type: reducerCases.ADD_MESSAGES,
@@ -98,12 +151,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           ...groups.filter(chat => chat.chatId === currentChat.chatId),
           ...groups.filter(chat => chat.chatId !== currentChat.chatId)
         ];
-        console.log("ChatBox")
-        console.log(group)
         dispatch({
           type: reducerCases.SET_ALL_GROUP,
           groups: group
         })
+        setSelectedFiles([])
         setSelectedImages([])
         setSendMessages("")
       } catch (error) {
@@ -112,39 +164,74 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   }
   const convertName = () => {
-    if (chat.type == "private") {
-      const splitName = chat.name.split("/");
-      const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
-
-      return displayName
+    if (currentChat) {
+      if (chat.type == "private") {
+        const splitName = chat.name.split("/");
+        const displayName = splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
+        return displayName
+      }
+      return chat.name
     }
-    return chat.name
+    else {
+      return ""
+    }
   }
-  const openNewWindow = () => {
-    const width = 600;
-    const height = 400;
-    const left = 300;
-    const top = 200;
+  const openNewWindow = (chatId) => {
+    return () => {
 
-    const options = `
-      width=${width},
-      height=${height},
-      top=${top},
-      left=${left},
-      resizable=yes,
-      scrollbars=yes,
-      status=yes,
-      toolbar=yes,
-      menubar=yes,
-      location=yes
-    `;
-
-    window.open('localhost:3000', '_blank', options);
+      socket.current.emit("get-browser", chatId);
+    };
   };
+
+
+
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+  };
+  const handleRemoveFile = (index) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  // const handleAttachFiles = () => {
+  //   document.getElementById('file-input').click();
+  // };
+
+  const handleVoiceCall = () => {
+    if (currentChat.type === "private") {
+
+      socket.current.emit("request-to-voice-call-private", {
+        receiveId: receiveId,
+        senderId: userInfo?.id,
+        senderName: userInfo?.display_name
+      });
+    }
+  };
+
+  // useEffect(() => {
+  //   const handleResponse = (data) => {
+  //     console.log("res call private");
+  //     alert(data.res);
+  //   };
+
+  //   socket.current.on("response-from-voice-call-private", handleResponse);
+
+  //   // Cleanup effect to remove the listener when component unmounts
+  //   return () => {
+  //     socket.current.off("response-from-voice-call-private", handleResponse);
+  //   };
+  // }, []); // Passing an empty dependency array ensures this effect runs only once, similar to componentDidMount
+  // // Ensure this effect runs only once, similar to componentDidMount
+
+
+  const handleVideoCall = () => {
+    alert("call video")
+  }
+
 
   return (
 
-    <Stack className={`chat-box  ${showInfo ? 'w-full' : ''}`}>
+    <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
       <div className="chat-header justify-content-between align-items-center">
         <div className="d-flex">
           <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
@@ -155,8 +242,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow} />
-          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" />
+          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(currentChat?.chatId)} /> */}
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} />
+          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} />
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
         </div>
@@ -166,11 +254,104 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       </div>
 
 
-      <div className="messages" style={{ height: '100vh' }}>
-        {messages && (
-          <ChatLand messages={messages} userInfo={userInfo} />
-        )}
-      </div>
+      {messages && (
+        <Stack gap={3} className="messages tw-max-h-60"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {messages && messages.map((message, index) => (
+
+            <div key={index} className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}>
+              {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
+              <div className={'tw-flex tw-justify-center tw-items-center'}>
+                <Stack>
+                  <div className="tw-ml-4 tw-mb-1">
+                    {message.senderName}
+                  </div>
+                  {message.type === "text" ? (
+                    <span>{message.content}</span>
+                  ) : (
+                    message.type === "files" ? (
+                      <div>
+                        {message.content && message.content.split('|').map((content, index) => {
+
+
+                          const lastSlashIndex = content.split("?");
+                          const filenameWithExtension = lastSlashIndex[0];
+
+
+                          const lastSlashIndex1 = filenameWithExtension.split("/");
+                          const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
+
+
+                          const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                          const filename = filenameWithExtension1.substring(0, lastDotIndex);
+                          const extension = filenameWithExtension1.substring(lastDotIndex);
+                          console.log(filenameWithExtension1)
+                          return (
+                            <div className="tw-flex" key={index}>
+                              {content.startsWith("https://") ? (
+                                <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+
+                                  <div className="tw-mr-3 ">
+                                    {extension === ".doc" && (
+                                      <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".xls" && (
+                                      <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".xlsx" && (
+                                      <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".pdf" && (
+                                      <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".txt" && (
+                                      <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".docx" && (
+                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                    {extension === ".pptx" && (
+                                      <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
+                                  </div>
+                                  <span><a href={content}
+                                    download={filename + extension}
+                                    style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
+
+                                </div>
+                              ) : (
+                                <span>{content}</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      message.content && message.content.split('|').map((content, index) => (
+                        <div className="tw-flex" key={index}>
+                          {content.startsWith("https://") ? (
+                            <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
+                          ) : (
+                            <span>{content}</span>
+                          )}
+                        </div>
+                      ))
+                    )
+                  )}
+
+                  <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
+                    {calculateTime(message.timestamp)}
+                  </span>
+                </Stack>
+                {message.senderId == userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-ml-2" />) : ""}
+              </div>
+            </div>
+          ))}
+        </Stack>
+      )
+      }
 
       <div className="chat-input">
         <div className="w-100 items-center">
@@ -188,7 +369,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             <FileImageOutlined className="chat-input-icon px-2" title="Send Image" />
 
           </label>
-          <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
+          <input
+            type="file"
+            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt, .pptx"
+            className="d-none"
+            onChange={handleFileInputChange}
+            multiple
+            id="file-input"
+          />
+          <label htmlFor="file-input" >
+            <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
+          </label>
         </div>
 
         <div className="selected-images">
@@ -198,7 +389,19 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
               <button className="delete-btn " onClick={() => handleRemoveImage(index)}><MdDeleteForever className="" /></button>
             </div>
           ))}
+        </div>
+        <div className=" tw-flex tw-flex-wrap">
+          {selectedFiles.map((file, index) => (
+            <div key={index} className="file-wrapper tw-p-3 tw-mr-2">
+              <button onClick={() => handleRemoveFile(index)} className="tw-absolute -tw-right-2 -tw-top-4 tw-p-2">
+                <MdDeleteForever className="tw-bg-[#1e1f22] tw-rounded-full tw-p-1 tw-text-3xl" />
+              </button>
+              <div className="tw-bg-slate-500 tw-p-2 tw-rounded-full">
+                <div className="tw-text-white tw-text-sm ">{file.name}</div>
+              </div>
 
+            </div>
+          ))}
         </div>
         <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea
@@ -208,10 +411,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             onChange={(e) => setSendMessages(e.target.value)}
             value={sendMessages}
           />
-          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22', color: '#fffffff' }} />
+          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white ms-2" onClick={handleSendMessage} style={{ backgroundColor: 'white', color: '#fffffff' }} />
         </div>
       </div>
-    </Stack>
+    </Stack >
     // <div>a</div>
   );
 };

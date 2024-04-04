@@ -1,6 +1,6 @@
 const express = require('express');
-const {saveMessageInChat,getAllMessageInChat,
-    deleteMessageByIdInChat
+const {saveMessageInChat,getAllMessageInChat,saveImageInChat,
+    deleteMessageByIdInChat,saveFileInChat
 
 } = require('../controllers/messageController');
 
@@ -8,6 +8,9 @@ const router = express.Router();
 
 //send message in chat
 router.put('/:chatId/messages', saveMessageInChat);
+router.post('/:chatId/images', saveImageInChat);
+router.post('/:chatId/files', saveFileInChat);
+
 //get all message in chat
 router.get('/:chatId/messages', getAllMessageInChat);
 //get message by id in chat

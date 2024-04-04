@@ -10,15 +10,16 @@ class Conversation {
 }
 
 class Message {
-    constructor(messageId,type,senderId, content, timestamp,status) {
+    constructor(messageId,type,senderId,senderName,senderPicture ,content, timestamp,status) {
         this.messageId=messageId;
         this.type = type;
         this.senderId = senderId;
+        this.senderName = senderName;
+        this.senderPicture=senderPicture;
         this.content = content;
         this.timestamp = timestamp;
         this.status = status
     }
-
 }
 
 module.exports = { Conversation, Message};

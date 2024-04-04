@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFriendModal from './contact/modal/AddFriendModal';
 import CreateGroupModal from './contact/modal/CreateGroupModal';
-import avatar from "../assets/2Q.png"
+import { useLogout } from "../apis/useLogout";
 
 import {
   faAddressBook,
@@ -22,8 +22,12 @@ import { useStateProvider } from '../context/StateContext';
 import axios from 'axios';
 import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from '../router/ApiRoutes';
 import { reducerCases } from '../context/constants';
+import GroupCard from './contact/card/GroupCard';
+import { chain } from 'lodash';
+import { Outlet, useNavigate } from "react-router-dom";
+import Page from "../constants/Page";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, contactsPage, currentChat, groups }, dispatch] = useStateProvider();
   const [activeKey, setActiveKey] = useState('first');
 
   const [showFormUser, setShowFormUser] = useState(false);
@@ -49,7 +53,12 @@ const SideBar = () => {
   const [showFormSetting, setShowFormSetting] = useState(false);
   const handleCloseFormSetting = () => setShowFormSetting(false);
   const handleShowFormSetting = () => setShowFormSetting(true);
+  const navigate = useNavigate();
+  const handleShowFormSetting1 = () => {
 
+    navigate(Page.USER_SETTING_PAGE.path, { replace: true });
+
+  }
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
@@ -79,19 +88,7 @@ const SideBar = () => {
 
     fetchData();
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
 
-        setFriendList1(data.data?.friends);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const ref = useRef();
   const loggedInUS = {
@@ -118,13 +115,6 @@ const SideBar = () => {
 
     // Ví dụ: Cập nhật trạng thái hoặc làm bất kỳ điều gì bạn cần với dữ liệu này
   };
-  useEffect(() => {
-    console.log("receiveFriendData updated:", receiveFriendData);
-
-    // Thực hiện các thao tác dựa trên giá trị mới của receiveFriendData ở đây
-    // Ví dụ: Cập nhật trạng thái hoặc làm bất kỳ điều gì bạn cần với dữ liệu này
-
-  }, [receiveFriendData]);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -134,27 +124,73 @@ const SideBar = () => {
   }, []);
   const [activeTab, setActiveTab] = useState('first');
   useEffect(() => {
-    if (activeTab === "first") {
-      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false });
-    } else if (activeTab === "second") {
-      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: true });
-    }
-  }, [activeTab, dispatch]);
+    const fetchData = async () => {
+      try {
+        if (activeTab === "first") {
+          dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false });
+          const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+          if (data) {
+            dispatch({
+              type: reducerCases.SET_ALL_GROUP,
+              groups: data.sort((a, b) => {
+                const lastMessageA = a.messages?.[a.messages.length - 1];
+                const lastMessageB = b.messages?.[b.messages.length - 1];
+                if (lastMessageA && lastMessageB) {
+                  return lastMessageB.timestamp - lastMessageA.timestamp;
+                } else {
+                  // Handle cases where lastMessageA or lastMessageB is undefined
+                  // For example, you might want to handle these cases differently
+                  return 0; // For simplicity, assuming equal timestamp for now
+                }
+              })
+            });
+          } else {
+            console.error("Data is undefined");
+          }
+        } else if (activeTab === "second") {
+          // Fetch other data based on the second tab if needed
+          dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: true });
+          const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+          if (data) {
+            dispatch({
+              type: reducerCases.SET_ALL_GROUP,
+              groups: data.sort((a, b) => {
+                const lastMessageA = a.messages?.[a.messages.length - 1];
+                const lastMessageB = b.messages?.[b.messages.length - 1];
+                if (lastMessageA && lastMessageB) {
+                  return lastMessageB.timestamp - lastMessageA.timestamp;
+                } else {
+                  // Handle cases where lastMessageA or lastMessageB is undefined
+                  // For example, you might want to handle these cases differently
+                  return 0; // For simplicity, assuming equal timestamp for now
+                }
+              })
+            });
+          } else {
+            console.error("Data is undefined");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [activeTab, dispatch, userInfo?.id]);
+  const logOut = useLogout();
+
+  const onLogout = () => {
+    const data = localStorage.getItem('accessToken');
+    logOut(data);
+  };
 
   useEffect(() => {
     // Nếu contactsPage là true, chọn tab "second", ngược lại chọn tab "first"
     setActiveTab(contactsPage ? 'second' : 'first');
-    console.log(contactsPage)
+
   }, [contactsPage]);
 
   return (
-    // <Tab.Container id="left-tabs-example" defaultActiveKey="first" >
-    // <Tab.Container
-    //   id="left-tabs-example"
-    //   defaultActiveKey="first"
-    //   activeKey={activeTab}
-    //   onSelect={handleTabSelect}>
-    //   <div className="d-flex">
     <Tab.Container
       id="left-tabs-example"
       defaultActiveKey="first"
@@ -278,11 +314,11 @@ const SideBar = () => {
                 setFriendList={setFriendList}
                 sendFriendDataToSidebar={receiveFriendDataFromModal}
               />
-              <CreateGroupModal showModal={showFormCreateGroup} handleCloseModal={handleCloseCreateGroupModal} friendList={friendList1} />
+              <CreateGroupModal showModal={showFormCreateGroup} handleCloseModal={handleCloseCreateGroupModal} />
 
             </Nav.Item>
             <Nav.Item className="mt-3 mb-3">
-              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="first" onClick={() => { setActiveKey('first'); console.log(activeTab); }}>
+              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="first" onClick={() => { setActiveKey('first'); }}>
                 <div className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg" style={{ backgroundColor: activeTab === 'first' ? 'gray' : 'transparent' }}>
                   <FontAwesomeIcon
                     icon={faMessage}
@@ -293,7 +329,7 @@ const SideBar = () => {
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mt-3 mb-3">
-              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="second" onClick={() => { setActiveKey('second'); console.log(activeTab); }}>
+              <Nav.Link style={{ backgroundColor: 'transparent' }} eventKey="second" onClick={() => { setActiveKey('second'); }}>
                 <div className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg" style={{ backgroundColor: activeTab === 'second' ? 'gray' : 'transparent' }}>
                   <FontAwesomeIcon
                     icon={faAddressBook}
@@ -323,7 +359,7 @@ const SideBar = () => {
                   <Button variant="secondary" onClick={handleCloseFormLogOut}>
                     Không
                   </Button>
-                  <Button variant="primary" onClick={handleCloseFormLogOut}>
+                  <Button variant="primary" onClick={onLogout}>
                     Đăng xuất
                   </Button>
                 </Modal.Footer>
@@ -332,16 +368,15 @@ const SideBar = () => {
           </Nav>
         </Col>
         <Col style={{ width: '90%' }} className='tw-relative'>
-          <div className=' col-3 tw-h-20 tw-border  tw-absolute' style={{ backgroundColor: 'white', border: '1px solid #dde0e2' }}>
+          <div className=' col-3 tw-h-20 tw-absolute' style={{ backgroundColor: 'white' }}>
             <div className='tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full'>
-              <div className='tw-flex tw-w-full tw-items-center'>
-                <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500' style={{ backgroundColor: '#6f7276' }} />
+              <div className='tw-flex tw-w-full tw-items-center' >
+                <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-white' style={{ backgroundColor: '#eaedf0' }} />
                 <div className='tw-w-1/5 tw-flex-1 tw-flex'>
                   {showSearchTable ? (
-                    <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1  hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
+                    <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-white hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
                       Đóng
                     </button>
-
                   ) : (
                     <>
                       <button className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300">
@@ -367,21 +402,16 @@ const SideBar = () => {
             </div>
           </div>
           {showSearchTable && (
-            <div className='tw-bg-white tw-h[90%] tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r '>
-              <div className='tw-h-full' style={{ backgroundColor: 'white' }}>
-                {userList.map((user, index) => (
-                  <div className='tw-flex tw-items-center tw-p-2 tw-border-b tw-border-gray-200 tw-cursor-pointer'>
-                    <div className='tw-w-1/4 tw-flex tw-justify-center'>
-                      <img src={user.profilePicture} alt="User Avatar" className="tw-w-16 tw-h-16 tw-rounded-full" />
-                    </div>
-                    <div className='tw-w-3/4'>
-                      <div className='tw-text-lg tw-font-bold'>{user.display_name}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className='tw-bg-white tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r'>
+
+              {groups.map((chat, index) => (
+                <GroupCard chat={chat} />
+              ))}
+
+
             </div>
           )}
+
           {showFormUser && (
             <div className="tooltip-content col-2 tw-w-2/5 absolute" ref={ref}>
               <div
@@ -391,7 +421,7 @@ const SideBar = () => {
                   className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormProfile}>Hồ sơ của bạn
                 </div>
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting}>Cài đặt
+                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting1}>Cài đặt
                 </div>
               </div>
               <div
