@@ -29,7 +29,7 @@ const ChatImage = ({ imageUrl }) => {
     };
     return (
         <div>
-            <img src={imageUrl} alt="Image" onClick={handleShowModal} className="tw-mt-1 tw-mr-1" />
+            <img src={imageUrl} alt="Image" onClick={handleShowModal} className="tw-mt-1 tw-mr-1 tw-w-44 tw-h-44" />
 
             <Modal show={showModal} onHide={handleCloseModal} centered>
                 <Modal.Header className="tw-flex tw-justify-between">

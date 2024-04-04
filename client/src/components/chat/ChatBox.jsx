@@ -5,7 +5,6 @@ import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@a
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
-import avatar from "../../assets/2Q.png"
 import { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
@@ -21,6 +20,8 @@ import txt from "../../assets/txt.png";
 import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
+import ppt from "../../assets/ppt.png";
+import he from 'he';
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -60,7 +61,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           });
 
           const { data } = await axios.post(CHAT_API + currentChat?.chatId + "/images", formData);
-          console.log(data.data);
+
 
           content = data.data;
           type = "image";
@@ -72,7 +73,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       if (selectedFiles.length > 0 && selectedImages == 0) {
         const formData = new FormData();
         selectedFiles.forEach((file, index) => {
-          formData.append(`files`, file);
+          const encodedFileName = encodeURIComponent(file.name);
+          formData.append(`files`, file, encodedFileName);
+
         });
 
         try {
@@ -81,7 +84,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
               'Content-Type': 'multipart/form-data'
             }
           });
-          console.log('URLs of uploaded files:', response.data);
           content += response.data.data;
           type = "files";
         } catch (error) {
@@ -93,7 +95,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
       try {
         content += sendMessages
-        console.log(userInfo)
+
         // Gửi tin nhắn đến server
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
@@ -105,11 +107,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             timestamp: Date.now()
           }
         });
-        console.log(data.data.newMessage)
+
 
 
         if (currentChat.type == "private") {
-          console.log("private")
+
           socket.current.emit("send-msg-private", {
             receiveId: receiveId,
             newMessage: {
@@ -123,7 +125,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           })
         }
         if (currentChat.type == "public") {
-          console.log("public")
+
           socket.current.emit("send-msg-public", {
             receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
             newMessage: {
@@ -148,7 +150,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           ...groups.filter(chat => chat.chatId === currentChat.chatId),
           ...groups.filter(chat => chat.chatId !== currentChat.chatId)
         ];
-        console.log(group)
+
         dispatch({
           type: reducerCases.SET_ALL_GROUP,
           groups: group
@@ -176,7 +178,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   }
   const openNewWindow = (chatId) => {
     return () => {
-      console.log(chatId)
+
       socket.current.emit("get-browser", chatId);
     };
   };
@@ -197,7 +199,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
   const handleVoiceCall = () => {
     if (currentChat.type === "private") {
-      console.log("call private");
+
       socket.current.emit("request-to-voice-call-private", {
         receiveId: receiveId,
         senderId: userInfo?.id,
@@ -276,25 +278,24 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                     message.type === "files" ? (
                       <div>
                         {message.content && message.content.split('|').map((content, index) => {
-                          console.log(content)
+
 
                           const lastSlashIndex = content.split("?");
                           const filenameWithExtension = lastSlashIndex[0];
-                          console.log(filenameWithExtension)
+
 
                           const lastSlashIndex1 = filenameWithExtension.split("/");
                           const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
+
+
+                          const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                          const filename = filenameWithExtension1.substring(0, lastDotIndex);
+                          const extension = filenameWithExtension1.substring(lastDotIndex);
                           console.log(filenameWithExtension1)
-
-                          const lastSlashIndex2 = filenameWithExtension1.split(".");
-                          const filename = lastSlashIndex2[0];
-                          const extension = "." + lastSlashIndex2[1];
-
-
                           return (
                             <div className="tw-flex" key={index}>
                               {content.startsWith("https://") ? (
-                                <div className="tw-flex tw-justify-center tw-items-center tw-mb-3">
+                                <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
 
                                   <div className="tw-mr-3 ">
                                     {extension === ".doc" && (
@@ -315,11 +316,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                     {extension === ".docx" && (
                                       <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
                                     )}
-                                    {extension === ".ppt" && (
-                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    {extension === ".pptx" && (
+                                      <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
                                     )}
                                   </div>
-                                  <span><a href={content} download={filename + extension}>{filename}</a></span>
+                                  <span><a href={content}
+                                    download={filename + extension}
+                                    style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
 
                                 </div>
                               ) : (
@@ -372,7 +375,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </label>
           <input
             type="file"
-            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt, .ppt"
+            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt, .pptx"
             className="d-none"
             onChange={handleFileInputChange}
             multiple
