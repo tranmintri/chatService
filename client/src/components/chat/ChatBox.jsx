@@ -315,6 +315,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                     {extension === ".docx" && (
                                       <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
                                     )}
+                                    {extension === ".ppt" && (
+                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                    )}
                                   </div>
                                   <span><a href={content} download={filename + extension}>{filename}</a></span>
 
@@ -369,7 +372,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </label>
           <input
             type="file"
-            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt"
+            accept=".doc, .docx, .xls, .xlsx, .pdf, .txt, .ppt"
             className="d-none"
             onChange={handleFileInputChange}
             multiple
