@@ -56,9 +56,10 @@ html,
 /* User Card */
 .user-card {
   position: relative;
-  border-bottom: 1px solid rgb(100, 100, 100);
+  border-bottom: 1px solid #ebedf0;
   width: 100%;
-  background-color: #6c6f73;
+  background-color: white;
+  color: black;
 }
 
 .user-card .text-content {
@@ -74,7 +75,7 @@ html,
 .user-card .date {
   top: 0px;
   font-size: 14px;
-  color: white;
+  color: black;
 }
 
 .user-online {
@@ -92,8 +93,8 @@ html,
 /* Message Box */
 .message-box {
   height: 100vh;
-  background-color: #2b2d31;
-  border: solid 1px black;
+  background-color: white;
+  border: solid 1px #ebedf0;
 }
 
 /* Notification */
@@ -145,9 +146,9 @@ html,
   align-items: start;
   justify-content: start;
   padding: 0.85rem;
-  color: white;
-  background: #1e1f22;
-  border-bottom: 1px solid black;
+  color: black;
+  background: white;
+  border-bottom: 1px solid #ebedf0;
 }
 
 .chat-header-condition {
@@ -172,14 +173,7 @@ html,
   overflow-y: auto;
   padding: 0 2rem;
   background: rgb(207, 207, 207);
-  background: linear-gradient(
-    225deg,
-    rgb(124, 124, 124),
-    rgb(66, 66, 66),
-    rgb(0, 0, 0),
-    rgb(28, 42, 48),
-    rgb(139, 139, 139)
-  );
+  background: linear-gradient(45deg, #A9B8BBff, #C1C4C7ff, #D4CCC9ff, #D9D9D2ff, #E8E9E4ff);
 }
 
 .message {
@@ -187,7 +181,7 @@ html,
   background: #282828;
   padding: 0.75rem;
   border-radius: 5px;
-  max-width: 100%;
+  max-width: 70%;
 }
 
 .message.self {
@@ -205,6 +199,7 @@ html,
   position: relative;
   display: inline-block;
 }
+
 .file-wrapper {
   position: relative;
   display: inline-block;
@@ -223,11 +218,11 @@ html,
 
 /* Chat Input  */
 .chat-input {
-  color: white;
-  border-top: solid 1px black;
+  color: black;
+  border-top: solid 1px #ebedf0;
   margin-top: auto;
   width: 100%;
-  background: #1e1f22;
+  background: white;
   padding: 1rem;
   padding-top: 0px;
   display: block;
@@ -271,13 +266,13 @@ html,
   border-right: 1px solid black;
 
   .tab-link:hover {
-    background-color: beige;
+    background-color: #e5efff;
   }
 }
 
 .friend-list-header {
-  border-bottom: 1px solid white;
-  color: white;
+  border-bottom: 1px solid black;
+  color: black;
 
   span {
     font-size: 14px;
@@ -285,8 +280,8 @@ html,
 }
 
 .group-list-header {
-  border-bottom: 1px solid white;
-  color: white;
+  border-bottom: 1px solid black;
+  color: black;
 
   span {
     font-size: 14px;
@@ -298,8 +293,8 @@ html,
 }
 
 .friend-requests-header {
-  border-bottom: 1px solid white;
-  color: white;
+  border-bottom: 1px solid black;
+  color: black;
 
   span {
     font-size: 14px;

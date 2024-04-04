@@ -55,29 +55,31 @@ const UserChat = () => {
                             return chat.name
                         }
                         return (
-                            <Stack
-                                key={index}
-                                onClick={() => handleSelectChat(chat)}
-                                direction="horizontal"
-                                gap={3}
-                                className="user-card align-items-center p-2 justify-content-between"
-                                role="button"
-                            >
-                                <div className="d-flex">
-                                    <div className="m-2">
-                                        <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
+                            <div className="hover:tw-bg-red-50">
+                                <Stack
+                                    key={index}
+                                    onClick={() => handleSelectChat(chat)}
+                                    direction="horizontal"
+                                    gap={3}
+                                    className="user-card align-items-center p-2 justify-content-between"
+                                    role="button"
+                                >
+                                    <div className="d-flex">
+                                        <div className="m-2">
+                                            <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
+                                        </div>
+                                        <div className="text-content">
+                                            <div className="name">{convertName()}</div>
+                                            {lastMessage.type == "image" ? `Friend sent some image for you` : lastMessage.type == "files" ? `Friend sent some file for you` : <div className="text">{lastMessage.content}</div>}
+                                        </div>
                                     </div>
-                                    <div className="text-content tw-text-white">
-                                        <div className="name">{convertName()}</div>
-                                        {lastMessage.type == "image" ? `Friend sent some image for you` : lastMessage.type == "files" ? `Friend sent some file for you` : <div className="text">{lastMessage.content}</div>}
+                                    <div className="d-flex flex-column align-items-end">
+                                        <div className="date">{calculateTime(lastMessage.timestamp)}</div>
+                                        <div className="this-user-notifications">{1}</div>
+                                        <span className="user-online mt-1"></span>
                                     </div>
-                                </div>
-                                <div className="d-flex flex-column align-items-end">
-                                    <div className="date">{calculateTime(lastMessage.timestamp)}</div>
-                                    <div className="this-user-notifications">{1}</div>
-                                    <span className="user-online mt-1"></span>
-                                </div>
-                            </Stack>
+                                </Stack>
+                            </div>
                         );
                     }
                 }

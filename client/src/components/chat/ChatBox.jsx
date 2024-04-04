@@ -30,6 +30,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
+
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedImages((prevImages) => [...prevImages, ...files]);
@@ -150,7 +151,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           ...groups.filter(chat => chat.chatId === currentChat.chatId),
           ...groups.filter(chat => chat.chatId !== currentChat.chatId)
         ];
-
         dispatch({
           type: reducerCases.SET_ALL_GROUP,
           groups: group
@@ -261,17 +261,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         >
           {messages && messages.map((message, index) => (
 
-            <Stack key={index}>
-              <div className={`align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} tw-text-white tw-ml-4 tw-mb-1`}>
-                {message.senderName}
-              </div>
-              <div className={`tw-flex tw-justify-center tw-items-center align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'}`}>
-
-                {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
-                <Stack
-                  className={` message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}
-                >
-
+            <div key={index} className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}>
+              {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
+              <div className={'tw-flex tw-justify-center tw-items-center'}>
+                <Stack>
+                  <div className="tw-ml-4 tw-mb-1">
+                    {message.senderName}
+                  </div>
                   {message.type === "text" ? (
                     <span>{message.content}</span>
                   ) : (
@@ -351,11 +347,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                 </Stack>
                 {message.senderId == userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-ml-2" />) : ""}
               </div>
-            </Stack>
+            </div>
           ))}
         </Stack>
-      )}
-
+      )
+      }
 
       <div className="chat-input">
         <div className="w-100 items-center">
@@ -407,7 +403,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             </div>
           ))}
         </div>
-        <div className="d-flex w-100">
+        <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea
             type="text"
             placeholder="Type your message here..."
@@ -415,10 +411,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             onChange={(e) => setSendMessages(e.target.value)}
             value={sendMessages}
           />
-          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white" onClick={handleSendMessage} style={{ backgroundColor: '#1e1f22', color: '#fffffff' }} />
+          <IoIosSend className="send-btn tw-cursor-pointer tw-text-white ms-2" onClick={handleSendMessage} style={{ backgroundColor: 'white', color: '#fffffff' }} />
         </div>
       </div>
-    </Stack>
+    </Stack >
     // <div>a</div>
   );
 };
