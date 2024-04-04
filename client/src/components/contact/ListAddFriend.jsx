@@ -6,7 +6,7 @@ import { Container, ListGroup, Alert, Button, Col } from "react-bootstrap";
 import { NOTI_API } from "../../router/ApiRoutes";
 import { useStateProvider } from "../../context/StateContext";
 const ListAddFriend = () => {
-  const [{ userInfo, groups, socket }, dispatch ] = useStateProvider()
+  const [{ userInfo, groups, socket }, dispatch] = useStateProvider()
   const [sentInvitations, setSentInvitations] = useState([]);
   const [receivedInvitations, setReceivedInvitations] = useState([]);
 
@@ -15,9 +15,7 @@ const ListAddFriend = () => {
     const fetchData = async () => {
       try {
         const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
-        console.log(listSenderRequest.data)
         if (listSenderRequest.data) {
-          console.log(listSenderRequest.data, "listSenderRequest")
           setSentInvitations(listSenderRequest.data ? listSenderRequest.data : []);
         }
       } catch (error) {
@@ -27,13 +25,12 @@ const ListAddFriend = () => {
     fetchData();
   }, [userInfo?.id]);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-        console.log(listReceiverRequest.data)
         if (listReceiverRequest.data) {
-          console.log(listReceiverRequest.data, "listReceiverRequest")
           setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
         }
       } catch (error) {
@@ -42,22 +39,85 @@ const ListAddFriend = () => {
     };
     fetchData();
   }, [userInfo?.id]);
+  const fetchReceiverData = async () => {
+    try {
+      const listReceiverRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+      if (listReceiverRequest.data) {
+        setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
+  const fetchSenderData = async () => {
+    try {
+      const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
+      if (listReceiverRequest.data) {
+        setSentInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleAcceptInvite = async (invitation) => {
-    console.log(invitation.receiver)
     const postData = {
-        userId: userInfo?.id,
-        requestId: invitation.sender
+      userId: userInfo?.id,
+      requestId: invitation.sender
     }
     try {
-        socket.current.emit("acceptFriendRequest", postData);
-        alert('Acept successfully!');
-        socket.current.on("accept", (data) => {
-            console.log(data, "data")
-        })
+      socket.current.emit("acceptFriendRequest", postData);
+      alert('Acept successfully!');
+      fetchReceiverData();
+      const updatedReceivedInvitations = receivedInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setReceivedInvitations(updatedReceivedInvitations);
+
+      socket.current.on("acceptFriend", (data) => {
+        // console.log(data, "data")
+      })
     } catch (error) {
-        console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const handleRejectInvite = async (invitation) => {
+    const postData = {
+      userId: userInfo?.id,
+      requestId: invitation.sender
+    }
+    try {
+      socket.current.emit("rejectFriendRequest", postData);
+      alert('Reject successfully!');
+      fetchReceiverData();
+      const updatedReceivedInvitations = receivedInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setReceivedInvitations(updatedReceivedInvitations);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const handleCancelInvite = async (invitation) => {
+    const postData = {
+      userId: userInfo?.id,
+      requestId: invitation.receiver
+    }
+    try {
+      socket.current.emit("cancelFriendRequest", postData);
+      alert('Cancel successfully!');
+      fetchSenderData();
+      const updatedSendedInvitations = sentInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setSentInvitations(updatedSendedInvitations);
+      socket.current.on("cancelFriend", (data) => {
+      })
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   }
 
@@ -100,11 +160,11 @@ const ListAddFriend = () => {
         </div>
       ) : (
         <ListGroup className="m-3">
-{receivedInvitations.map((invitation, index) => (
-  <div key={index}>
-    <ListGroup.Item
-      style={{ width: "350px", fontWeight: "bold" }}
-    >
+          {receivedInvitations.map((invitation, index) => (
+            <div key={index}>
+              <ListGroup.Item
+                style={{ width: "350px", fontWeight: "bold" }}
+              >
                 {invitation.senderName}
                 <div className="d-flex justify-content-between">
                   <Col md={6}>
@@ -119,7 +179,7 @@ const ListAddFriend = () => {
                   <Col>
                     <Button
                       variant="danger"
-                      // onClick={() => handleCancelInvite(invitation.id)}
+                      onClick={() => handleRejectInvite(invitation)}
                       style={{ width: "100%" }}
                     >
                       Reject
@@ -154,17 +214,17 @@ const ListAddFriend = () => {
         </div>
       ) : (
         <ListGroup className="m-3">
-{sentInvitations.map((invitations, index) => (
-  <div key={index}>
-    <ListGroup.Item
-      style={{ width: "350px", fontWeight: "bold" }}
-    >
+          {sentInvitations.map((invitations, index) => (
+            <div key={index}>
+              <ListGroup.Item
+                style={{ width: "350px", fontWeight: "bold" }}
+              >
                 {invitations.receiverName}
                 <div className="d-flex justify-content-end">
                   <Col md={12}>
                     <Button
                       variant="secondary"
-                      // onClick={() => handleRejectInvite(invitations.id)}
+                      onClick={() => handleCancelInvite(invitations)}
                       style={{ width: "100%" }}
                     >
                       Cancel

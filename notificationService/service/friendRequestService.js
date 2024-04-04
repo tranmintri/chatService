@@ -102,19 +102,25 @@ const requestAddFriend = async (data) => {
     }
 };
 // huy YC KB
-const cancelSendedFriend = async (userId, requestId) => {
+const cancelSendedFriend = async (data) => {
     try {
-        const userRef = db.collection('Users').doc(userId);
+        const userRef = db.collection('Users').doc(data.userId);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
-        const requestRef = db.collection('FriendRequests').doc(requestId);
-        const requestDoc = await requestRef.get();
-        if (!requestDoc.exists) {
+        const requestsSnapshot = await db.collection('FriendRequests')
+            .where('sender', '==', data.userId)
+            .where('receiver', '==', data.requestId)
+            .get();
+        if (requestsSnapshot.empty) {
             throw new Error("Yêu cầu đã bị hủy hoặc chưa được gửi");
         }
-        await db.collection('FriendRequests').doc(requestId).delete();
+    
+        requestsSnapshot.forEach(doc => {
+            doc.ref.delete();
+        });
+    
         return { message: "Yêu cầu kết bạn đã bị hủy" };
     } catch (error) {
         console.error('Error:', error);
@@ -122,65 +128,6 @@ const cancelSendedFriend = async (userId, requestId) => {
     }
 };
 // chap nhan YC KB
-// const acceptFriend = async (data) => {
-//     try {
-//         const userRef = db.collection('Users').doc(data.userId);
-//         const userDoc = await userRef.get();
-//         if (!userDoc.exists) {
-//             throw new Error("Người dùng chưa đăng nhập!!!");
-//         }
-//         const requestRef = db.collection('FriendRequests').doc(data.requestId);
-//         const requestDoc = await requestRef.get();
-
-//         if (!requestDoc.exists) {
-//             throw new Error("Yêu cầu đã được chấp nhận hoặc chưa được gửi");
-//         }
-//         const request = requestDoc.data();
-//         if (data.userId === request.sender) {
-//             throw new Error("Bản thân không thể tự chấp nhận lời mời kết bạn");
-//         }
-//         if (data.userId !== request.receiver) {
-//             throw new Error("Người đang đăng nhập không phải người được gửi");
-//         }
-//         const senderRef = db.collection('Users').doc(request.sender);
-//         const senderDoc = await senderRef.get();
-//         if (!senderDoc.exists) {
-//             throw new Error("Người gửi không tồn tại");
-//         }
-//         const sender = senderDoc.data();
-//         if (sender.friends && sender.friends.includes(data.userId)) {
-//             throw new Error("đã có trong danh sách bạn bè của bạn");
-//         }
-//         sender.friends = [...sender.friends, data.userId];
-//         await senderRef.update(sender);
-
-//         const user = userDoc.data();
-
-//         if (user.friends && user.friends.includes(request.sender)) {
-//             throw new Error("đã kết bạn rồi");
-//         }
-//         user.friends = [...user.friends, request.sender];
-//         await userRef.update(user);
-
-
-//         const chatsData = {
-//             chatId: uuidv4(),
-//             deleteId: null,
-//             name: user.name + ' & ' + sender.name,
-//             participants: [data.userId, request.sender],
-//             type: 'private'
-//         };
-//         //test
-//         await db.collection('Chats').doc(chatsData.chatId).set(chatsData);
-//         //test
-//         await db.collection('FriendRequests').doc(data.requestId).delete();
-//         // Emit events to sockets here if necessary
-//         return { message: "Yêu cầu kết bạn được chấp nhận", user: sender };
-//     } catch (error) {
-//         console.error('Error:', error);
-//         throw new Error('Internal Server Error');
-//     }
-// };
 const acceptFriend = async (data) => {
     try {
         const userRef = db.collection('Users').doc(data.userId);
@@ -244,23 +191,30 @@ const acceptFriend = async (data) => {
     }
 };
 // tu choi YC KB
-const declineFriend = async (userId, requestId) => {
+const declineFriend = async (data) => {
     try {
-        const userRef = db.collection('Users').doc(userId);
+        console.log(data, "data")
+        const userRef = db.collection('Users').doc(data.userId);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
-        const requestRef = db.collection('FriendRequests').doc(requestId);
-        const requestDoc = await requestRef.get();
-        if (!requestDoc.exists) {
-            throw new Error("Yêu cầu đã bị từ chối hoặc chưa được gửi");
-        }
-        const request = requestDoc.data();
-        if (userId !== request.sender && userId !== request.receiver) {
-            throw new Error("Không thể xóa lời mời kết bạn của người khác");
-        }
-        await db.collection('FriendRequests').doc(requestId).delete();
+        // const requestRef = db.collection('FriendRequests')
+        //     .where('sender', '==', data.requestId)
+        //     .where('receiver', '==', data.userId);
+        // const requestDoc = await requestRef.get();
+        // if (requestDoc.empty) {
+        //     throw new Error("Yêu cầu đã bị từ chối hoặc chưa được gửi");
+        // }
+        const friendRequestsRef = db.collection('FriendRequests');
+        const snapshot = await friendRequestsRef.where('sender', '==', data.requestId).where('receiver', '==', data.userId).get();
+        if (snapshot.empty) {
+            console.log('No matching documents.');
+          return;
+        }  
+        snapshot.forEach(doc => {
+          doc.ref.delete();
+        });
         return { message: "Yêu cầu kết bạn đã bị từ chối" };
     } catch (error) {
         console.error('Error:', error);

@@ -97,30 +97,29 @@ io.on("connection", (socket) => {
             requestId: data?.requestId
         };
         console.log(postData, "postData")
-        socket.to(onlineUsers.get(data.userId)).emit("accept", postData);
+        socket.to(onlineUsers.get(data.userId)).emit("acceptFriend", postData);
     });
 
 
-    // socket.on("rejectFriendRequest", (data) => {
-    //     friendRequestService.rejectFriendRequest(data)
-    //     const postData = {
-    //         id: data.id_UserWantAdd,
-    //         display_name: data.receiverName,
-    //         profilePicture: data.profilePicture
-    //     };
-    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriendRequest", postData);
-    //     console.log("Friend request rejected:", data);
-    // });
+    socket.on("rejectFriendRequest", (data) => {
+        console.log(data, "rejectFriendRequest")
+        friendRequestService.declineFriend(data)
+        const postData = {
+            userId: data?.userId,
+            requestId: data?.requestId
+        };
+        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriend", postData);
+        console.log("Friend request rejected:", data);
+    });
 
-    // socket.on("cancelFriendRequest", (data) => {
-    //     friendRequestService.cancelFriendRequest(data)
-    //     const postData = {
-    //         id: data.id_UserWantAdd,
-    //         display_name: data.receiverName,
-    //         profilePicture: data.profilePicture
-    //     };
-    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriendRequest", postData);
-    //     console.log("Friend request cancelled:", data);
-    // })
+    socket.on("cancelFriendRequest", (data) => {
+        friendRequestService.cancelSendedFriend(data)
+        const postData = {
+            userId: data?.userId,
+            requestId: data?.requestId
+        };
+        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriend", postData);
+        console.log("Friend request cancelled:", data);
+    })
 
 })
