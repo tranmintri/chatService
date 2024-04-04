@@ -23,34 +23,32 @@ const EmptyChatScreen = () => {
         <Container fluid className="tw-h-screen tw-w-full">
             <Container fluid className="text-center" style={{ height: '25%', margin: '0 auto' }}>
                 <Container fluid className="font-weight-normal" style={{ paddingTop: '60px', fontSize: '20px' }}>
-                    Chào mừng đến với <b>DRAFI PC!</b>{" "}
+                    Welcome to <b>DRAFI PC!</b>{" "}
                 </Container>
                 <Container fluid style={{ marginTop: '20px', fontSize: '14px' }}>
-                    Khám phá những tiện ích hỗ trợ làm việc và trò chuyện cùng
-                    người thân, bạn bè được tối ưu hóa cho máy tính của bạn.
+                    Discover utilities to help work and chat with relatives and friends optimized for your computer.
                 </Container>
             </Container>
             <Container fluid style={{ height: '75%', paddingTop: '15px' }}>
                 <Slick {...settings}>
                     <Container fluid className="h-100 w-100 text-center slick-slide">
                         <Image src={img1} alt="1" style={{ width: '40%', height: '40%', margin: '0 auto' }} />
-                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Nhắn tin nhiều hơn, soạn thảo ít hơn</h4>
+                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Text more, edit less</h4>
                         <p style={{ fontSize: '14px' }}>
-                            Sử dụng <b>Tin Nhắn Nhanh</b> để lưu trữ các tin nhắn
-                            thường dùng và gửi nhanh trong hộp thoại bất kì
+                            Use <b>Instant Messages</b> to archive messages
+                            Common and quick send in any dialog box
                         </p>
                     </Container>
                     <Container fluid className="h-100 w-100 text-center">
                         <Image src={img2} alt="2" style={{ width: '40%', height: '40%', margin: '0 auto' }} />
-                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Gọi nhóm và làm việc hiệu quả với Lazo Group Call</h4>
-                        <p style={{ fontSize: '14px' }}>Trao đổi công việc mọi lúc mọi nơi</p>
+                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Call your team and be productive with Lazo Group Call</h4>
+                        <p style={{ fontSize: '14px' }}>Exchange work anytime, anywhere</p>
                     </Container>
                     <Container fluid className="h-100 w-100 text-center">
                         <Image src={img3} alt="3" style={{ width: '40%', height: '40%', margin: '0 auto' }} />
-                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Trải nghiệm xuyên suốt</h4>
+                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Seamless experience</h4>
                         <p style={{ fontSize: '14px' }}>
-                            Kết nối và giải quyết công việc trên mọi thiết bị với dữ
-                            liệu luôn được đồng bộ
+                            Connect and get things done on any device with data always in sync
                         </p>
                     </Container>
                     <Container fluid className="h-100 w-100 text-center">
@@ -60,13 +58,13 @@ const EmptyChatScreen = () => {
                     </Container>
                     <Container fluid className="h-100 w-100 text-center">
                         <Image src={img5} alt="5" style={{ width: '40%', height: '40%', margin: '0 auto' }} />
-                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Chat nhóm với đồng nghiệp</h4>
-                        <p style={{ fontSize: '14px' }}>Tiện lợi hơn, nhờ các công cụ chat trên máy tính</p>
+                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Group chat with colleagues</h4>
+                        <p style={{ fontSize: '14px' }}>More convenient, thanks to chat tools on your computer</p>
                     </Container>
                     <Container fluid className="h-100 w-100 text-center">
                         <Image src={img6} alt="6" style={{ width: '40%', height: '40%', margin: '0 auto' }} />
-                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Giải quyết công việc hiệu quả hơn, lên đến 40%</h4>
-                        <p style={{ fontSize: '14px' }}>Với DRAFI PC</p>
+                        <h4 style={{ color: '#805740', margin: '15px 0' }}>Solve tasks more efficiently, up to 40%</h4>
+                        <p style={{ fontSize: '14px' }}>With DRAFI PC</p>
                     </Container>
                 </Slick>
             </Container>

@@ -214,7 +214,7 @@ const SideBar = () => {
 
               <Modal show={showFormProfile} onHide={handleCloseFormProfile} centered className='custom-modal'>
                 <Modal.Header closeButton>
-                  <Modal.Title>Thông tin tài khoản</Modal.Title>
+                  <Modal.Title>Account Infomation</Modal.Title>
                 </Modal.Header>
                 <div className='tw-relative'>
                   <img src={loggedInUS.coverPicture} alt="User Cover" className="tw-w-full tw-h-40" />
@@ -231,21 +231,18 @@ const SideBar = () => {
                     <div className='tw-ml-5 mt-2 tw-font-bold tw-text-xl'>{userInfo?.display_name}</div>
                   </div>
                   <div>
-                    <div className='tw-pl-5 tw-font-bold'>Thông tin cá nhân</div>
+                    <div className='tw-pl-5 tw-font-bold'>Personal Infomation</div>
                     <div className='tw-ml-5'>
                       <div className='tw-flex tw-w-3/5 pt-2'>
-                        <div className='tw-flex-1 tw-text-gray-400'>Giới tính</div>
-                        <div className='tw-flex-1'>{loggedInUS.gender ? 'Nam' : 'Nữ'}</div>
+                        <div className='tw-flex-1 tw-text-gray-400'>Email</div>
+                        <div className='tw-flex-1'>{"abcdefgh@gmail.com"}</div>
                       </div>
-                      <div className='tw-flex tw-w-3/5 pt-2'>
-                        <div className='tw-flex-1 tw-text-gray-400'>Ngày sinh</div>
-                        <div className='tw-flex-1'>{new Date(loggedInUS.birthday).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-                      </div>
+
                       <div className='tw-flex tw-w-3/5 pt-2'>
                         <div className='tw-flex-1 tw-text-gray-400'>Điện thoại</div>
                         <div className='tw-flex-1'>+{loggedInUS.phone}</div>
                       </div>
-                      <div className='tw-text-gray-400 pt-2'>Chỉ bạn bè có lưu số của bạn trong danh bạ xem được số này</div>
+                      <br />
                     </div>
                   </div>
                 </div>
@@ -346,15 +343,15 @@ const SideBar = () => {
               </Nav.Link>
               <Modal show={showFormLogout} onHide={handleCloseFormLogOut} centered>
                 <Modal.Header closeButton>
-                  <Modal.Title>Xác nhận</Modal.Title>
+                  <Modal.Title>Confirm</Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ borderBottom: 'none' }}>Bạn có muốn đăng xuất khỏi Drafi ?</Modal.Body>
+                <Modal.Body style={{ borderBottom: 'none' }}>Do you want to sign out to Drafi ?</Modal.Body>
                 <Modal.Footer style={{ borderTop: 'none' }}>
                   <Button variant="secondary" onClick={handleCloseFormLogOut}>
-                    Không
+                    No
                   </Button>
                   <Button variant="primary" onClick={onLogout}>
-                    Đăng xuất
+                    Sign Out
                   </Button>
                 </Modal.Footer>
               </Modal>
@@ -369,24 +366,28 @@ const SideBar = () => {
                 <div className='tw-w-1/5 tw-flex-1 tw-flex'>
                   {showSearchTable ? (
                     <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-white hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
-                      Đóng
+                      Close
                     </button>
                   ) : (
                     <>
-                      <button className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300">
+                      <button className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
+                        onClick={handleShowAddFriend}
+                      >
                         <FontAwesomeIcon
                           icon={faUserPlus}
                           style={{ fontSize: "15px" }}
                           color="gray"
-                          onClick={handleShowAddFriend}
+
                         />
                       </button>
-                      <button className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300">
+                      <button className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
+                        onClick={handleShowCreateGroup}
+                      >
                         <FontAwesomeIcon
                           icon={faUsers}
                           style={{ fontSize: "15px" }}
                           color="gray"
-                          onClick={handleShowCreateGroup}
+
                         />
                       </button>
                     </>
@@ -412,15 +413,15 @@ const SideBar = () => {
                 className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-border-b tw-font-bold">{userInfo?.display_name}</div>
               <div style={{ height: '50%' }}>
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormProfile}>Hồ sơ của bạn
+                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormProfile}>Your profile
                 </div>
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting1}>Cài đặt
+                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting1}>Setting
                 </div>
               </div>
               <div
                 className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200 tw-border-t" onClick={handleShowFormLogOut}>
-                Đăng xuất
+                Sign Out
               </div>
             </div>)}
           <Tab.Content>
