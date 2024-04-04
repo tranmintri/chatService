@@ -1,12 +1,3 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Nav, Tab, Col, ModalFooter, ModalHeader } from "react-bootstrap";
-import { Image, Modal, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "react-datepicker/dist/react-datepicker.css";
-import AddFriendModal from './contact/modal/AddFriendModal';
-import CreateGroupModal from './contact/modal/CreateGroupModal';
-import { useLogout } from "../apis/useLogout";
-
 import {
   faAddressBook,
   faCamera,
@@ -15,26 +6,30 @@ import {
   faUserPlus,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Image, Modal, ModalFooter, ModalHeader, Nav, Tab } from "react-bootstrap";
+import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
+import { useLogout } from "../apis/useLogout";
+import Page from "../constants/Page";
+import { useStateProvider } from '../context/StateContext';
+import { reducerCases } from '../context/constants';
+import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from '../router/ApiRoutes';
 import Chat from "./Chat";
 import Contact from "./Contact";
-import cloud from "../assets/cloud.jpg";
-import { useStateProvider } from '../context/StateContext';
-import axios from 'axios';
-import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from '../router/ApiRoutes';
-import { reducerCases } from '../context/constants';
 import GroupCard from './contact/card/GroupCard';
-import { chain } from 'lodash';
-import { Outlet, useNavigate } from "react-router-dom";
-import Page from "../constants/Page";
+import AddFriendModal from './contact/modal/AddFriendModal';
+import CreateGroupModal from './contact/modal/CreateGroupModal';
 const SideBar = () => {
-  const [{ userInfo, contactsPage, currentChat, groups }, dispatch] = useStateProvider();
+  const [{ userInfo, contactsPage, groups }, dispatch] = useStateProvider();
   const [activeKey, setActiveKey] = useState('first');
 
   const [showFormUser, setShowFormUser] = useState(false);
   const [showFormAddFriend, setShowFormAddFriend] = useState(false);
   const [userList, setUserList] = useState([]);
   const [friendList, setFriendList] = useState([]);
-  const [friendList1, setFriendList1] = useState([]);
   const handleCloseAddFriendModal = () => setShowFormAddFriend(false);
   const handleShowAddFriend = () => setShowFormAddFriend(true);
 
@@ -52,7 +47,6 @@ const SideBar = () => {
 
   const [showFormSetting, setShowFormSetting] = useState(false);
   const handleCloseFormSetting = () => setShowFormSetting(false);
-  const handleShowFormSetting = () => setShowFormSetting(true);
   const navigate = useNavigate();
   const handleShowFormSetting1 = () => {
 

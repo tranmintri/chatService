@@ -1,17 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import SideBar from "../components/SideBar";
-import { useStateProvider } from "../context/StateContext";
-import { useNavigate } from "react-router-dom";
-import { CHAT_API, GET_CHAT_BY_PARTICIPANTS } from "../router/ApiRoutes";
 import axios from "axios";
-import { reducerCases } from "../context/constants";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import { HOST } from '../router/ApiRoutes';
-import { HOST2 } from '../router/ApiRoutes';
+import SideBar from "../components/SideBar";
 import Loading from "../components/chat/Loading";
+import { useStateProvider } from "../context/StateContext";
+import { reducerCases } from "../context/constants";
+import { CHAT_API, GET_CHAT_BY_PARTICIPANTS, HOST, HOST2 } from "../router/ApiRoutes";
 
 const Main = () => { // State để kiểm soát việc gọi fetchData
-  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, currentChat }, dispatch] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef()
   const [socketEvent, setSocketEvent] = useState(false)
@@ -90,7 +88,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
     // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
     const timer = setTimeout(() => {
       setIsLoading(true)
-    }, 2000);
+    }, 800);
 
     // Clear timeout khi component unmount để tránh memory leak
     return () => clearTimeout(timer);
