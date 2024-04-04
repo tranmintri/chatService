@@ -90,18 +90,18 @@ const Contact = ({ data }) => {
       <div
         className="d-flex"
       >
-        <Col md={3} style={{ backgroundColor: '#2b2d31' }}>
+        <Col md={3} style={{ backgroundColor: 'white' }}>
           <Nav className="nav-contact flex-column gap-2" variant="light">
-            <Nav.Item className="tab-link  tw-mt-16">
+            <Nav.Item className="tab-link  tw-mt-20">
               <Nav.Link
                 eventKey="first"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black" }}
               >
                 <div className="d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
                     icon={faUsers}
                     style={{ fontSize: "22px", marginRight: 12 }}
-                    color="white"
+                    color="black"
                   />
                   <span className="ml-3">Friends list</span>
                 </div>
@@ -110,13 +110,13 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="second"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black" }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
                     icon={faUserGroup}
                     style={{ fontSize: "22px", marginRight: 12 }}
-                    color="white"
+                    color="black"
                   />
                   <span>Groups list</span>
                 </div>
@@ -125,13 +125,13 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="third"
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none", color: "black" }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
                     icon={faUserPlus}
                     style={{ fontSize: "22px", marginRight: 12 }}
-                    color="white"
+                    color="black"
                   />
                   <span>Friend requests</span>
                 </div>

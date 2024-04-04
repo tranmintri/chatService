@@ -32,14 +32,14 @@ const ListGroups = ({ data }) => {
     console.log(`Selected filter: ${selectedFilter}`);
   };
   return (
-    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
       <div className="group-list-header">
         <h2>
           {" "}
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="white"
+            color="black"
           />{" "}
           Group list
         </h2>

@@ -52,7 +52,7 @@ const Chat = () => {
   };
   return (
     <div className="d-flex w-100">
-      <div className="col-3 border-r-2 border-gray-300">
+      <div className="col-3">
         <Stack className="message-box flex-grow-0" gap={3}>
           <UserChat chats={chats ? chats : []} />
         </Stack>

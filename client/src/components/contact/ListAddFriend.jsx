@@ -6,40 +6,40 @@ import { Container, ListGroup, Alert, Button, Col } from "react-bootstrap";
 import { NOTI_API } from "../../router/ApiRoutes";
 import { useStateProvider } from "../../context/StateContext";
 const ListAddFriend = () => {
-  const [{ userInfo, groups, socket }, dispatch ] = useStateProvider()
+  const [{ userInfo, groups, socket }, dispatch] = useStateProvider()
   const [sentInvitations, setSentInvitations] = useState([]);
   const [receivedInvitations, setReceivedInvitations] = useState([]);
 
   //chuan
   useEffect(() => {
     const fetchData = async () => {
-        try {
-          const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
-            console.log(listSenderRequest.data)
-            if (listSenderRequest.data) {
-              setSentInvitations(listSenderRequest.data ? listSenderRequest.data : []);
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
+      try {
+        const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+        console.log(listSenderRequest.data)
+        if (listSenderRequest.data) {
+          setSentInvitations(listSenderRequest.data ? listSenderRequest.data : []);
         }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
     fetchData();
-}, [userInfo?.id]);
+  }, [userInfo?.id]);
 
-useEffect(() => {
-  const fetchData = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-          console.log(listReceiverRequest.data)
-          if (listReceiverRequest.data) {
-            setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
-          }
+        console.log(listReceiverRequest.data)
+        if (listReceiverRequest.data) {
+          setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+        }
       } catch (error) {
-          console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error);
       }
-  };
-  fetchData();
-}, [userInfo?.id]);
+    };
+    fetchData();
+  }, [userInfo?.id]);
 
 
 
@@ -79,14 +79,14 @@ useEffect(() => {
 
 
   return (
-    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
       <div className="friend-requests-header">
         <h2>
           {" "}
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="white"
+            color="black"
           />
           Friend Requests List
         </h2>
@@ -98,7 +98,7 @@ useEffect(() => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
-          color: 'white'
+          color: 'black'
         }}
       >
         <u>Lời mời kết bạn đã nhận</u>{" "}
