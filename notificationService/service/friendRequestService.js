@@ -84,7 +84,7 @@ const requestAddFriend = async (data) => {
             .get();
 
         if (!friendRequestSnapshot.empty) {
-            throw new Error("Yêu cầu kết bạn đã được gửi");
+            return { message: "Yêu cầu kết bạn đã được gửi" };
         }
         const newFriendRequest = {
             senderName: data.senderName,
@@ -95,7 +95,7 @@ const requestAddFriend = async (data) => {
             receiver: data.id_UserWantAdd,
         };
         await db.collection('FriendRequests').doc(newFriendRequest.requestId).set(newFriendRequest);
-        return { message: "Yêu cầu kết bạn đã được gửi" };
+        // return { message: "Yêu cầu kết bạn đã được gửi" };
     } catch (error) {
         console.error('Error:', error);
         throw new Error('Internal Server Error');
@@ -122,58 +122,120 @@ const cancelSendedFriend = async (userId, requestId) => {
     }
 };
 // chap nhan YC KB
-const acceptFriend = async (userId, requestId) => {
+// const acceptFriend = async (data) => {
+//     try {
+//         const userRef = db.collection('Users').doc(data.userId);
+//         const userDoc = await userRef.get();
+//         if (!userDoc.exists) {
+//             throw new Error("Người dùng chưa đăng nhập!!!");
+//         }
+//         const requestRef = db.collection('FriendRequests').doc(data.requestId);
+//         const requestDoc = await requestRef.get();
+
+//         if (!requestDoc.exists) {
+//             throw new Error("Yêu cầu đã được chấp nhận hoặc chưa được gửi");
+//         }
+//         const request = requestDoc.data();
+//         if (data.userId === request.sender) {
+//             throw new Error("Bản thân không thể tự chấp nhận lời mời kết bạn");
+//         }
+//         if (data.userId !== request.receiver) {
+//             throw new Error("Người đang đăng nhập không phải người được gửi");
+//         }
+//         const senderRef = db.collection('Users').doc(request.sender);
+//         const senderDoc = await senderRef.get();
+//         if (!senderDoc.exists) {
+//             throw new Error("Người gửi không tồn tại");
+//         }
+//         const sender = senderDoc.data();
+//         if (sender.friends && sender.friends.includes(data.userId)) {
+//             throw new Error("đã có trong danh sách bạn bè của bạn");
+//         }
+//         sender.friends = [...sender.friends, data.userId];
+//         await senderRef.update(sender);
+
+//         const user = userDoc.data();
+
+//         if (user.friends && user.friends.includes(request.sender)) {
+//             throw new Error("đã kết bạn rồi");
+//         }
+//         user.friends = [...user.friends, request.sender];
+//         await userRef.update(user);
+
+
+//         const chatsData = {
+//             chatId: uuidv4(),
+//             deleteId: null,
+//             name: user.name + ' & ' + sender.name,
+//             participants: [data.userId, request.sender],
+//             type: 'private'
+//         };
+//         //test
+//         await db.collection('Chats').doc(chatsData.chatId).set(chatsData);
+//         //test
+//         await db.collection('FriendRequests').doc(data.requestId).delete();
+//         // Emit events to sockets here if necessary
+//         return { message: "Yêu cầu kết bạn được chấp nhận", user: sender };
+//     } catch (error) {
+//         console.error('Error:', error);
+//         throw new Error('Internal Server Error');
+//     }
+// };
+const acceptFriend = async (data) => {
     try {
-        const userRef = db.collection('Users').doc(userId);
+        const userRef = db.collection('Users').doc(data.userId);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
-        const requestRef = db.collection('FriendRequests').doc(requestId);
-        const requestDoc = await requestRef.get();
+        const user = userDoc.data();
 
-        if (!requestDoc.exists) {
-            throw new Error("Yêu cầu đã được chấp nhận hoặc chưa được gửi");
-        }
-        const request = requestDoc.data();
-        if (userId === request.sender) {
-            throw new Error("Bản thân không thể tự chấp nhận lời mời kết bạn");
-        }
-        if (userId !== request.receiver) {
-            throw new Error("Người đang đăng nhập không phải người được gửi");
-        }
-        const senderRef = db.collection('Users').doc(request.sender);
+        const senderRef = db.collection('Users').doc(data.requestId);
         const senderDoc = await senderRef.get();
         if (!senderDoc.exists) {
             throw new Error("Người gửi không tồn tại");
         }
         const sender = senderDoc.data();
-        if (sender.friends && sender.friends.includes(userId)) {
+
+        // Check if the sender is already a friend
+        if (user.friends && user.friends.includes(data.requestId)) {
             throw new Error("đã có trong danh sách bạn bè của bạn");
         }
-        sender.friends = [...sender.friends, userId];
+        if (!Array.isArray(sender.friends)) {
+            sender.friends = [];
+        }
+        sender.friends = [...sender.friends, data.userId];
         await senderRef.update(sender);
 
-        const user = userDoc.data();
 
-        if (user.friends && user.friends.includes(request.sender)) {
-            throw new Error("đã kết bạn rồi");
+        if (!Array.isArray(user.friends)) {
+            user.friends = [];
         }
-        user.friends = [...user.friends, request.sender];
+        user.friends = [...user.friends, data.requestId];
         await userRef.update(user);
 
+        // Create chat
+        // const chatsData = {
+        //     chatId: uuidv4(),
+        //     deleteId: null,
+        //     name: user.name + ' & ' + sender.name,
+        //     participants: [data.userId, data.requestId],
+        //     type: 'private'
+        // };
+        // await db.collection('Chats').doc(chatsData.chatId).set(chatsData);
 
-        const chatsData = {
-            chatId: uuidv4(),
-            deleteId: null,
-            name: user.name + ' & ' + sender.name,
-            participants: [userId, request.sender],
-            type: 'private'
-        };
-        //test
-        await db.collection('Chats').doc(chatsData.chatId).set(chatsData);
-        //test
-        await db.collection('FriendRequests').doc(requestId).delete();
+        // Delete friend request
+        const friendRequestsRef = db.collection('FriendRequests');
+        const snapshot = await friendRequestsRef.where('sender', '==', data.requestId).where('receiver', '==', data.userId).get();
+        
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }  
+        
+        snapshot.forEach(doc => {
+          doc.ref.delete();
+        });
         // Emit events to sockets here if necessary
         return { message: "Yêu cầu kết bạn được chấp nhận", user: sender };
     } catch (error) {

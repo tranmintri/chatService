@@ -77,6 +77,7 @@ io.on("connection", (socket) => {
         console.log(userId)
         onlineUsers.set(userId, socket.id)
     })
+    
     socket.on("sendFriendRequest", (data) => {
         friendRequestService.requestAddFriend(data)
         const postData = {
@@ -87,5 +88,39 @@ io.on("connection", (socket) => {
         socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
         console.log("Friend request sent:", data);
     });
+
+    socket.on("acceptFriendRequest", (data) => {
+        console.log(data, "acceptFriendRequest")
+        friendRequestService.acceptFriend(data)
+        const postData = {
+            userId: data?.userId,
+            requestId: data?.requestId
+        };
+        console.log(postData, "postData")
+        socket.to(onlineUsers.get(data.userId)).emit("accept", postData);
+    });
+
+
+    // socket.on("rejectFriendRequest", (data) => {
+    //     friendRequestService.rejectFriendRequest(data)
+    //     const postData = {
+    //         id: data.id_UserWantAdd,
+    //         display_name: data.receiverName,
+    //         profilePicture: data.profilePicture
+    //     };
+    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriendRequest", postData);
+    //     console.log("Friend request rejected:", data);
+    // });
+
+    // socket.on("cancelFriendRequest", (data) => {
+    //     friendRequestService.cancelFriendRequest(data)
+    //     const postData = {
+    //         id: data.id_UserWantAdd,
+    //         display_name: data.receiverName,
+    //         profilePicture: data.profilePicture
+    //     };
+    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriendRequest", postData);
+    //     console.log("Friend request cancelled:", data);
+    // })
 
 })

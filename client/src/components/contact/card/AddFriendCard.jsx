@@ -45,6 +45,8 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
         // }
         try {
             socket.current.emit("sendFriendRequest", postData);
+            alert('Friend added successfully!');
+            handleCloseModal();
             socket.on("friendRequest", (data) => {
                 console.log(data)
                 // sendFriendDataToModal(response.data.data);
@@ -57,8 +59,7 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
             // Cập nhật danh sách bạn bè ngay sau khi gửi yêu cầu thành công
             // Send friend data back to modal
 
-            alert('Friend added successfully!');
-            handleCloseModal();
+
         } catch (error) {
             console.error('Error sending friend request:', error);
             // Xử lý lỗi nếu có
