@@ -2,12 +2,13 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const userRoutes = require('./routes/user-routes')
 const friendRequestRoutes = require('./routes/friendRequest-routes')
+const friendRequestService = require('./service/friendRequestService')
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
-const dotenv = require("dotenv")
+const dotenv = require("dotenv");
+const { log } = require('console');
 
 dotenv.config()
 app.use(cors());
@@ -35,54 +36,56 @@ app.use('/api', friendRequestRoutes.routes);
 const server = app.listen(PORT,()=>{
     console.log(`App is listening on ${PORT}`)
 })
-// const io = new Server(server, {
-//     cors: {
-//         origin: "*",
-//     },
-// });
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+    },
+});
 // global.onlineUsers = new Map();
 // io.on("connection", (socket) => {
+//     global.notiSocket = socket;
 
-//     global.chatSocket = socket;
 //     socket.on("add-user", (userId) => {
 //         console.log("add-user")
 //         console.log(userId)
 //         onlineUsers.set(userId, socket.id)
 //     })
 
-//     socket.on("send-msg-private", (data) => {
-//         console.log("send-msg-private")
-//         console.log(data)
-//         console.log(data.receiveId)
-//         const sendUserSocket = onlineUsers.get(data.receiveId)
-//         console.log(onlineUsers.get(data.receiveId))
-//         console.log(onlineUsers.get(data.receiveId))
-//         // if (sendUserSocket){
-//         socket.to(sendUserSocket).emit("msg-recieve-private", {
-//             from: data.newMessage.senderId,
-//             newMessage:{
-//                 senderId: data.newMessage.senderId,
-//                 type: data.newMessage.type,
-//                 content: data.newMessage.content,
-//                 timestamp: data.newMessage.timestamp
-//             }
-//         })
-//         // }
+//     socket.on("friend-request-accept-status", (data) => {
+//         const userID = onlineUsers.get(data.userId);
+//         if (userID) {
+//             const chat = { chatId: foundUser.chatId, name: foundUser.name + ' & ' + sender.name, participants: [foundUser.userId, sender.userId], type: 'private' };
+//             socket.to(userID).emit("friend-request-accept-status", { foundUser, chat, sender });
+//             socket.emit("accept-by-me", { data });
+//         }
 //     });
-//     socket.on("join-room-public",(chatId)=>{
-//         socket.join(chatId)
-//     })
-//     socket.on("send-msg-public", (chatId, data) => {
-//         // if (sendUserSocket){
-//         socket.to(chatId).emit("msg-recieve-public", {
-//             from: data.newMessage.senderId,
-//             newMessage:{
-//                 senderId: data.newMessage.senderId,
-//                 type: data.newMessage.type,
-//                 content: data.newMessage.content,
-//                 timestamp: data.newMessage.timestamp
-//             }
-//         })
-//         // }
+
+//     socket.on("friend-request-decline-status", (data) => {
+//         const userID = onlineUsers.get(data.userId);
+//         if (userID) {
+//             socket.to(userID).emit("friend-request-decline-status", data);
+//         }
 //     });
+
 // })
+global.onlineUsers = new Map();
+io.on("connection", (socket) => {
+
+    global.notifSocket = socket;
+    socket.on("add-user", (userId) => {
+        console.log("add-user")
+        console.log(userId)
+        onlineUsers.set(userId, socket.id)
+    })
+    socket.on("sendFriendRequest", (data) => {
+        friendRequestService.requestAddFriend(data)
+        const postData = {
+            id: data.id_UserWantAdd,
+            display_name: data.receiverName,
+            profilePicture: data.profilePicture
+        };
+        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
+        console.log("Friend request sent:", data);
+    });
+
+})

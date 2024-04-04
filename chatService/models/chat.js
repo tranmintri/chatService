@@ -20,7 +20,6 @@ class Message {
         this.timestamp = timestamp;
         this.status = status
     }
-
 }
 
 module.exports = { Conversation, Message};

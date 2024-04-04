@@ -200,5 +200,15 @@ io.on("connection", (socket) => {
         console.log(data)
         io.to(data.roomId).emit('ice-candidate', data.candidate);
     });
-
+    // socket.on("sendFriendRequest", (data) => {
+    //     console.log(data)
+    //     friendRequestService.requestAddFriend(data)
+    //     const postData = {
+    //         id: data.id_UserWantAdd,
+    //         display_name: data.receiverName,
+    //         profilePicture: data.profilePicture
+    //     };
+    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
+    //     console.log("Friend request sent:", data);
+    // });
 })

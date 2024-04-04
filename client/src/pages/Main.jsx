@@ -7,6 +7,7 @@ import axios from "axios";
 import { reducerCases } from "../context/constants";
 import { io } from "socket.io-client";
 import { HOST } from '../router/ApiRoutes';
+import { HOST2 } from '../router/ApiRoutes';
 import Loading from "../components/chat/Loading";
 
 const Main = () => { // State để kiểm soát việc gọi fetchData
@@ -46,6 +47,10 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   useEffect(() => {
     if (userInfo) {
       socket.current = io(HOST)
+      socket.current.emit("add-user", userInfo?.id)
+      dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
+
+      socket.current = io(HOST2)
       socket.current.emit("add-user", userInfo?.id)
       dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
     }
