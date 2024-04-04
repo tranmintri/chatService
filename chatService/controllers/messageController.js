@@ -85,9 +85,8 @@ const saveFileInChat = async (req, res, next) => {
             let fileContent = ""
             // Lưu các file vào Firebase Storage và lấy đường dẫn
             for (let file of files) {
-                const fileUploadPath = `files/${file.originalname}`; // Đường dẫn tới thư mục "files"
+                const fileUploadPath = `files/${decodeURIComponent(file.originalname)}`;// Đường dẫn tới thư mục "files"
                 const fileRef = bucket.file(fileUploadPath);
-
                 await fileRef.save(file.buffer, {
                     metadata: {
                         contentType: file.mimetype

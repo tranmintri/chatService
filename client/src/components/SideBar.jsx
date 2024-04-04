@@ -24,6 +24,8 @@ import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from '../router/ApiRoutes';
 import { reducerCases } from '../context/constants';
 import GroupCard from './contact/card/GroupCard';
 import { chain } from 'lodash';
+import { Outlet, useNavigate } from "react-router-dom";
+import Page from "../constants/Page";
 const SideBar = () => {
   const [{ userInfo, contactsPage, currentChat, groups }, dispatch] = useStateProvider();
   const [activeKey, setActiveKey] = useState('first');
@@ -51,7 +53,12 @@ const SideBar = () => {
   const [showFormSetting, setShowFormSetting] = useState(false);
   const handleCloseFormSetting = () => setShowFormSetting(false);
   const handleShowFormSetting = () => setShowFormSetting(true);
+  const navigate = useNavigate();
+  const handleShowFormSetting1 = () => {
 
+    navigate(Page.USER_SETTING_PAGE.path, { replace: true });
+
+  }
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
@@ -415,7 +422,7 @@ const SideBar = () => {
                   className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormProfile}>Hồ sơ của bạn
                 </div>
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting}>Cài đặt
+                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200" onClick={handleShowFormSetting1}>Cài đặt
                 </div>
               </div>
               <div
