@@ -265,7 +265,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
               {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
               <div className={'tw-flex tw-justify-center tw-items-center'}>
                 <Stack>
-                  <div className="tw-ml-4 tw-mb-1">
+                  <div className="tw-right-1">
                     {message.senderName}
                   </div>
                   {message.type === "text" ? (

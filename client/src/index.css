@@ -62,6 +62,10 @@ html,
   color: black;
 }
 
+.user-card:hover {
+  background-color: #e5efff;
+}
+
 .user-card .text-content {
   padding-top: 10px;
   width: 170px;
