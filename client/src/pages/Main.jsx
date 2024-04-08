@@ -19,6 +19,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
 
       navigate("/signin");
     }
+    console.log(userInfo)
   }, [navigate, userInfo]);
   useEffect(() => {
     // Chỉ gọi fetchData nếu userInfo tồn tại và groupList chưa được fetch
@@ -48,14 +49,29 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       socket.current.emit("add-user", userInfo?.id)
       dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
 
-      socket.current = io(HOST2)
-      socket.current.emit("add-user", userInfo?.id)
-      dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
+      // socket.current = io(HOST2)
+      // socket.current.emit("add-user", userInfo?.id)
+      // dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
     }
   }, [userInfo])
   useEffect(() => {
     if (socket.current && !socketEvent) {
+      socket.current.on(" ", (data) => {
+        console.log(data)
+        dispatch({
+          type: reducerCases.ADD_MESSAGES,
+          newMessage: {
+            ...data.newMessage,
+          }
+        })
+      })
+      setSocketEvent(true)
+    }
+  }, [socket.current])
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
+        console.log("public")
         console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,

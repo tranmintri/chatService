@@ -86,7 +86,12 @@ function Video() {
         if (localStream) {
             const audioTrack = localStream.getAudioTracks()[0];
             audioTrack.enabled = !audioTrack.enabled; // Toggle trạng thái của mic
-            setMicOn(!micOn);
+            if (micOn) {
+                setMicOn(false);
+            }
+            else {
+                setMicOn(true)
+            }
         }
     };
 
@@ -94,7 +99,13 @@ function Video() {
         if (localStream) {
             const videoTrack = localStream.getVideoTracks()[0];
             videoTrack.enabled = !videoTrack.enabled; // Toggle trạng thái của camera
-            setCameraOn(!cameraOn);
+
+            if (cameraOn) {
+                setCameraOn(false);
+            }
+            else {
+                setCameraOn(true)
+            }
         }
     };
 
@@ -115,34 +126,39 @@ function Video() {
     }, [localStream, remoteStream]);
 
     return (
-        <div className='w-full bg-slate-950'>
-            <div className='min-h-96 max-h-96 bg-slate-900'>
-                <video autoPlay muted ref={videoRef} style={{ width: '47%', height: '47%', position: 'absolute', top: 0, left: 450 }}></video>
-                <video autoPlay ref={videoRef} style={{ width: '47%', height: '47%', position: 'absolute', top: 0, left: 450 }}></video>
+        <div className='tw-w-full tw-bg-slate-950'>
+            <div className='tw-flex tw-min-h-96 tw-max-h-96 tw-bg-slate-900'>
+                {/* <video autoPlay muted ref={videoRef} style={{ width: '47%', height: '60%' }}>
+
+                </video>
+                <video autoPlay ref={videoRef} style={{ width: '47%', height: '60%' }}></video>
+                <video autoPlay muted ref={videoRef} style={{ width: '47%', height: '60%' }}>
+                </video>
+                <video autoPlay ref={videoRef} style={{ width: '47%', height: '60%' }}></video> */}
             </div>
-            <div className='min-h-56 max-h-56'>
-                ádddđ
+            <div className='tw-min-h-56 tw-max-h-56 tw-bg-slate-900'>
+
             </div>
-            <div className='flex justify-between mt-7 min-h-32 max-h-32'>
+            <div className='tw-flex tw-justify-between tw-mt-7 tw-min-h-32 tw-max-h-32'>
                 <div>
-                    <span className='text-2xl text-white font-semibold'>Group Meeting</span>
+                    <span className='tw-text-2xl tw-text-white tw-font-semibold'>Group Meeting</span>
                 </div>
                 <div>
                     <button className="control-button" onClick={toggleMic}>
-                        {micOn ? <IoMdMic className='text-6xl text-white mr-9 bg-slate-500 rounded-full p-3' /> : <IoMdMicOff className='text-6xl text-white mr-9 bg-slate-500 rounded-full p-3' />}
+                        {micOn ? <IoMdMic className='tw-text-6xl tw-text-white tw-mr-9 tw-bg-slate-500 tw-rounded-full p-3' /> : <IoMdMicOff className='tw-text-6xl tw-text-white tw-mr-9 tw-bg-slate-500 tw-rounded-full tw-p-3' />}
                     </button>
                     <button className="control-button" onClick={toggleCamera}>
-                        {cameraOn ? <HiVideoCamera className='text-6xl text-white mr-9 bg-slate-500 rounded-full p-3' /> : <HiVideoCameraSlash className='text-6xl text-white mr-9 bg-slate-500 rounded-full p-3' />}
+                        {cameraOn ? <HiVideoCamera className='tw-text-6xl tw-text-white tw-mr-9 tw-bg-slate-500 tw-rounded-full tw-p-3' /> : <HiVideoCameraSlash className='tw-text-6xl tw-text-white tw-mr-9 tw-bg-slate-500 tw-rounded-full tw-p-3' />}
                     </button>
                     <button className="control-button">
-                        <ImPhoneHangUp className='text-6xl text-white mr-9 bg-red-600 rounded-full p-3' />
+                        <ImPhoneHangUp className='tw-text-6xl tw-text-white tw-mr-9 tw-bg-red-600 tw-rounded-full tw-p-3' />
                     </button>
                     <button className="control-button">
-                        <MdOutlineScreenShare className='text-6xl text-white bg-slate-500 rounded-full p-3' />
+                        <MdOutlineScreenShare className='tw-text-6xl tw-text-white tw-bg-slate-500 tw-rounded-full tw-p-3' />
                     </button>
                 </div>
                 <div>
-                    <span className='text-4xl text-white mr-7 flex justify-center items-center'>
+                    <span className='tw-text-4xl tw-text-white tw-mr-7 flex tw-justify-center tw-items-center'>
                         <MdGroups2 />
                     </span>
                 </div>

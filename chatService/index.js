@@ -38,55 +38,6 @@ app.use('/api', chatRoutes.routes);
 app.use('/api/chats', messageRoutes.routes);
 app.use('/api', userRoutes.routes);
 
-let browserInstance;
-const openNewBrowser = async (chatId) => {
-
-    let browser;
-    try {
-        // Khởi tạo trình duyệt mới
-    // || !await browserInstance.isConnected()
-        if (!browser ) {
-            // Khởi tạo trình duyệt mới
-            browser = await puppeteer.launch({
-                headless: false, // false để hiển thị giao diện người dùng
-            });
-        }
-
-        // Mở một trang mới trong trình duyệt
-        const page = await browser.newPage();
-        const pages = await browser.pages();
-        if (pages.length > 1) {
-            await pages[0].close();
-        }
-        // Điều hướng đến URL mong muốn
-
-        // Lấy kích thước của màn hình
-        const screenSize = await page.evaluate(() => {
-            return {
-                width: window.screen.width,
-                height: window.screen.height
-            };
-        });
-        console.log({ width: screenSize.width, height: screenSize.height });
-
-        // Đặt kích thước của cửa sổ trình duyệt sao cho nó bằng kích thước của màn hình
-        await page.setViewport({ width: screenSize.width, height: screenSize.height });
-        await page.goto(`http://localhost:3000/chat/${chatId}`);
-    } catch (error) {
-        console.error('Error occurred while opening new browser:', error);
-    } finally {
-        // Đảm bảo đóng trình duyệt một cách an toàn
-        if (browser) {
-            try {
-                // await browser.close();
-                // console.log('Browser closed successfully.');
-            } catch (closeError) {
-                console.error('Error occurred while closing browser:', closeError);
-            }
-        }
-    }
-};
-
 const server = app.listen(PORT, () => {
     console.log(`App is listening on ${PORT}`)
 })
@@ -110,17 +61,16 @@ io.on("connection", (socket) => {
         socket.emit("online-users", Array.from(onlineUsers.keys()));
     })
 
-    socket.on("get-browser", (chatId) => {
-        openNewBrowser(chatId); // Gọi hàm mở trình duyệt mới
-    });
 
     socket.on("send-msg-private", (data) => {
         console.log("send-msg-private")
+        console.log("send-msg-public")
         console.log(data)
         console.log(data.receiveId)
         const receiveUserSocket = onlineUsers.get(data.receiveId)
 
         if (receiveUserSocket) {
+            console.log("recieve-msg-private")
             socket.to(receiveUserSocket).emit("msg-recieve-private", {
                 from: data.newMessage.senderId,
                 newMessage: {
@@ -135,7 +85,7 @@ io.on("connection", (socket) => {
         }
     })
     socket.on("send-msg-public", (data) => {
-        console.log("send-msg-public")
+
         console.log(data)
         data.receiveId.forEach(p => {
             const receiveUserSocket = onlineUsers.get(p)

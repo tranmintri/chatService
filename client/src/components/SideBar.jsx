@@ -85,17 +85,6 @@ const SideBar = () => {
 
 
   const ref = useRef();
-  const loggedInUS = {
-    "email": "phxuancanh29@gmail.com",
-    "name": "Phạm Xuân Cảnh",
-    "profilePicture": "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
-    "userId": "061411e6-389c-495c-842c-96ee095e6281",
-    "birthday": "2000-01-01",
-    "phone": "0123456789",
-    "coverPicture": "https://picsum.photos/200/300",
-    "gender": true
-  }
-
   const handleClickOutside = (event) => {
     if (ref.current && !ref.current.contains(event.target)) {
       setShowFormUser(false);
@@ -208,7 +197,7 @@ const SideBar = () => {
             <Nav.Item className="mt-3 mb-3">
               <Nav.Link onClick={() => setShowFormUser(!showFormUser)}>
                 <div className="d-flex align-items-center justify-content-center">
-                  <Image src={loggedInUS.profilePicture} roundedCircle className="w-100" style={{ border: '2px solid black' }} />
+                  <Image src={userInfo?.avatar ? userInfo?.avatar : "https://www.signivis.com/img/custom/avatars/member-avatar-01.png"} roundedCircle className="w-100" style={{ border: '2px solid black' }} />
                 </div>
               </Nav.Link>
 
@@ -217,10 +206,10 @@ const SideBar = () => {
                   <Modal.Title>Account Infomation</Modal.Title>
                 </Modal.Header>
                 <div className='tw-relative'>
-                  <img src={loggedInUS.coverPicture} alt="User Cover" className="tw-w-full tw-h-40" />
+                  <img src={"https://picsum.photos/200/300"} alt="User Cover" className="tw-w-full tw-h-40" />
                   <div className='tw-ml-5 tw-flex tw-items-center tw-bottom-0 tw-transform tw--translate-y-1/3'>
                     <div>
-                      <img src={loggedInUS.profilePicture} alt="User Avatar" className="tw-w-24 tw-h-24 tw-rounded-full tw-border tw-border-gray-500" />
+                      <img src={userInfo?.avatar ? userInfo?.avatar : "https://www.signivis.com/img/custom/avatars/member-avatar-01.png"} alt="User Avatar" className="tw-w-24 tw-h-24 tw-rounded-full tw-border tw-border-gray-500" />
                       <button className="tw-absolute tw-bottom-0 tw-left-16 tw-w-8 tw-h-8 tw-rounded-full tw-bg-gray-300 tw-text-gray-500 tw-flex tw-items-center tw-justify-center tw-border-2 tw-border-white">
                         <FontAwesomeIcon
                           icon={faCamera}
@@ -235,12 +224,12 @@ const SideBar = () => {
                     <div className='tw-ml-5'>
                       <div className='tw-flex tw-w-3/5 pt-2'>
                         <div className='tw-flex-1 tw-text-gray-400'>Email</div>
-                        <div className='tw-flex-1'>{"abcdefgh@gmail.com"}</div>
+                        <div className='tw-flex-1'>{userInfo?.email ? userInfo?.email : "abcdefgh@gmail.com"}</div>
                       </div>
 
                       <div className='tw-flex tw-w-3/5 pt-2'>
                         <div className='tw-flex-1 tw-text-gray-400'>Điện thoại</div>
-                        <div className='tw-flex-1'>+{loggedInUS.phone}</div>
+                        <div className='tw-flex-1'>+{userInfo?.phone ? userInfo?.phone : "123456789"}</div>
                       </div>
                       <br />
                     </div>

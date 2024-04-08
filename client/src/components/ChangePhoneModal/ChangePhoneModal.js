@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
@@ -6,9 +6,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserInfo } from "../../apis/userApi";
 import QueryKey from "../../constants/QueryKey";
 import { toast } from "react-toastify";
+import { useStateProvider } from "../../context/StateContext";
 
 const ChangePhoneModal = ({ open, setOpen, userInfo }) => {
   const cancelButtonRef = useRef(null);
+
   const queryClient = useQueryClient();
 
   const {
@@ -22,6 +24,7 @@ const ChangePhoneModal = ({ open, setOpen, userInfo }) => {
 
   const updateMutation = useMutation({
     mutationFn: (data) => updateUserInfo(data),
+    // userInfo?.phone = data,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.GET_USER_INFO] });
       toast.info("Cập nhật số điện thoại thành công");

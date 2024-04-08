@@ -18,6 +18,8 @@ export const useSignIn = () => {
       const data = res.data;
 
       saveToken(data);
+      console.log("signin");
+      console.log(data.user_info);
       saveUser(data.user_info);
 
       toast.success("Đăng nhập thành công");

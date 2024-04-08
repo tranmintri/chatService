@@ -46,7 +46,7 @@ const GroupCard = ({ chat }) => {
     return (
         <div className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2 tw-text-black'>
             <div>
-                <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className='tw-w-14' />
+                <img src={chat?.avatar} className='tw-w-14' />
             </div>
             <div className="tw-flex-1 tw-ml-10">
                 <span className='tw-font-semibold tw-text-xl'>{convertName()}</span>

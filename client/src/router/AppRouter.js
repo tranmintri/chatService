@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Page from "../constants/Page";
-import Video from "../components/chat/Video";
+import CallPrivate from "../components/chat/CallPrivate";
 import MyAccountPage from "../pages/UserSettingPage/MyAccountPage/MyAccountPage";
 
 const AppRouter = () => {
@@ -26,7 +26,7 @@ const AppRouter = () => {
         >
           <Route index element={<MyAccountPage />} />
         </Route>
-        <Route path="/chat/:id" element={<Video />} />
+        <Route path="/chat/:id" element={<CallPrivate />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

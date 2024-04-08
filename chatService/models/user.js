@@ -7,8 +7,7 @@ class User {
         this.created_at = created_at;
         this.profilePicture = profilePicture;
         this.email = email,
-        this.friends = friends,
-            this.phone = phone
+        this.friends = friends, this.phone = phone
     }
 }
 module.exports = {User}

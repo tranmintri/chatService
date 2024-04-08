@@ -8,7 +8,7 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
-import { CHAT_API } from "../../router/ApiRoutes";
+import { CHAT_API, CLIENT_HOST } from "../../router/ApiRoutes";
 import { reducerCases } from "../../context/constants";
 import axios from "axios";
 import { calculateTime } from './../../utils/CalculateTime';
@@ -90,8 +90,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         } catch (error) {
           console.error('Error uploading files:', error);
         }
-      } else {
-        console.error('No files selected');
       }
 
       try {
@@ -112,8 +110,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
 
         if (currentChat.type == "private") {
-
+          console.log("aaaaa")
           socket.current.emit("send-msg-private", {
+
             receiveId: receiveId,
             newMessage: {
               senderId: userInfo?.id,
@@ -128,6 +127,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         if (currentChat.type == "public") {
 
           socket.current.emit("send-msg-public", {
+
             receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
             newMessage: {
               senderId: userInfo?.id,
@@ -177,8 +177,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   }
   const openNewWindow = (chatId) => {
-    return () => {
 
+    return () => {
       socket.current.emit("get-browser", chatId);
     };
   };
@@ -207,6 +207,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       });
     }
   };
+  const handleClickOpenTab = (chatId) => {
+    // Tạo URL cho tab mới
+    const newTabUrl = `${CLIENT_HOST}/chat/${chatId}`;
+    // Mở tab mới
+    const newTab = window.open(newTabUrl, '_blank');
+    // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
+    if (newTab && newTab.focus) {
+      newTab.focus();
+    }
+  };
+
 
   // useEffect(() => {
   //   const handleResponse = (data) => {
@@ -242,8 +253,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(currentChat?.chatId)} /> */}
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} />
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={() => handleClickOpenTab(chat.chatId)} />
+          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(chat.chatId)} /> */}
           <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} />
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
@@ -287,7 +298,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                           const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
                           const filename = filenameWithExtension1.substring(0, lastDotIndex);
                           const extension = filenameWithExtension1.substring(lastDotIndex);
-                          console.log(filenameWithExtension1)
+
                           return (
                             <div className="tw-flex" key={index}>
                               {content.startsWith("https://") ? (
