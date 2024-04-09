@@ -1,5 +1,5 @@
 const {v4: uuidv4} = require('uuid');
-const {Conversation, Message} = require('../models/chat');
+const {user} = require('../models/user')
 const admin = require("firebase-admin")
 const {db} = require('../config/firebase')
 const {User} = require("../models/user");
@@ -26,7 +26,21 @@ const run = async () => {
                 value: message.value.toString(),
 
             });
-            save(message.value)
+            const userData = JSON.parse(message.value);
+            const userInfo = new User(
+                userData.id,
+                userData.email,
+                userData.displayName,
+                userData.phone !== "" ? userData.phone : "",
+                userData.avatar !== "" ? userData.avatar : "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
+                userData.updatedAt,
+                userData.createdAt,
+                userData.friends.length > 0 ? userData.friends : []
+            );
+
+            console.log("run")
+            console.log(userInfo)
+            save(userInfo)
         },
     });
 };
@@ -44,7 +58,8 @@ const findAll = async () => {
     const data = await users.get();
     const usersArrays = [];
     if (data.empty) {
-        throw new Error('user is empty.');
+        // throw new Error('user is empty.');
+        return
     } else {
         data.forEach(doc => {
             const user = new User(
@@ -54,8 +69,8 @@ const findAll = async () => {
                 doc.data().phone,
                 doc.data().email,
                 doc.data().profilePicture,
-                doc.data().updatedAt,
-                doc.data().createdAt,
+                doc.data().updated_at,
+                doc.data().created_at,
                 doc.data().friends,
 
 
@@ -86,29 +101,52 @@ const getUserData = async (collectionName, fieldName, value) => {
 const save = async (data) => {
 
     // Kiểm tra xem data có dữ liệu không
-    const userData = JSON.parse(data);
-    if (!userData) {
+
+    if (!data) {
         throw new Error('User data is empty.');
     }
-    console.log(userData)
-    console.log(userData.id)
-    const profilePicture = userData.profilePicture ? userData.profilePicture : 'https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c';
+    console.log("save")
+    console.log(data)
+    console.log(data.id)
+    const profilePicture = data.profilePicture ? data.profilePicture : 'https://www.signivis.com/img/custom/avatars/member-avatar-01.png';
     // Thêm dữ liệu vào Firestore nếu số điện thoại chưa tồn tại
     console.log(profilePicture)
-    await db.collection('Users').doc(userData.id).set({
-        id: userData.id,
-        email: userData.email,
+    await db.collection('Users').doc(data.id).set({
+        id: data.id,
+        email: data.email,
         profilePicture: profilePicture,
-        display_name: userData.displayName,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt,
-        username: userData.username,
-        phone:generateRandomNumberString(10),
+        display_name: data.display_name,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        username: data.username,
+        phone:data.phone,
         friends:[]
     });
 
     return 'Record saved successfully';
 };
+const updateUser = async (data) => {
+    // Kiểm tra xem data có dữ liệu không
+    if (!data) {
+        throw new Error('User data is empty.');
+    }
+
+    // Cập nhật thông tin người dùng trong Firestore
+    await db.collection('Users').doc(data.id).update({
+        email: data.email,
+        display_name: data.display_name,
+        updated_at: data.updated_at,
+        profilePicture: data.avatar,
+        username : data.username,
+        phone: data.phone,
+
+
+        // Bạn có thể cập nhật các trường khác tương tự như username, friends, ...
+    });
+
+    return 'User updated successfully';
+};
+
 
 const findByEmail = async (email) => {
     const userData = await getUserData('Users', 'email', email);
@@ -148,12 +186,13 @@ const addFriend = async (id,data) => {
             friends: admin.firestore.FieldValue.arrayUnion({
                 id: id,
                 displayName: data.user.display_name,
-                profilePicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+                profilePicture: data.user.avatar,
             })
         });
     const privateChatData = {
             chatId: data.id,
-            name: data.display_name,
+            name: data.display_name + "/" +data.user.display_name,
+            picture:data.profilePicture + "|" + data.user.profilePicture,
             participants: [id, data.id],
             type: "private",
             deleteId: null,
@@ -164,4 +203,4 @@ const addFriend = async (id,data) => {
 };
 
 
-module.exports = {save, findAll, findByEmail,addFriend,findById}
+module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser}

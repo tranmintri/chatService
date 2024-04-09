@@ -54,6 +54,16 @@ const UserChat = () => {
                             }
                             return chat.name
                         }
+
+                        const convertPicture = () => {
+
+                            if (chat.type == "private") {
+                                const splitPicture = chat.picture.split("|");
+                                const receiverPicture = splitPicture[0] !== userInfo?.avatar ? splitPicture[0] : splitPicture[1];
+                                return receiverPicture
+                            }
+                            return chat.picture
+                        }
                         return (
                             <div className="hover:tw-bg-red-50">
                                 <Stack
@@ -66,7 +76,7 @@ const UserChat = () => {
                                 >
                                     <div className="d-flex">
                                         <div className="m-2">
-                                            <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
+                                            <img src={convertPicture()} className="me-2 tw-h-16 tw-w-16 tw-rounded-full" alt="Avatar" />
                                         </div>
                                         <div className="text-content">
                                             <div className="name">{convertName()}</div>

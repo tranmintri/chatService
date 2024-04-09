@@ -1,7 +1,7 @@
 'use strict';
 const admin = require("firebase-admin")
 const {db} = require('../config/firebase')
-const {save, findByEmail, findAll,addFriend,findById} = require("../service/userService");
+const {save, findByEmail, findAll,addFriend,findById,updateUser} = require("../service/userService");
 
 
 const addUser= async (req, res, next) => {
@@ -17,6 +17,22 @@ const addUser= async (req, res, next) => {
         }
         // Thêm dữ liệu vào Firestore nếu có dữ liệu messages
         const result = await save(data)
+        res.json({data:result,status:true});
+    } catch (error) {
+        res.json(error.message);
+    }
+}
+
+const updateUserCon= async (req, res, next) => {
+    try {
+        const data = req.body;
+
+        // Kiểm tra xem newConversation.messages có dữ liệu hay không
+        if (!data) {
+            throw new Error('user data are required.');
+        }
+        // Thêm dữ liệu vào Firestore nếu có dữ liệu messages
+        const result = await updateUser(data)
         res.json({data:result,status:true});
     } catch (error) {
         res.json(error.message);
@@ -89,4 +105,4 @@ const addFriendToList = async (req, res, next) => {
     }
 }
 
-module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById}
+module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon}

@@ -7,10 +7,12 @@ import { toast } from "react-toastify";
 import Page from "../constants/Page";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider } from "../configs/FirebaseConfig";
-
+import { useStateProvider } from "../context/StateContext";
+import { reducerCases } from "../context/constants";
 
 export const useSignInWithGoogle = () => {
   const navigate = useNavigate();
+  const [{ userInfo }, dispatch] = useStateProvider();
   const { mutate: signInWithGoogleMutate } = useMutation({
     mutationFn: () => signInWithPopup(auth, googleAuthProvider),
     onSuccess: (result) => {
@@ -29,6 +31,10 @@ export const useSignInWithGoogle = () => {
           saveToken(data);
           saveUser(data.user_info);
           toast.success("Đăng nhập thành công");
+          dispatch({
+            type: reducerCases.SET_USER_INFO,
+            userInfo: data.user_info,
+          });
           navigate(Page.MAIN_PAGE.path, { replace: true });
         })
         .catch((error) => {

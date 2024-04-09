@@ -2,16 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 import QueryKey from "../../../constants/QueryKey";
 import { getUserInfo } from "../../../apis/userApi";
 import ChangePasswordModal from "../../../components/ChangePasswordModal/ChangePasswordModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChangeDisplayNameModal from "../../../components/ChangeDisplayNameModal/ChangeDisplayNameModal";
 import ChangeUsernameModal from "../../../components/ChangeUsernameModal/ChangeUsernameModal";
 import ChangeEmailModal from "../../../components/ChangeEmailModal/ChangeEmailModal";
 import ChangePhoneModal from "../../../components/ChangePhoneModal/ChangePhoneModal";
 import ChangeAvatarModal from "../../../components/ChangeAvatarModal/ChangeAvatarModal";
 import { useStateProvider } from "../../../context/StateContext";
+import { reducerCases } from "../../../context/constants";
+import axios from "axios";
+import { GET_ALL_USER } from "../../../router/ApiRoutes";
 
 const MyAccountPage = () => {
-  const [{ userInfo: user }] = useStateProvider();
+  const [{ userInfo: user }, dispatch] = useStateProvider();
   const {
     data: userInfo,
     error,
@@ -31,8 +34,22 @@ const MyAccountPage = () => {
   const [changeUsernameModalShow, setChangeUsernameModalShow] = useState(false);
   const [changeEmailModalShow, setChangeEmailModalShow] = useState(false);
   const [changePhoneModalShow, setChangePhoneModalShow] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log(userInfo);
+        const res = await axios.put(GET_ALL_USER, userInfo);
+        dispatch({
+          type: reducerCases.SET_USER_INFO,
+          userInfo: userInfo,
+        });
+      } catch (error) {
+        console.error("Error updating user info:", error);
+      }
+    };
 
-  console.log(userInfo);
+    fetchData();
+  }, [userInfo]);
 
   const handleBtnChangeAvatarClick = () => {
     setChangeAvatarModalShow(true);
