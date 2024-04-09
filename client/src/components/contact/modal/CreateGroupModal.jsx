@@ -12,9 +12,10 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [friendList, setFriendList] = useState([])
+    const filteredFriendList = friendList.filter(friend => 
+        friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     const handleFriendSelect = (friendId) => {
-
-
         setSelectedFriends((prevSelectedFriends) => {
             const isSelected = prevSelectedFriends.includes(friendId);
             return isSelected
@@ -47,8 +48,6 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
             alert("Please enter group name");
             return;
         }
-
-
         const participant = selectedFriends.concat(userInfo?.id)
         const postData = {
             name: groupName,
@@ -86,9 +85,9 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
                     <h5>Friend list</h5>
                     <div style={{ maxHeight: '200px', overflowY: 'scroll' }}>
                         {/* Check if friendList is defined */}
-                        {friendList && friendList.length > 0 ? (
+                        {filteredFriendList && filteredFriendList.length > 0 ? (
                             <ListGroup>
-                                {friendList.map(friend => (
+                                {filteredFriendList.map(friend => (
                                     <ListGroup.Item className="mb-2 d-flex text-center align-items-center" key={friend.id} onClick={() => handleFriendSelect(friend.id)} >
                                         <img src={friend.profilePicture} className="me-3 tw-size-12" style={{ borderRadius: '50%' }} alt="Avatar" />
                                         <Form.Check

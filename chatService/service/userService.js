@@ -198,17 +198,6 @@ const addFriend = async (id,data) => {
             deleteId: null,
             messages:[]
     }
-    const friendRequestsRef = db.collection('FriendRequests');
-    const snapshot = await friendRequestsRef.where('sender', '==', data.id).where('receiver', '==', data.user.id).get();
-    
-    if (snapshot.empty) {
-      console.log('No matching documents.');
-      return;
-    }  
-    
-    snapshot.forEach(doc => {
-      doc.ref.delete();
-    });
     await saveInChat(privateChatData)
     return privateChatData
 };

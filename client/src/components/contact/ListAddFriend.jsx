@@ -81,7 +81,8 @@ const ListAddFriend = () => {
       user: userInfo
   };
   console.log(postData, "postData")
-    const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
+    const response = await axios.post(GET_ALL_USER + userInfo?.id, postData)
+    const response2 = await axios.post(NOTI_API + "delete", postData)
     // sendFriendDataToModal(response.data.data);
     // setFriendList(prevList => [...prevList, response.data.data]);
     // dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
