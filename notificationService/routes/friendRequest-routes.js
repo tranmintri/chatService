@@ -7,7 +7,8 @@ const {
     cancelSendedFriendController,
     acceptFriendController,
     declineFriendController,
-    getListReceiverRequestController
+    getListReceiverRequestController,
+    deleteFriendRequestController
 } = require('../controllers/friendRequestController');
 
 const router = express.Router();
@@ -19,6 +20,7 @@ router.post('/requests/add', requestAddFriendController); // senderId, receiverI
 router.post('/requests/cancel', cancelSendedFriendController); // userId, requestId ok
 router.post('/requests/accept', acceptFriendController); // userId, requestId ok
 router.post('/requests/decline', declineFriendController); // userId, requestId ok
+router.post('/requests/delete', deleteFriendRequestController); // userId ok
 
 module.exports = {
     routes: router

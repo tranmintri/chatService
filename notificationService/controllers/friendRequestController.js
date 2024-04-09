@@ -1,5 +1,5 @@
 'use strict';
-const {getListSenderRequest, getListReceiverRequest, checkSendRequest, requestAddFriend, cancelSendedFriend, acceptFriend, declineFriend} = require("../service/friendRequestService");
+const {getListSenderRequest, getListReceiverRequest, checkSendRequest, requestAddFriend, cancelSendedFriend, acceptFriend, declineFriend, deleteFriendRequest} = require("../service/friendRequestService");
 const {v4: uuidv4} = require("uuid");
 
 const getListSenderRequestController = async (req, res) => {
@@ -78,7 +78,20 @@ const declineFriendController = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
+const deleteFriendRequestController = async (req, res, next) => {
+    const data  = req.body;
+    console.log("data in rq")
+    console.log(data)
+    try{
+        // const {id, user} = req.body;
+        const result = await deleteFriendRequest(data);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
 module.exports = {
     getListSenderRequestController,
     getListReceiverRequestController,
@@ -86,5 +99,6 @@ module.exports = {
     requestAddFriendController,
     cancelSendedFriendController,
     acceptFriendController,
-    declineFriendController
+    declineFriendController,
+    deleteFriendRequestController
 };
