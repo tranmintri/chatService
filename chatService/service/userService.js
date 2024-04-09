@@ -31,13 +31,14 @@ const run = async () => {
                 userData.id,
                 userData.email,
                 userData.displayName,
-                "",
-                userData.email,
-                "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
+                userData.phone !== "" ? userData.phone : "",
+                userData.avatar !== "" ? userData.avatar : "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
                 userData.updatedAt,
                 userData.createdAt,
-                []
-            )
+                userData.friends.length > 0 ? userData.friends : []
+            );
+
+            console.log("run")
             console.log(userInfo)
             save(userInfo)
         },
@@ -68,8 +69,8 @@ const findAll = async () => {
                 doc.data().phone,
                 doc.data().email,
                 doc.data().profilePicture,
-                doc.data().updatedAt,
-                doc.data().createdAt,
+                doc.data().updated_at,
+                doc.data().created_at,
                 doc.data().friends,
 
 
@@ -104,6 +105,7 @@ const save = async (data) => {
     if (!data) {
         throw new Error('User data is empty.');
     }
+    console.log("save")
     console.log(data)
     console.log(data.id)
     const profilePicture = data.profilePicture ? data.profilePicture : 'https://www.signivis.com/img/custom/avatars/member-avatar-01.png';
@@ -184,12 +186,13 @@ const addFriend = async (id,data) => {
             friends: admin.firestore.FieldValue.arrayUnion({
                 id: id,
                 displayName: data.user.display_name,
-                profilePicture: data.user.profilePicture,
+                profilePicture: data.user.avatar,
             })
         });
     const privateChatData = {
             chatId: data.id,
             name: data.display_name + "/" +data.user.display_name,
+            picture:data.profilePicture + "|" + data.user.profilePicture,
             participants: [id, data.id],
             type: "private",
             deleteId: null,

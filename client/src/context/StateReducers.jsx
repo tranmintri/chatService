@@ -8,6 +8,10 @@ export const initialState = {
   messages: [],
   groups: [],
   socket: undefined,
+  videoCall: undefined,
+  voiceCall: undefined,
+  incomingVoiceCall: undefined,
+  incomingVideoCall: undefined
 };
 
 const reducer = (state, action) => {

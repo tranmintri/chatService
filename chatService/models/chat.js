@@ -1,6 +1,7 @@
 class Conversation {
-    constructor(chatId,name, participants, messages,type,deleteId) {
+    constructor(chatId,name,picture, participants, messages,type,deleteId) {
         this.chatId = chatId;
+        this.picture=picture
         this.name = name;
         this.participants = participants;
         this.messages = messages;

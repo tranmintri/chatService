@@ -7,7 +7,7 @@ import { MdOutlineScreenShare } from "react-icons/md";
 import { ImPhoneHangUp } from "react-icons/im";
 import { MdGroups2 } from "react-icons/md";
 
-function Video() {
+function CallPrivate() {
     const { id } = useParams();
     const [{ socket }] = useStateProvider();
     const [localStream, setLocalStream] = useState(null);
@@ -108,10 +108,38 @@ function Video() {
             }
         }
     };
+    useEffect(() => {
+        // Listen for answer event from server
+        socket.current.on('answer', (answer) => {
+            handleAnswer(answer);
+        });
+
+        return () => {
+            // Remove the event listener when the component unmounts
+            if (socket && socket.current) {
+                socket.current.off('answer');
+            }
+        };
+    }, []);
+
 
     const handleAnswer = (answer) => {
         peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     };
+    useEffect(() => {
+        // Listen for ice-candidate event from server
+        socket.current.on('ice-candidate', (data) => {
+            handleIceCandidate(data.candidate);
+        });
+
+        return () => {
+            // Remove the event listener when the component unmounts
+            if (socket && socket.current) {
+                socket.current.off('ice-candidate');
+            }
+        };
+    }, []);
+
 
     const handleIceCandidate = (candidate) => {
         if (peerConnection) {
@@ -128,16 +156,13 @@ function Video() {
     return (
         <div className='tw-w-full tw-bg-slate-950'>
             <div className='tw-flex tw-min-h-96 tw-max-h-96 tw-bg-slate-900'>
-                {/* <video autoPlay muted ref={videoRef} style={{ width: '47%', height: '60%' }}>
-
-                </video>
-                <video autoPlay ref={videoRef} style={{ width: '47%', height: '60%' }}></video>
                 <video autoPlay muted ref={videoRef} style={{ width: '47%', height: '60%' }}>
                 </video>
-                <video autoPlay ref={videoRef} style={{ width: '47%', height: '60%' }}></video> */}
+                <video autoPlay ref={videoRef} style={{ width: '47%', height: '60%' }}></video>
+
             </div>
             <div className='tw-min-h-56 tw-max-h-56 tw-bg-slate-900'>
-
+                aaaaaaaaaaaaaaaa
             </div>
             <div className='tw-flex tw-justify-between tw-mt-7 tw-min-h-32 tw-max-h-32'>
                 <div>
@@ -167,4 +192,4 @@ function Video() {
     );
 }
 
-export default Video;
+export default CallPrivate;

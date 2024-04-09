@@ -120,45 +120,5 @@ io.on("connection", (socket) => {
         socket.join(roomId);
     });
 
-    socket.on('request-to-voice-call-private', (data) => {
-        console.log(data);
-        console.log("call private");
-        const receiveUserSocket = onlineUsers.get(data.receiveId);
-        const sendUserSocket = onlineUsers.get(data.senderId);
-        // if (!receiveUserSocket) {
-            console.log("res call private");
-            console.log(sendUserSocket);
-            socket.to(sendUserSocket).emit("response-from-voice-call-private", data);
-        // }
-    });
 
-
-    // Listen for offer event
-    socket.on('offer', (data) => {
-        console.log(data)
-        io.to(data.roomId).emit('offer', data.offer);
-    });
-
-    // Listen for answer event
-    socket.on('answer', (data) => {
-        console.log(data)
-        io.to(data.roomId).emit('answer', data.answer);
-    });
-
-    // Listen for ICE candidates event
-    socket.on('ice-candidate', (data) => {
-        console.log(data)
-        io.to(data.roomId).emit('ice-candidate', data.candidate);
-    });
-    // socket.on("sendFriendRequest", (data) => {
-    //     console.log(data)
-    //     friendRequestService.requestAddFriend(data)
-    //     const postData = {
-    //         id: data.id_UserWantAdd,
-    //         display_name: data.receiverName,
-    //         profilePicture: data.profilePicture
-    //     };
-    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
-    //     console.log("Friend request sent:", data);
-    // });
 })

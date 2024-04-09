@@ -28,6 +28,7 @@ const findAll = async () => {
             const conversation = new Conversation(
                 doc.data().chatId,
                 doc.data().name,
+                doc.data().picture,
                 doc.data().participants,
                 doc.data().messages,
                 doc.data().deleteId,
@@ -39,10 +40,7 @@ const findAll = async () => {
     }
 };
 const findById = async (chatId) => {
-console.log(chatId)
     const chatData = await getChatData('Chats', chatId);
-    console.log("a")
-console.log(chatData)
 
     if (chatData) {
         return chatData
@@ -96,15 +94,9 @@ const getChatsByOneParticipantID = async (participantId) => {
             .where('participants', 'array-contains', participantId)
             .get();
 
-        // Tạo một mảng để lưu trữ các cuộc trò chuyện
-
-
-        // Lặp qua từng tài liệu trong snapshot
         snapshot.forEach((doc) => {
             // Lấy dữ liệu của cuộc trò chuyện và thêm vào mảng chats
-
                 chats.push(doc.data());
-
         });
         return chats
     } catch (error) {
@@ -132,7 +124,6 @@ const getChatsByParticipants = async (participants) => {
             // Lặp qua từng tài liệu trong snapshot
             snapshot.forEach((doc) => {
                 // Lấy dữ liệu của cuộc trò chuyện và thêm vào mảng chats
-                console.log(doc.data())
                 chat = doc.data();
             });
             return chat
@@ -141,8 +132,4 @@ const getChatsByParticipants = async (participants) => {
         throw new Error('Error getting chats by participants:', error);
     }
 };
-
-
-
-
 module.exports = {save,findAll,findById,addParticipant,deleteById,getChatData,getChatsByOneParticipantID,getChatsByParticipants}

@@ -1,11 +1,9 @@
 import { Stack } from "react-bootstrap";
-// import InputEmoji from "react-input-emoji";
-import { Input } from 'antd';
 import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@ant-design/icons'
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
 import { CHAT_API, CLIENT_HOST } from "../../router/ApiRoutes";
@@ -21,7 +19,7 @@ import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
-import he from 'he';
+import EmojiPicker from 'emoji-picker-react';
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -29,7 +27,31 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const emojiPickerRef = useRef(null)
 
+
+  const handleEmojiModal = () => {
+    setShowEmojiPicker(!showEmojiPicker)
+  }
+
+  const handleEmojiClick = (emoji) => {
+    setSendMessages((prevMessage) => (prevMessage += emoji.emoji))
+  }
+
+  // useEffect(() => {
+  //   const handleOutSideClick = (event) => {
+  //     if (event.target.id !== "emoji-open") {
+  //       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+  //         // setShowEmojiPicker(false)
+  //       }
+  //     }
+  //   }
+  //   document.addEventListener("click", handleOutSideClick)
+  //   return () => {
+  //     document.removeEventListener("click", handleOutSideClick)
+  //   }
+  // }, [])
 
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
@@ -100,7 +122,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           newMessage: {
             senderId: userInfo?.id,
             senderName: userInfo?.display_name,
-            senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+            senderPicture: userInfo?.avatar,
             type: type,
             content: content,
             timestamp: Date.now()
@@ -117,7 +139,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             newMessage: {
               senderId: userInfo?.id,
               senderName: userInfo?.display_name,
-              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              senderPicture: userInfo?.avatar,
               type: type,
               content: content,
               timestamp: Date.now()
@@ -132,7 +154,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             newMessage: {
               senderId: userInfo?.id,
               senderName: userInfo?.display_name,
-              senderPicture: "https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c",
+              senderPicture: userInfo?.avatar,
               type: type,
               content: content,
               timestamp: Date.now()
@@ -176,12 +198,25 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       return ""
     }
   }
-  const openNewWindow = (chatId) => {
+  const convertPicture = () => {
+    if (currentChat) {
+      if (chat.type == "private") {
+        const splitPicture = chat.picture.split("|");
+        const receiverPicture = splitPicture[0] !== userInfo?.avatar ? splitPicture[0] : splitPicture[1];
+        return receiverPicture
+      }
+      return chat.picture
+    }
+    else {
+      return ""
+    }
+  }
+  // const openNewWindow = (chatId) => {
 
-    return () => {
-      socket.current.emit("get-browser", chatId);
-    };
-  };
+  //   return () => {
+  //     socket.current.emit("get-browser", chatId);
+  //   };
+  // };
 
 
 
@@ -197,19 +232,20 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   //   document.getElementById('file-input').click();
   // };
 
-  const handleVoiceCall = () => {
-    if (currentChat.type === "private") {
+  // const handleVoiceCall = () => {
+  //   if (currentChat.type === "private") {
 
-      socket.current.emit("request-to-voice-call-private", {
-        receiveId: receiveId,
-        senderId: userInfo?.id,
-        senderName: userInfo?.display_name
-      });
-    }
-  };
-  const handleClickOpenTab = (chatId) => {
+  //     socket.current.emit("request-to-voice-call-private", {
+  //       receiveId: receiveId,
+  //       senderId: userInfo?.id,
+  //       senderName: userInfo?.display_name
+  //     });
+  //   }
+  // };
+  const handleClickOpenTab = (receiverId) => {
     // Tạo URL cho tab mới
-    const newTabUrl = `${CLIENT_HOST}/chat/${chatId}`;
+    sendVoiceCallRequest(receiverId, userInfo?.id);
+    const newTabUrl = `${CLIENT_HOST}/chat/${receiverId}`;
     // Mở tab mới
     const newTab = window.open(newTabUrl, '_blank');
     // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
@@ -217,27 +253,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       newTab.focus();
     }
   };
-
-
-  // useEffect(() => {
-  //   const handleResponse = (data) => {
-  //     console.log("res call private");
-  //     alert(data.res);
-  //   };
-
-  //   socket.current.on("response-from-voice-call-private", handleResponse);
-
-  //   // Cleanup effect to remove the listener when component unmounts
-  //   return () => {
-  //     socket.current.off("response-from-voice-call-private", handleResponse);
-  //   };
-  // }, []); // Passing an empty dependency array ensures this effect runs only once, similar to componentDidMount
-  // // Ensure this effect runs only once, similar to componentDidMount
-
-
-  const handleVideoCall = () => {
-    alert("call video")
-  }
+  const sendVoiceCallRequest = (receiverId, senderId) => {
+    socket.current.emit("request-to-voice-call-private", { receiveId: receiverId, senderId: senderId });
+  };
 
 
   return (
@@ -245,7 +263,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
       <div className="chat-header justify-content-between align-items-center">
         <div className="d-flex">
-          <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
+          <img src={convertPicture()} className="me-2 tw-w-12 tw-h-12 tw-rounded-full" />
           <div>
             <strong style={{ fontSize: '20px' }}>{convertName()}</strong>
             <p className="chat-header-condition">online</p>
@@ -253,9 +271,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
-          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={() => handleClickOpenTab(chat.chatId)} />
-          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={openNewWindow(chat.chatId)} /> */}
-          <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} />
+          <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={() => handleClickOpenTab(chat.type == 'private' ? chat.participants[0] == userInfo?.id ? chat.participants[1] : chat.participants[0] : chat.chatId)} />
+          {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} /> */}
+          {/* <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} /> */}
           {showInfo ? (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="blue" onClick={toggleConversationInfo} />)
             : (<VscLayoutSidebarRightOff className="chat-header-icon px-2 bg-white" color="black" onClick={toggleConversationInfo} />)}
         </div>
@@ -366,7 +384,19 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
       <div className="chat-input">
         <div className="w-100 items-center">
-          <SmileOutlined className="chat-input-icon px-2" title="Send Emoji" size="2em" />
+          <SmileOutlined
+            className="chat-input-icon px-2" title="Send Emoji" size="2em"
+            id="emoji-open"
+            onClick={handleEmojiModal}
+          />
+          {showEmojiPicker &&
+            <div
+              className="tw-absolute tw-bottom-28 tw-left-12 tw-z-40"
+              ref={emojiPickerRef}
+            >
+              <EmojiPicker onEmojiClick={handleEmojiClick} />
+            </div>
+          }
 
           <input
             type="file"

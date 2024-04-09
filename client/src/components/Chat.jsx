@@ -13,16 +13,8 @@ const Chat = () => {
   const [showInfo, setShowInfo] = useState(false);
 
   const [{ userInfo, currentChat, socket }] = useStateProvider()
-  const [chat, setChat] = useState({});
   const [chats, setChats] = useState([]);
 
-  useEffect(() => {
-    socket.current.emit("get-online-user")
-
-    socket.current.on("online-users", (userList) => {
-      console.log("Online users:", userList);
-    });
-  }, [socket.current])
 
   useEffect(() => {
     const fetchChatData = async () => {

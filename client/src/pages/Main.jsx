@@ -19,7 +19,7 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
 
       navigate("/signin");
     }
-    console.log(userInfo)
+
   }, [navigate, userInfo]);
   useEffect(() => {
     // Chỉ gọi fetchData nếu userInfo tồn tại và groupList chưa được fetch
@@ -54,25 +54,16 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       // dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
     }
   }, [userInfo])
-  useEffect(() => {
-    if (socket.current && !socketEvent) {
-      socket.current.on(" ", (data) => {
-        console.log(data)
-        dispatch({
-          type: reducerCases.ADD_MESSAGES,
-          newMessage: {
-            ...data.newMessage,
-          }
-        })
-      })
-      setSocketEvent(true)
-    }
-  }, [socket.current])
+
+  // useEffect(() => {
+
+  //   socket.current.on("online-users", (userList) => {
+  //     console.log("Online users:", userList);
+  //   });
+  // }, [socket.current])
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
-        console.log("public")
-        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -86,8 +77,6 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-public", (data) => {
-        console.log("public")
-        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -109,12 +98,13 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
     // Clear timeout khi component unmount để tránh memory leak
     return () => clearTimeout(timer);
   }, [])
+
   useEffect(() => {
     const getMessage = async () => {
       try {
         if (currentChat?.chatId) {
           const { data } = await axios.get(`${CHAT_API}${currentChat.chatId}/messages`);
-          console.log(data)
+
           dispatch({ type: reducerCases.SET_MESSAGES, messages: data ? data : [] });
         }
       } catch (error) {

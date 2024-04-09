@@ -31,7 +31,15 @@ const GroupCard = ({ chat }) => {
             console.log(error)
         }
     }
+    const convertImage = () => {
+        if (chat.type == "private") {
+            const splitName = chat.picture.split("|");
+            const friendPicture = splitName[0] !== userInfo?.avatar ? splitName[0] : splitName[1];
 
+            return friendPicture
+        }
+        return chat.picture
+    }
     const convertName = () => {
         if (chat.type == "private") {
             const splitName = chat.name.split("/");
@@ -39,14 +47,13 @@ const GroupCard = ({ chat }) => {
 
             return displayName
         }
-
         return chat.name
     }
 
     return (
         <div className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2 tw-text-black'>
             <div>
-                <img src={chat?.avatar} className='tw-w-14' />
+                <img src={convertImage()} className='tw-w-14' />
             </div>
             <div className="tw-flex-1 tw-ml-10">
                 <span className='tw-font-semibold tw-text-xl'>{convertName()}</span>
