@@ -73,10 +73,9 @@ io.on("connection", (socket) => {
 
     global.notifSocket = socket;
     socket.on("add-user", (userId) => {
-        console.log("add-user")
-        console.log(userId)
         onlineUsers.set(userId, socket.id)
     })
+    
     socket.on("sendFriendRequest", (data) => {
         friendRequestService.requestAddFriend(data)
         const postData = {
@@ -85,7 +84,48 @@ io.on("connection", (socket) => {
             profilePicture: data.profilePicture
         };
         socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
-        console.log("Friend request sent:", data);
     });
+
+    socket.on("acceptFriendRequest", (data) => {
+        
+        console.log(data, "acceptFriendRequest")
+        // friendRequestService.acceptFriend(data)
+        // const postData = {
+        //     userId: data?.userId,
+        //     requestId: data?.requestId
+        // };
+        const postData = {
+            id: data.id,
+            display_name: data.user.display_name,
+            profilePicture: data.profilePicture,
+            user: data.user
+        };
+
+        console.log(postData, "postData")
+        console.log(data.id, "data.userId")
+        socket.to(onlineUsers.get(data.id)).emit("acceptFriend", postData);
+    });
+
+
+    socket.on("rejectFriendRequest", (data) => {
+        console.log(data, "rejectFriendRequest")
+        friendRequestService.declineFriend(data)
+        const postData = {
+            userId: data?.userId,
+            requestId: data?.requestId
+        };
+        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriend", postData);
+        console.log("Friend request rejected:", data);
+    });
+
+    socket.on("cancelFriendRequest", (data) => {
+        friendRequestService.cancelSendedFriend(data)
+        const postData = {
+            userId: data?.userId,
+            requestId: data?.requestId
+        };
+        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriend", postData);
+        console.log("Friend request cancelled:", data);
+    })
 
 })

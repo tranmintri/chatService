@@ -5,9 +5,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { reducerCases } from "../../../context/constants";
+import { toast } from "react-toastify";
 
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
-    const [{ userInfo, groups, socket }, dispatch] = useStateProvider()
+    const [{ userInfo, groups, socket, socket2 }, dispatch ] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
 
@@ -29,46 +30,22 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
 
 
     const handleAddFriend = async () => {
-        if (!searchResults) return; // Kiểm tra nếu không có kết quả tìm kiếm thì không thực hiện gửi lời mời
-
-        // const postData = {
-        //     id_UserWantAdd: searchResults.id,
-        //     userId: userInfo?.id,
-        //     profilePicture: searchResults.profilePicture,
-        //     senderName: userInfo?.display_name,
-        //     receiverName: searchResults.display_name
-        // };
+        if (!searchResults) return; 
         const postData = {
-            id: searchResults.id,
-            display_name: searchResults.display_name,
+            id_UserWantAdd: searchResults.id,
+            userId: userInfo?.id,
             profilePicture: searchResults.profilePicture,
-            user: userInfo
+            senderName: userInfo?.display_name,
+            receiverName: searchResults.display_name
         };
-
-        // const newFriendRequest = {
-        //     id_UserWantAccept: userInfo?.id,
-        //     id_UserWantAdd: searchResults.id
-        // }
         try {
-            // socket.current.emit("sendFriendRequest", postData);
-            // socket.on("friendRequest", (data) => {
-            //     console.log(data)
-            const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
-            sendFriendDataToModal(response.data.data);
-            setFriendList(prevList => [...prevList, response.data.data]);
-            dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
-
-
-            // })
-            // Xử lý dữ liệu phản hồi từ server nếu cần
-            // Cập nhật danh sách bạn bè ngay sau khi gửi yêu cầu thành công
-            // Send friend data back to modal
-
-            alert('Friend added successfully!');
+            socket2.current.emit("sendFriendRequest", postData);
+            // alert('Friend added successfully!');
+            toast.success('Friend added successfully!');
             handleCloseModal();
+
         } catch (error) {
             console.error('Error sending friend request:', error);
-            // Xử lý lỗi nếu có
         }
     };
 

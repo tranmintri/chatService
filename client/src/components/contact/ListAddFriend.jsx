@@ -5,8 +5,11 @@ import React, { useState, useEffect } from "react";
 import { Container, ListGroup, Alert, Button, Col } from "react-bootstrap";
 import { NOTI_API } from "../../router/ApiRoutes";
 import { useStateProvider } from "../../context/StateContext";
+import { reducerCases } from "../../context/constants";
+import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from "../../router/ApiRoutes";
+import { toast } from "react-toastify";
 const ListAddFriend = () => {
-  const [{ userInfo, groups, socket }, dispatch] = useStateProvider()
+  const [{ userInfo, groups, socket, socket2 }, dispatch] = useStateProvider()
   const [sentInvitations, setSentInvitations] = useState([]);
   const [receivedInvitations, setReceivedInvitations] = useState([]);
 
@@ -15,7 +18,6 @@ const ListAddFriend = () => {
     const fetchData = async () => {
       try {
         const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
-        console.log(listSenderRequest.data)
         if (listSenderRequest.data) {
           setSentInvitations(listSenderRequest.data ? listSenderRequest.data : []);
         }
@@ -26,11 +28,11 @@ const ListAddFriend = () => {
     fetchData();
   }, [userInfo?.id]);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-        console.log(listReceiverRequest.data)
         if (listReceiverRequest.data) {
           setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
         }
@@ -40,53 +42,111 @@ const ListAddFriend = () => {
     };
     fetchData();
   }, [userInfo?.id]);
-
-
-
-  const handleRejectInvite = (invitationsId) => {
-    // Xử lý hủy lời mời kết bạn đã gửi
-    console.log(`Hủy lời mời kết bạn đã gửi với id: ${invitationsId}`);
-    // Cập nhật danh sách lời mời đã gửi sau khi hủy
-    const updatedSentInvitations = sentInvitations.filter(
-      (invitations) => invitations.id !== invitationsId
-    );
-    setSentInvitations(updatedSentInvitations);
+  const fetchReceiverData = async () => {
+    try {
+      const listReceiverRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+      if (listReceiverRequest.data) {
+        setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  const handleAcceptInvite = (invitationId) => {
-    // Xử lý chấp nhận lời mời kết bạn đã nhận
-    console.log(`Chấp nhận lời mời kết bạn đã nhận với id: ${invitationId}`);
-    // Cập nhật danh sách lời mời đã nhận sau khi chấp nhận
-    const updatedReceivedInvitations = receivedInvitations.filter(
-      (invitation) => invitation.id !== invitationId
-    );
-    setReceivedInvitations(updatedReceivedInvitations);
+  const fetchSenderData = async () => {
+    try {
+      const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
+      if (listReceiverRequest.data) {
+        setSentInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+  // id: searchResults.id,
+  // display_name: searchResults.display_name,
+  // profilePicture: searchResults.profilePicture,
+  // user: userInfo
 
-  const handleCancelInvite = (invitationId) => {
-    // Xử lý từ chối lời mời kết bạn đã nhận
-    console.log(`Từ chối lời mời kết bạn đã nhận với id: ${invitationId}`);
-    // Cập nhật danh sách lời mời đã nhận sau khi từ chối
-    const updatedReceivedInvitations = receivedInvitations.filter(
-      (invitation) => invitation.id !== invitationId
-    );
-    setReceivedInvitations(updatedReceivedInvitations);
+  const handleAcceptInvite = async (invitation) => {
+    // const postData = {
+    //   userId: userInfo?.id,
+    //   requestId: invitation.sender,
+    // }
+    // console.log(invitation)
+    const postData = {
+      id: invitation.sender,
+      display_name: invitation.senderName,
+      profilePicture: invitation.profilePicture,
+      user: userInfo
   };
+  console.log(postData, "postData")
+    const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
+    // sendFriendDataToModal(response.data.data);
+    // setFriendList(prevList => [...prevList, response.data.data]);
+    // dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
+    try {
+      socket2.current.emit("acceptFriendRequest", postData);
+      // alert('Acept successfully!');
+      toast.success("Accept successfully!");
+      fetchReceiverData();
+      const updatedReceivedInvitations = receivedInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setReceivedInvitations(updatedReceivedInvitations);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 
-  receivedInvitations.map((invitation) => {
-    // console.log(invitation.sender);
-  });
+  const handleRejectInvite = async (invitation) => {
+    const postData = {
+      userId: userInfo?.id,
+      requestId: invitation.sender
+    }
+    try {
+      socket2.current.emit("rejectFriendRequest", postData);
+      alert('Reject successfully!');
+      fetchReceiverData();
+      const updatedReceivedInvitations = receivedInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setReceivedInvitations(updatedReceivedInvitations);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  const handleCancelInvite = async (invitation) => {
+    const postData = {
+      userId: userInfo?.id,
+      requestId: invitation.receiver
+    }
+    try {
+      socket2.current.emit("cancelFriendRequest", postData);
+      alert('Cancel successfully!');
+      fetchSenderData();
+      const updatedSendedInvitations = sentInvitations.filter(
+        (invitation) => invitation.id !== invitation.sender
+      );
+      setSentInvitations(updatedSendedInvitations);
+      socket2.current.on("cancelFriend", (data) => {
+      })
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 
 
   return (
-    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
       <div className="friend-requests-header">
         <h2>
           {" "}
           <FontAwesomeIcon
             icon={faUserGroup}
             style={{ fontSize: "22px", marginRight: 12 }}
-            color="black"
+            color="white"
           />
           Friend Requests List
         </h2>
@@ -98,7 +158,7 @@ const ListAddFriend = () => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
-          color: 'black'
+          color: 'white'
         }}
       >
         <u>Lời mời kết bạn đã nhận</u>{" "}
@@ -116,10 +176,9 @@ const ListAddFriend = () => {
         </div>
       ) : (
         <ListGroup className="m-3">
-          {receivedInvitations.map((invitation) => (
-            <div className="">
+          {receivedInvitations.map((invitation, index) => (
+            <div key={index}>
               <ListGroup.Item
-                key={invitation.id}
                 style={{ width: "350px", fontWeight: "bold" }}
               >
                 {invitation.senderName}
@@ -127,7 +186,7 @@ const ListAddFriend = () => {
                   <Col md={6}>
                     <Button
                       variant="success"
-                      onClick={() => handleAcceptInvite(invitation.id)}
+                      onClick={() => handleAcceptInvite(invitation)}
                       style={{ width: "100%" }}
                     >
                       Accept
@@ -136,7 +195,7 @@ const ListAddFriend = () => {
                   <Col>
                     <Button
                       variant="danger"
-                      onClick={() => handleCancelInvite(invitation.id)}
+                      onClick={() => handleRejectInvite(invitation)}
                       style={{ width: "100%" }}
                     >
                       Reject
@@ -171,10 +230,9 @@ const ListAddFriend = () => {
         </div>
       ) : (
         <ListGroup className="m-3">
-          {sentInvitations.map((invitations) => (
-            <div className="">
+          {sentInvitations.map((invitations, index) => (
+            <div key={index}>
               <ListGroup.Item
-                key={invitations.id}
                 style={{ width: "350px", fontWeight: "bold" }}
               >
                 {invitations.receiverName}
@@ -182,7 +240,7 @@ const ListAddFriend = () => {
                   <Col md={12}>
                     <Button
                       variant="secondary"
-                      onClick={() => handleRejectInvite(invitations.id)}
+                      onClick={() => handleCancelInvite(invitations)}
                       style={{ width: "100%" }}
                     >
                       Cancel

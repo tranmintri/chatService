@@ -1,25 +1,28 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 import SideBar from "../components/SideBar";
-import Loading from "../components/chat/Loading";
 import { useStateProvider } from "../context/StateContext";
+import { useNavigate } from "react-router-dom";
+import { CHAT_API, GET_CHAT_BY_PARTICIPANTS } from "../router/ApiRoutes";
+import axios from "axios";
 import { reducerCases } from "../context/constants";
-import { CHAT_API, GET_CHAT_BY_PARTICIPANTS, HOST, HOST2 } from "../router/ApiRoutes";
-
-const Main = () => { // State để kiểm soát việc gọi fetchData
-  const [{ userInfo, currentChat }, dispatch] = useStateProvider();
+import { io } from "socket.io-client";
+import { HOST } from '../router/ApiRoutes';
+import { HOST2 } from '../router/ApiRoutes';
+import Loading from "../components/chat/Loading";
+import { toast } from "react-toastify";
+const Main = () => {
+  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef()
+  const socket2 = useRef()
   const [socketEvent, setSocketEvent] = useState(false)
+  const [socketEvent2, setSocketEvent2] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     if (!userInfo) {
 
       navigate("/signin");
     }
-
   }, [navigate, userInfo]);
   useEffect(() => {
     // Chỉ gọi fetchData nếu userInfo tồn tại và groupList chưa được fetch
@@ -49,21 +52,15 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       socket.current.emit("add-user", userInfo?.id)
       dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
 
-      // socket.current = io(HOST2)
-      // socket.current.emit("add-user", userInfo?.id)
-      // dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
+      socket2.current = io(HOST2)
+      socket2.current.emit("add-user", userInfo?.id)
+      dispatch({ type: reducerCases.SET_SOCKET2, socket2: socket2 })
     }
   }, [userInfo])
-
-  // useEffect(() => {
-
-  //   socket.current.on("online-users", (userList) => {
-  //     console.log("Online users:", userList);
-  //   });
-  // }, [socket.current])
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
+        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -77,6 +74,8 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-public", (data) => {
+        console.log("public")
+        console.log(data)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -87,24 +86,40 @@ const Main = () => { // State để kiểm soát việc gọi fetchData
       setSocketEvent(true)
     }
   }, [socket.current])
-
+  useEffect(() => {
+    if (socket2.current && !socketEvent2) {
+      socket2.current.on("friendRequest", (data) => {
+        console.log("aaa");
+        toast.info("You have a new friend request " + data.display_name);
+    })
+      setSocketEvent2(true)
+    }
+  }, [socket2.current])
+  useEffect(() => {
+    if (socket2.current && !socketEvent2) {
+      socket2.current.on("acceptFriend", (data) => {
+        console.log(data, "data")
+        toast.success("You friend request accpeted by " + data.display_name);
+      })
+      setSocketEvent2(true)
+    }
+  }, [socket2.current])
 
   useEffect(() => {
     // Sử dụng setTimeout để đợi 5 giây trước khi hiển thị thông báo
     const timer = setTimeout(() => {
       setIsLoading(true)
-    }, 800);
+    }, 2000);
 
     // Clear timeout khi component unmount để tránh memory leak
     return () => clearTimeout(timer);
   }, [])
-
   useEffect(() => {
     const getMessage = async () => {
       try {
         if (currentChat?.chatId) {
           const { data } = await axios.get(`${CHAT_API}${currentChat.chatId}/messages`);
-
+          console.log(data)
           dispatch({ type: reducerCases.SET_MESSAGES, messages: data ? data : [] });
         }
       } catch (error) {

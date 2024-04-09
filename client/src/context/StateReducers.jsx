@@ -8,6 +8,7 @@ export const initialState = {
   messages: [],
   groups: [],
   socket: undefined,
+  socket2: undefined,
   videoCall: undefined,
   voiceCall: undefined,
   incomingVoiceCall: undefined,
@@ -57,6 +58,11 @@ const reducer = (state, action) => {
         ...state,
         socket: action.socket,
       };
+      case reducerCases.SET_SOCKET2:
+        return {
+          ...state,
+          socket2: action.socket2,
+        };
     case reducerCases.ADD_MESSAGES:
       return {
         ...state,
