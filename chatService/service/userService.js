@@ -6,16 +6,16 @@ const {User} = require("../models/user");
 const { Kafka } = require('kafkajs');
 const  {save :saveInChat} = require("./chatService")
 
-// Khởi tạo Kafka broker
 const kafka = new Kafka({
     clientId: 'user-consumer',
-    brokers: ['localhost:9092']
+    brokers: ['localhost:9092'],
 });
+
 const consumer = kafka.consumer({ groupId: 'user-group' });
 
 const run = async () => {
     await consumer.connect();
-    await consumer.subscribe({ topic: 'newuser' });
+    await consumer.subscribe({ topic: 'newuser', fromBeginning: false }); // Set fromBeginning to false to only receive new messages
 
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
@@ -24,27 +24,38 @@ const run = async () => {
                 partition,
                 offset: message.offset,
                 value: message.value.toString(),
-
             });
-            const userData = JSON.parse(message.value);
+
+            const userData = JSON.parse(message.value.toString());
+            console.log("Received new message from Kafka:");
+            console.log(userData);
+
             const userInfo = new User(
                 userData.id,
-                userData.email,
+                userData.username != null ? userData.username : userData.email,
                 userData.displayName,
-                userData.phone !== "" ? userData.phone : "",
-                userData.avatar !== "" ? userData.avatar : "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
+                 "",
+                userData.email,
+                "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
                 userData.updatedAt,
                 userData.createdAt,
-                userData.friends.length > 0 ? userData.friends : []
+                []
             );
+            console.log("Processing new message:");
+            console.log(userInfo);
 
-            console.log("run")
-            console.log(userInfo)
-            save(userInfo)
+            // Save the user information
+            await save(userInfo);
+
+            // Commit the offset to mark the message as processed
+            await consumer.commitOffsets([{ topic, partition, offset: message.offset }]);
         },
     });
 };
+
 run().catch(console.error);
+
+
 function generateRandomNumberString(length) {
     let result = '';
     for (let i = 0; i < length; i++) {
