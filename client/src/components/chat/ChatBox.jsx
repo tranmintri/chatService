@@ -21,8 +21,9 @@ import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
-import he from 'he';
-
+import { SlReload } from "react-icons/sl";
+import { IoIosRedo } from "react-icons/io";
+import { BiSolidQuoteRight } from "react-icons/bi";
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
@@ -227,8 +228,25 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleVideoCall = () => {
     alert("call video")
   }
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
+  const handleMouseEnter = (index) => {
+    setHoveredIndex(index);
+  };
 
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
+
+  const handleForward = () => {
+    window.alert("forward")
+  }
+  const handleReply = () => {
+    window.alert("Reply")
+  }
+  const handleRemove = () => {
+    window.alert("remove")
+  }
   return (
 
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
@@ -255,99 +273,109 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
 
       {messages && (
-        <Stack gap={3} className="messages tw-max-h-60"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        <Stack gap={3} className="messages tw-max-h-60 tw-flex">
           {messages && messages.map((message, index) => (
-
-            <div key={index} className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}>
-              {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
-              <div className={'tw-flex tw-justify-center tw-items-center'}>
-                <Stack>
-                  <div className="tw-right-1">
+            <Stack key={index} className={`tw-my-3 hover:tw-bg-blue-50 tw-flex tw-break-words`} onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+            >
+              {message.senderId !== userInfo?.id && (
+                <img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" size={10} />
+              )}
+              <Stack className={`tw-flex message ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} flex-grow-0`}
+              >
+                {message.senderId !== userInfo?.id && (
+                  <div className="tw-right-1 tw-text-start tw-italic" style={{ fontSize: '13px' }}>
                     {message.senderName}
                   </div>
-                  {message.type === "text" ? (
-                    <span>{message.content}</span>
-                  ) : (
-                    message.type === "files" ? (
-                      <div>
-                        {message.content && message.content.split('|').map((content, index) => {
+                )}
+                {/* <div className={`tw-right-1 ${message.senderId == userInfo?.id ? 'tw-text-end' : 'tw-text-start'}`}>
+                  {message.senderName}
+                </div> */}
+                {message.type === "text" ? (
+                  <span className="tw-text-[16px]">{message.content}</span>
+                ) : (
+                  message.type === "files" ? (
+                    <div>
+                      {message.content && message.content.split('|').map((content, index) => {
 
 
-                          const lastSlashIndex = content.split("?");
-                          const filenameWithExtension = lastSlashIndex[0];
+                        const lastSlashIndex = content.split("?");
+                        const filenameWithExtension = lastSlashIndex[0];
 
 
-                          const lastSlashIndex1 = filenameWithExtension.split("/");
-                          const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
+                        const lastSlashIndex1 = filenameWithExtension.split("/");
+                        const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
 
 
-                          const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
-                          const filename = filenameWithExtension1.substring(0, lastDotIndex);
-                          const extension = filenameWithExtension1.substring(lastDotIndex);
-                          console.log(filenameWithExtension1)
-                          return (
-                            <div className="tw-flex" key={index}>
-                              {content.startsWith("https://") ? (
-                                <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                        const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                        const filename = filenameWithExtension1.substring(0, lastDotIndex);
+                        const extension = filenameWithExtension1.substring(lastDotIndex);
+                        console.log(filenameWithExtension1)
+                        return (
+                          <div className="tw-flex" key={index}>
+                            {content.startsWith("https://") ? (
+                              <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
 
-                                  <div className="tw-mr-3 ">
-                                    {extension === ".doc" && (
-                                      <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".xls" && (
-                                      <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".xlsx" && (
-                                      <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".pdf" && (
-                                      <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".txt" && (
-                                      <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".docx" && (
-                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".pptx" && (
-                                      <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                  </div>
-                                  <span><a href={content}
-                                    download={filename + extension}
-                                    style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
-
+                                <div className="tw-mr-3 ">
+                                  {extension === ".doc" && (
+                                    <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".xls" && (
+                                    <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".xlsx" && (
+                                    <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".pdf" && (
+                                    <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".txt" && (
+                                    <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".docx" && (
+                                    <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".pptx" && (
+                                    <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
                                 </div>
-                              ) : (
-                                <span>{content}</span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      message.content && message.content.split('|').map((content, index) => (
-                        <div className="tw-flex" key={index}>
-                          {content.startsWith("https://") ? (
-                            <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
-                          ) : (
-                            <span>{content}</span>
-                          )}
-                        </div>
-                      ))
-                    )
-                  )}
+                                <span><a href={content}
+                                  download={filename + extension}
+                                  style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
 
-                  <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
-                    {calculateTime(message.timestamp)}
-                  </span>
-                </Stack>
-                {message.senderId == userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-ml-2" />) : ""}
-              </div>
-            </div>
+                              </div>
+                            ) : (
+                              <span>{content}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    message.content && message.content.split('|').map((content, index) => (
+                      <div className="tw-flex" key={index}>
+                        {content.startsWith("https://") ? (
+                          <ChatImage imageUrl={content} alt="Image" className="tw-mb-1 tw-mr-1" />
+                        ) : (
+                          <span>{content}</span>
+                        )}
+                      </div>
+                    ))
+                  )
+                )}
+                <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
+                  {calculateTime(message.timestamp)}
+                </span>
+
+              </Stack>
+              {hoveredIndex === index && (
+                <div className={`message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} `} >
+                  <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={handleForward} size={18} />
+                  <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={handleReply} size={18} />
+                  <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={handleRemove} size={18} />
+                </div>
+              )}
+            </Stack>
           ))}
         </Stack>
       )

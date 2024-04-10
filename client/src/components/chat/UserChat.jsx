@@ -60,7 +60,7 @@ const UserChat = () => {
                                 onClick={() => handleSelectChat(chat)}
                                 direction="horizontal"
                                 gap={3}
-                                className="user-card align-items-center p-2 justify-content-between"
+                                className="user-card align-items-center p-2 justify-content-between tw-overflow-x-clip"
                                 role="button"
                             >
                                 <div className="d-flex">

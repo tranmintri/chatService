@@ -185,7 +185,7 @@ html,
   background: #282828;
   padding: 0.75rem;
   border-radius: 5px;
-  max-width: 70%;
+  max-width: 50%;
 }
 
 .message.self {
@@ -267,7 +267,7 @@ html,
 .nav-contact {
   font-size: 18px;
   height: 100vh;
-  border-right: 1px solid black;
+  border-right: 1px solid #ebedf0;
 
   .tab-link:hover {
     background-color: #e5efff;
@@ -403,4 +403,21 @@ html,
   100% {
     transform: rotate(360deg);
   }
+}
+
+.message-buttons-container {
+  display: flex;
+  /* Sử dụng flexbox để sắp xếp các nút */
+  align-items: center;
+  /* Canh giữa theo chiều dọc */
+}
+
+/* Nếu message.senderId == userInfo?.id, sắp xếp từ phải sang trái */
+.message-buttons-container.sender-is-user {
+  flex-direction: row-reverse;
+}
+
+/* Nếu message.senderId != userInfo?.id, sắp xếp từ trái sang phải */
+.message-buttons-container.sender-not-user {
+  flex-direction: row;
 }
