@@ -435,7 +435,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           {selectedFiles.map((file, index) => (
             <div key={index} className="file-wrapper tw-p-3 tw-mr-2">
               <button onClick={() => handleRemoveFile(index)} className="tw-absolute -tw-right-2 -tw-top-4 tw-p-2">
-                <MdDeleteForever className="tw-bg-[#1e1f22] tw-rounded-full tw-p-1 tw-text-3xl" />
+                <MdDeleteForever className="tw-bg-white tw-rounded-full tw-p-1 tw-text-3xl" />
               </button>
               <div className="tw-bg-slate-500 tw-p-2 tw-rounded-full">
                 <div className="tw-text-white tw-text-sm ">{file.name}</div>
