@@ -61,8 +61,15 @@ const SideBar = () => {
   // const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const [receiveFriendData, setReceiveFriendData] = useState([])
+  const [searchTerm, setSearchTerm] = useState('');
 
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  };
 
+  const filteredGroups = groups.filter(group =>
+    group.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const handleOpenUpdateModal = () => {
     setShowUpdateModal(true);
   };
@@ -352,7 +359,7 @@ const SideBar = () => {
           <div className=' col-3 tw-h-20 tw-absolute' style={{ backgroundColor: 'white' }}>
             <div className='tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full'>
               <div className='tw-flex tw-w-full tw-items-center' >
-                <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-white' style={{ backgroundColor: '#eaedf0' }} />
+                <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-white' style={{ backgroundColor: '#eaedf0' }} value={searchTerm} onChange={handleSearch} />
                 <div className='tw-w-1/5 tw-flex-1 tw-flex'>
                   {showSearchTable ? (
                     <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-white hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
@@ -388,12 +395,9 @@ const SideBar = () => {
           </div>
           {showSearchTable && (
             <div className='tw-bg-white tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r'>
-
-              {groups.map((chat, index) => (
+              {filteredGroups.map((chat, index) => (
                 <GroupCard chat={chat} />
               ))}
-
-
             </div>
           )}
 

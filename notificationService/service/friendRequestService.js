@@ -214,6 +214,19 @@ const declineFriend = async (data) => {
         throw new Error('Internal Server Error');
     }
 }
+const deleteFriendRequest = async (data) => {
+    const friendRequestsRef = db.collection('FriendRequests');
+    const snapshot = await friendRequestsRef.where('sender', '==', data.id).where('receiver', '==', data.user.id).get();
+    
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return;
+    }  
+    
+    snapshot.forEach(doc => {
+      doc.ref.delete();
+    });
+}
 module.exports = {
     getListSenderRequest,
     getListReceiverRequest,
@@ -221,5 +234,6 @@ module.exports = {
     requestAddFriend,
     cancelSendedFriend,
     acceptFriend,
-    declineFriend
+    declineFriend,
+    deleteFriendRequest
 }
