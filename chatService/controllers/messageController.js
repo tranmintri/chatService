@@ -1,6 +1,6 @@
 'use strict';
 
-const {findAll,addMessageOneByOne,deleteById} = require("../service/messageService");
+const {findAll,addMessageOneByOne,deleteById,shareMessage} = require("../service/messageService");
 const {Message} = require("../models/chat");
 const multer = require('multer');
 const upload = multer();
@@ -115,6 +115,7 @@ const saveMessageInChat = async (req, res, next) => {
         const  messageData  = req.body;
         console.log("control")
         console.log(messageData)
+
         const result = await addMessageOneByOne(chatId,messageData)
         if(result){
             res.status(200).json({ success: true, data:messageData });
@@ -125,7 +126,21 @@ const saveMessageInChat = async (req, res, next) => {
     }
 };
 
+const share_Message = async (req, res, next) => {
 
+    try {
+        const  data  = req.body;
+        console.log("share message")
+        console.log(data)
+        const result = await shareMessage(data)
+        if(result){
+            res.status(200).json({ success: true, data:data.shareMessage });
+        }
+    } catch (error) {
+        console.error('Error adding message to conversation:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 const deleteMessageByIdInChat = async (req, res, next) => {
     try {
         const { chatId, messageId } = req.params;
@@ -145,5 +160,6 @@ module.exports = {
     saveMessageInChat,
     getAllMessageInChat,
     deleteMessageByIdInChat,
-    saveFileInChat
+    saveFileInChat,
+    share_Message
 }

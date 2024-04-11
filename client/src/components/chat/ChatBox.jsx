@@ -20,6 +20,12 @@ import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
 import EmojiPicker from 'emoji-picker-react';
+import { SlReload } from "react-icons/sl";
+import { IoIosRedo } from "react-icons/io";
+import { BiSolidQuoteRight } from "react-icons/bi";
+import { BiSolidQuoteAltRight } from "react-icons/bi";
+import { v4 as uuidv4 } from 'uuid';
+import ForwardModal from "../contact/modal/ForwardModal";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -29,11 +35,29 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const emojiPickerRef = useRef(null)
-
-
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [replyMessage, setReplyMessage] = useState({});
+  const [shareMessage, setShareMessage] = useState({});
+  const [showReplyTooltip, setShowReplyTooltip] = useState(false);
+  const messageRefs = useRef([]);
+  const [scrollToMessageId, setScrollToMessageId] = useState(null);
+  const [showFormShareMessage, setShowFormShareMessage] = useState(false);
+  const handleShowFormShareMessage = () => setShowFormShareMessage(true);
+  const handleCloseModal = () => {
+    setShowFormShareMessage(false);
+    setShareMessage({})
+  }
   const handleEmojiModal = () => {
     setShowEmojiPicker(!showEmojiPicker)
   }
+  const updateMessageRefs = (element, index) => {
+    messageRefs.current[index] = element;
+  };
+  const scrollToMessage = (index) => {
+    if (messageRefs.current[index]) {
+      messageRefs.current[index].scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const handleEmojiClick = (emoji) => {
     setSendMessages((prevMessage) => (prevMessage += emoji.emoji))
@@ -67,16 +91,22 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     return acc;
   }, null) : "";
   const handleSendMessage = async () => {
-    if (sendMessages.length > 0 || selectedImages.length > 0 || selectedFiles.length > 0) {
+    if (sendMessages.length > 0 || selectedImages.length > 0 || selectedFiles.length > 0 || showReplyTooltip) {
       let type = "text";
       let content = "";
+      let messageId = "";
+      messageId = uuidv4()
+      if (showReplyTooltip && (selectedImages.length > 0 || selectedFiles.length > 0)) {
+        alert("Can't reply message and send photos or files at the same time")
+        return
+      }
 
       if (selectedImages.length > 0 && selectedFiles.length > 0) {
         alert("Can't send photos and files at the same time")
         return
       }
       // Nếu có hình ảnh được chọn, gửi hình ảnh trước
-      if (selectedImages.length > 0 && selectedFiles.length == 0) {
+      if (selectedImages.length > 0 && selectedFiles.length == 0 && !showReplyTooltip) {
         try {
           const formData = new FormData();
           selectedImages.forEach((image, index) => {
@@ -88,12 +118,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
           content = data.data;
           type = "image";
+
         } catch (error) {
           console.log("Error uploading images:", error);
           return;
         }
       }
-      if (selectedFiles.length > 0 && selectedImages == 0) {
+      if (selectedFiles.length > 0 && selectedImages == 0 && !showReplyTooltip) {
         const formData = new FormData();
         selectedFiles.forEach((file, index) => {
           const encodedFileName = encodeURIComponent(file.name);
@@ -109,17 +140,22 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           });
           content += response.data.data;
           type = "files";
+
         } catch (error) {
           console.error('Error uploading files:', error);
         }
+      }
+      if (showReplyTooltip && selectedFiles.length == 0 && selectedImages.length == 0) {
+        type = "reply";
+        messageId = replyMessage.messageId
       }
 
       try {
         content += sendMessages
 
-        // Gửi tin nhắn đến server
         const { data } = await axios.put(CHAT_API + currentChat?.chatId + "/messages", {
           newMessage: {
+            messageId: messageId,
             senderId: userInfo?.id,
             senderName: userInfo?.display_name,
             senderPicture: userInfo?.avatar,
@@ -129,14 +165,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           }
         });
 
-
+        console.log(data.data.newMessage)
 
         if (currentChat.type == "private") {
-          console.log("aaaaa")
-          socket.current.emit("send-msg-private", {
 
+          socket.current.emit("send-msg-private", {
             receiveId: receiveId,
             newMessage: {
+              messageId: messageId,
               senderId: userInfo?.id,
               senderName: userInfo?.display_name,
               senderPicture: userInfo?.avatar,
@@ -152,6 +188,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
             receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
             newMessage: {
+              messageId: messageId,
               senderId: userInfo?.id,
               senderName: userInfo?.display_name,
               senderPicture: userInfo?.avatar,
@@ -177,6 +214,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           type: reducerCases.SET_ALL_GROUP,
           groups: group
         })
+        setReplyMessage({}); // Xóa nội dung tin nhắn reply
+        setShowReplyTooltip(false); // Ẩn tooltip
         setSelectedFiles([])
         setSelectedImages([])
         setSendMessages("")
@@ -256,7 +295,60 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const sendVoiceCallRequest = (receiverId, senderId) => {
     socket.current.emit("request-to-voice-call-private", { receiveId: receiverId, senderId: senderId });
   };
+  const handleMouseEnter = (index) => {
+    setHoveredIndex(index);
+  };
 
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
+
+  const handleForward = (message) => {
+    handleShowFormShareMessage()
+    setShareMessage(message);
+
+  }
+  const handleReply = (message) => {
+    setReplyMessage(message);
+    setShowReplyTooltip(true);
+
+  }
+  const handleClickReply = (messageId) => {
+    setScrollToMessageId(messageId); // Set messageId cần cuộn đế
+  }
+  const handleRemove = (messageId) => {
+    window.alert(messageId)
+  }
+
+  const handleCloseReply = () => {
+    // Xử lý khi tooltip được đóng đi
+    setReplyMessage({}); // Xóa nội dung tin nhắn reply
+    setShowReplyTooltip(false); // Ẩn tooltip
+  };
+  useEffect(() => {
+    const lastMessageIndex = messages.length - 1;
+    scrollToMessage(lastMessageIndex);
+  }, [messages]);
+
+  const findMessageIndexById = (messageId) => {
+    return messages.findIndex((message) => message.messageId === messageId);
+  };
+  const findMessageById = (messageId) => {
+    return messages.find((message) => message.messageId === messageId);
+  };
+
+  useEffect(() => {
+    if (scrollToMessageId) {
+      // Tìm index của message có messageId bằng với scrollToMessageId
+      const index = findMessageIndexById(scrollToMessageId);
+      if (index !== -1) {
+        // Cuộn đến message tương ứng nếu tìm thấy
+        scrollToMessage(index);
+      }
+      // Reset lại state scrollToMessageId sau khi đã cuộn đến message
+      setScrollToMessageId(null);
+    }
+  }, [messages, scrollToMessageId]); // useEffect sẽ chạy lại khi messages hoặc scrollToMessageId thay đổi
 
   return (
 
@@ -283,81 +375,101 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       </div>
 
 
+
+
       {messages && (
-        <Stack gap={3} className="messages tw-max-h-60"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        <Stack gap={3} className="messages tw-max-h-60 tw-flex tw-cursor-pointer  ">
           {messages && messages.map((message, index) => (
-
-            <div key={index} className={`tw-my-1 message align-self-${message.senderId == userInfo?.id ? 'end self' : 'start'} flex-grow-0`}>
-              {message.senderId !== userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" />) : ""}
-              <div className={'tw-flex tw-justify-center tw-items-center'}>
-                <Stack>
-                  <div className="tw-ml-4 tw-mb-1">
-                    {message.senderName}
-                  </div>
-                  {message.type === "text" ? (
-                    <span>{message.content}</span>
-                  ) : (
-                    message.type === "files" ? (
-                      <div>
-                        {message.content && message.content.split('|').map((content, index) => {
-
-
-                          const lastSlashIndex = content.split("?");
-                          const filenameWithExtension = lastSlashIndex[0];
-
-
-                          const lastSlashIndex1 = filenameWithExtension.split("/");
-                          const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
-
-
-                          const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
-                          const filename = filenameWithExtension1.substring(0, lastDotIndex);
-                          const extension = filenameWithExtension1.substring(lastDotIndex);
-
-                          return (
-                            <div className="tw-flex" key={index}>
-                              {content.startsWith("https://") ? (
-                                <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
-
-                                  <div className="tw-mr-3 ">
-                                    {extension === ".doc" && (
-                                      <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".xls" && (
-                                      <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".xlsx" && (
-                                      <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".pdf" && (
-                                      <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".txt" && (
-                                      <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".docx" && (
-                                      <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                    {extension === ".pptx" && (
-                                      <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
-                                    )}
-                                  </div>
-                                  <span><a href={content}
-                                    download={filename + extension}
-                                    style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
-
-                                </div>
-                              ) : (
-                                <span>{content}</span>
-                              )}
-                            </div>
-                          );
-                        })}
+            <Stack key={index} className={`tw-my-3 tw-flex tw-break-words`} onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+              ref={(element) => updateMessageRefs(element, index)}
+              onClick={() => scrollToMessage(index)}
+            >
+              {/* {message.senderId !== userInfo?.id && (
+                <img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-mr-2" size={10} />
+              )} */}
+              <Stack className={`tw-flex message ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} flex-grow-0`}
+              >
+                {/* {message.senderId !== userInfo?.id && ( */}
+                <div className="tw-right-1 tw-text-start tw-italic" style={{ fontSize: '13px' }}>
+                  {message.type.includes('share') ? (
+                    <div>
+                      <div className="tw-flex tw-justify-items-center tw-items-center">
+                        <IoIosRedo className="tw-mr-2" />
+                        <span>{message.senderId == userInfo?.id ? "You've" : "Your friend"} forwarded a message</span>
                       </div>
-                    ) : (
+                      <div>
+
+                      </div>
+                    </div>
+                  ) : (message.senderName)}
+
+                </div>
+                {/* )} */}
+                {/* <div className={`tw-right-1 ${message.senderId == userInfo?.id ? 'tw-text-end' : 'tw-text-start'}`}>
+                {message.senderName}
+              </div> */}
+                {message.type.includes("text") ? (
+                  <span className="tw-text-[16px]">{message.content}</span>
+                ) : (
+                  message.type.includes("files") ? (
+                    <div>
+                      {message.content && message.content.split('|').map((content, index) => {
+
+
+                        const lastSlashIndex = content.split("?");
+                        const filenameWithExtension = lastSlashIndex[0];
+
+
+                        const lastSlashIndex1 = filenameWithExtension.split("/");
+                        const filenameWithExtension1 = lastSlashIndex1[lastSlashIndex1.length - 1];
+
+
+                        const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                        const filename = filenameWithExtension1.substring(0, lastDotIndex);
+                        const extension = filenameWithExtension1.substring(lastDotIndex);
+                        return (
+                          <div className="tw-flex" key={index}>
+                            {content.startsWith("https://") ? (
+                              <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+
+                                <div className="tw-mr-3 ">
+                                  {extension === ".doc" && (
+                                    <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".xls" && (
+                                    <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".xlsx" && (
+                                    <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".pdf" && (
+                                    <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".txt" && (
+                                    <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".docx" && (
+                                    <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                  {extension === ".pptx" && (
+                                    <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />
+                                  )}
+                                </div>
+                                <span><a href={content}
+                                  download={filename + extension}
+                                  style={{ textDecoration: 'none', color: 'black' }}>{decodeURIComponent(decodeURI(filename))}</a></span>
+
+                              </div>
+                            ) : (
+                              <span>{content}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    message.type.includes("image") ? (
                       message.content && message.content.split('|').map((content, index) => (
                         <div className="tw-flex" key={index}>
                           {content.startsWith("https://") ? (
@@ -367,16 +479,48 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                           )}
                         </div>
                       ))
-                    )
-                  )}
+                    ) : (
+                      message.type === "reply" && (
+                        <div>
+                          <div
+                            className="tw-border-l-4 tw-border-blue-500 tw-pl-3 tw-mb-2"
+                            onClick={() => handleClickReply(message.messageId)}
+                          >
+                            <div className="tw-flex">
+                              <span><BiSolidQuoteAltRight className="tw-text-slate-400 tw-text-sm tw-mr-1" /></span>
+                              <span className="tw-text-sm tw-font-bold">
+                                {findMessageById(message.messageId)?.senderName}
+                              </span>
+                            </div>
+                            <span className={`${message.senderId == userInfo?.id ? 'tw-text-black' : 'tw-text-white'}  tw-text-sm`}>
+                              {findMessageById(message.messageId)?.content}
+                            </span>
+                          </div>
+                          <span className={`${message.senderId == userInfo?.id ? 'tw-text-black' : 'tw-text-white'}`}>
+                            {message.content}
+                          </span>
+                        </div>
+                      )
 
-                  <span className="tw-text-bubble-meta tw-text-[11px] tw-pt-1 tw-min-w-fit">
-                    {calculateTime(message.timestamp)}
-                  </span>
-                </Stack>
-                {message.senderId == userInfo?.id ? (<img src={message.senderPicture} alt="" className="tw-w-10 tw-rounded-full tw-ml-2" />) : ""}
-              </div>
-            </div>
+                    )
+                  )
+                )}
+                <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
+                  {calculateTime(message.timestamp)}
+                </span>
+
+              </Stack>
+
+              {hoveredIndex === index && (
+                <div className={`tw-mt-2 message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} `} >
+                  <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
+                  <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
+                  <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
+                  <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
+                </div>
+              )}
+
+            </Stack>
           ))}
         </Stack>
       )
@@ -443,6 +587,41 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
             </div>
           ))}
+        </div>
+        <div>
+          {/* Hiển thị tooltip */}
+          {showReplyTooltip && (
+            <div className="tw-w-full tw-p-1">
+              <div className="reply-wrapper tw-w-11/12 tw-p-3 tw-mr-2">
+                <button onClick={handleCloseReply} className="tw-absolute -tw-right-2 -tw-top-4 tw-p-2">
+                  <MdDeleteForever className="tw-bg-white tw-rounded-full tw-p-1 tw-text-3xl" />
+                </button>
+                <div className="tw-bg-slate-200 tw-py-2 tw-px-5 tw-rounded-lg ">
+                  {replyMessage.type == "text" ? (
+
+                    <div className="tw-border-l-4 tw-border-blue-500 tw-pl-3">
+                      <div className="tw-flex ">
+                        <span><BiSolidQuoteAltRight className="tw-text-slate-400 tw-text-sm tw-mr-1" /></span>
+                        <span className="tw-text-slate-400 tw-text-sm tw-mr-1">Reply</span>
+                        <span className="tw-text-sm tw-font-bold">{replyMessage.senderName}</span>
+                      </div>
+                      <span className="tw-text-black tw-text-sm">{replyMessage.content}</span>
+
+                    </div>
+                  ) : (
+                    <div className="tw-border-l-4 tw-border-blue-500 tw-pl-3">
+                      <div className="tw-flex ">
+                        <span><BiSolidQuoteAltRight className="tw-text-slate-400 tw-text-sm tw-mr-1" /></span>
+                        <span className="tw-text-slate-400 tw-text-sm tw-mr-1">Reply</span>
+                        <span className="tw-text-sm tw-font-bold">{convertName()}</span>
+                      </div>
+                      <span className="tw-text-black tw-text-sm">[ {replyMessage.type} ]</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea

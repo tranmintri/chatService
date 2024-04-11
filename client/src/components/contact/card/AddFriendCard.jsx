@@ -8,7 +8,7 @@ import { reducerCases } from "../../../context/constants";
 import { toast } from "react-toastify";
 
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
-    const [{ userInfo, groups, socket, socket2 }, dispatch ] = useStateProvider()
+    const [{ userInfo, groups, socket, socket2 }, dispatch] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
 
@@ -30,11 +30,11 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
 
 
     const handleAddFriend = async () => {
-        if (!searchResults) return; 
+        if (!searchResults) return;
         const postData = {
             id_UserWantAdd: searchResults.id,
             userId: userInfo?.id,
-            profilePicture: searchResults.profilePicture,
+            profilePicture: userInfo?.avatar,
             senderName: userInfo?.display_name,
             receiverName: searchResults.display_name
         };

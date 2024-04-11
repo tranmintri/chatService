@@ -200,10 +200,11 @@ const addFriend = async (id,data) => {
                 profilePicture: data.user.avatar,
             })
         });
+    const chatId = uuidv4()
     const privateChatData = {
-            chatId: data.id,
+            chatId: chatId,
             name: data.display_name + "/" +data.user.display_name,
-            picture:data.profilePicture + "|" + data.user.profilePicture,
+            picture:data.profilePicture + "|" + data.user.avatar,
             participants: [id, data.id],
             type: "private",
             deleteId: null,

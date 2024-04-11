@@ -79,8 +79,9 @@ const ListAddFriend = () => {
       display_name: invitation.senderName,
       profilePicture: invitation.profilePicture,
       user: userInfo
-  };
-  console.log(postData, "postData")
+    };
+    console.log(postData)
+    console.log(postData, "postData")
     const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
     // sendFriendDataToModal(response.data.data);
     // setFriendList(prevList => [...prevList, response.data.data]);

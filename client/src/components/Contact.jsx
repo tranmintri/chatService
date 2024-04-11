@@ -95,7 +95,7 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link  tw-mt-20">
               <Nav.Link
                 eventKey="first"
-                style={{ textDecoration: "none", color: "black" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'first' ? 'gray' : 'transparent' }}
               >
                 <div className="d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
@@ -110,7 +110,7 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="second"
-                style={{ textDecoration: "none", color: "black" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'second' ? 'gray' : 'transparent' }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
@@ -125,7 +125,7 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="third"
-                style={{ textDecoration: "none", color: "black" }}
+                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'third' ? 'gray' : 'transparent' }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
