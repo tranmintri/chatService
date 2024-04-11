@@ -26,6 +26,7 @@ import { BiSolidQuoteRight } from "react-icons/bi";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { v4 as uuidv4 } from 'uuid';
 import ForwardModal from "../contact/modal/ForwardModal";
+import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -42,10 +43,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const messageRefs = useRef([]);
   const [scrollToMessageId, setScrollToMessageId] = useState(null);
   const [showFormShareMessage, setShowFormShareMessage] = useState(false);
+  const [showFormRemoveMessage, setShowFormRemoveMessage] = useState(false);
+
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
+  const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
+
   const handleCloseModal = () => {
     setShowFormShareMessage(false);
     setShareMessage({})
+  }
+  const handleCloseRemoveMessageModal = () => {
+    setShowFormRemoveMessage(false);
   }
   const handleEmojiModal = () => {
     setShowEmojiPicker(!showEmojiPicker)
@@ -320,7 +328,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     setScrollToMessageId(messageId); // Set messageId cần cuộn đế
   }
   const handleRemove = (messageId) => {
-    window.alert(messageId)
+    // window.alert(messageId)
+    handleShowFormRemoveMessage()
+
   }
 
   const handleCloseReply = () => {
@@ -550,6 +560,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                   <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
                   <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
                   <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
+                  <RemoveMessageModal showModal={showFormRemoveMessage} handleCloseModal={handleCloseRemoveMessageModal} backdrop="static"/>
                   <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
                 </div>
               )}

@@ -168,10 +168,11 @@ const SideBar = () => {
 
     fetchData();
   }, [activeTab, dispatch, userInfo?.id]);
-  const logOut = useLogout();
 
+  const logOut = useLogout();
   const onLogout = () => {
     const data = localStorage.getItem('accessToken');
+    console.log("logout ne");
     logOut(data);
   };
 
