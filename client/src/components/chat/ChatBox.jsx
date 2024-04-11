@@ -200,6 +200,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             }
           });
         }
+        console.log(data.data.newMessage)
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -488,15 +489,46 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                             className="tw-border-l-4 tw-border-blue-500 tw-pl-3 tw-mb-2"
                             onClick={() => handleClickReply(message.messageId)}
                           >
-                            <div className="tw-flex">
-                              <span><BiSolidQuoteAltRight className="tw-text-slate-400 tw-text-sm tw-mr-1" /></span>
-                              <span className="tw-text-sm tw-font-bold">
-                                {findMessageById(message.messageId)?.senderName}
-                              </span>
-                            </div>
+
                             <span className={`${message.senderId == userInfo?.id ? 'tw-text-black' : 'tw-text-white'}  tw-text-sm`}>
-                              {findMessageById(message.messageId)?.content}
+                              {findMessageById(message.messageId)?.content && findMessageById(message.messageId)?.content.split('|').map((content, index) => {
+                                const lastSlashIndex = content.lastIndexOf("?");
+                                const filenameWithExtension = content.substring(0, lastSlashIndex);
+
+                                const lastSlashIndex1 = filenameWithExtension.lastIndexOf("/");
+                                const filenameWithExtension1 = filenameWithExtension.substring(lastSlashIndex1 + 1);
+
+                                const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                                const filename = filenameWithExtension1.substring(0, lastDotIndex);
+                                const extension = filenameWithExtension1.substring(lastDotIndex);
+
+                                return (
+                                  <div className="tw-flex" key={index}>
+                                    {content.startsWith("https://") ? (
+                                      <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                                        <div className="tw-mr-3">
+                                          {extension === ".doc" && <img src={doc} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".xls" && <img src={xls} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".xlsx" && <img src={xlsx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".pdf" && <img src={pdf} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".txt" && <img src={txt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".docx" && <img src={docx} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                          {extension === ".pptx" && <img src={ppt} alt={`Document ${index + 1}`} style={{ width: '32px', height: '32px' }} />}
+                                        </div>
+                                        <span>
+                                          <a href={content} download={`${decodeURIComponent(decodeURI(filename))}${extension}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                            {decodeURIComponent(decodeURI(filename))}
+                                          </a>
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <span>{content}</span>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </span>
+
                           </div>
                           <span className={`${message.senderId == userInfo?.id ? 'tw-text-black' : 'tw-text-white'}`}>
                             {message.content}
@@ -612,7 +644,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                     </div>
                   ) : (
                     <div className="tw-border-l-4 tw-border-blue-500 tw-pl-3">
-                      <div className="tw-flex ">
+                      <div className="tw-flex tw-items-center">
                         <span><BiSolidQuoteAltRight className="tw-text-slate-400 tw-text-sm tw-mr-1" /></span>
                         <span className="tw-text-slate-400 tw-text-sm tw-mr-1">Reply</span>
                         <span className="tw-text-sm tw-font-bold">{convertName()}</span>
