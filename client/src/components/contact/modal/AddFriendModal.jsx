@@ -15,7 +15,7 @@ const AddFriendModal = ({ showModal, handleCloseModal, userList, setFriendList, 
 
     const handleSearch = () => {
         const results = userList.filter(user => user.phone === phoneNumber && user.id !== userInfo?.id);
-
+        console.log(results)
 
         if (results.length > 0) {
             setSearchResults(results[0]);

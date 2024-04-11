@@ -81,6 +81,7 @@ const SideBar = () => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(GET_ALL_USER);
+        console.log(data)
         setUserList(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);

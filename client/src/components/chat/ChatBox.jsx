@@ -147,7 +147,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       }
       if (showReplyTooltip && selectedFiles.length == 0 && selectedImages.length == 0) {
         type = "reply";
+        console.log(replyMessage.messageId)
         messageId = replyMessage.messageId
+
       }
 
       try {
@@ -198,7 +200,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             }
           });
         }
-
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -309,6 +310,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
   }
   const handleReply = (message) => {
+    alert(message.messageId)
     setReplyMessage(message);
     setShowReplyTooltip(true);
 
