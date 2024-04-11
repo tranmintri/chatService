@@ -96,7 +96,7 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
                         {/* Check if friendList is defined */}
                         {groups && groups.length > 0 ? (
                             <ListGroup>
-                                {groups.filter(g => g.chatId != currentChat.chatId).map(group => (
+                                {groups.map(group => (
                                     <ListGroup.Item className="mb-2 d-flex text-center align-items-center" key={group.chatId} onClick={() => handleGroupSelect(group.chatId)} >
                                         <img src={convertImage(group)} className="me-3 tw-size-12" style={{ borderRadius: '50%' }} alt="Avatar" />
                                         <Form.Check

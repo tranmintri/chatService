@@ -1,5 +1,5 @@
 import { Stack } from "react-bootstrap";
-import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@ant-design/icons'
+import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined, AudioOutlined } from '@ant-design/icons'
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
@@ -26,7 +26,9 @@ import { BiSolidQuoteRight } from "react-icons/bi";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { v4 as uuidv4 } from 'uuid';
 import ForwardModal from "../contact/modal/ForwardModal";
-
+import { FaMicrophone } from "react-icons/fa6";
+import { CiMicrophoneOn } from "react-icons/ci";
+import CaptureAudio from "./CaptureAudio";
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
@@ -42,6 +44,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const messageRefs = useRef([]);
   const [scrollToMessageId, setScrollToMessageId] = useState(null);
   const [showFormShareMessage, setShowFormShareMessage] = useState(false);
+  const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
   const handleCloseModal = () => {
     setShowFormShareMessage(false);
@@ -311,7 +314,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
   }
   const handleReply = (message) => {
-    alert(message.messageId)
     setReplyMessage(message);
     setShowReplyTooltip(true);
 
@@ -599,6 +601,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           <label htmlFor="file-input" >
             <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
           </label>
+          <label >
+            <AudioOutlined className="chat-input-icon px-2" title="Attach File"
+              onClick={() => setShowAudioRecorder(true)}
+            />
+          </label>
+
         </div>
 
         <div className="selected-images">
@@ -657,6 +665,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             </div>
           )}
         </div>
+        {/* {!showAudioRecorder && ( */}
+
         <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea
             type="text"
@@ -667,9 +677,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <IoIosSend className="send-btn tw-cursor-pointer tw-text-white ms-2" onClick={handleSendMessage} style={{ backgroundColor: 'white', color: '#fffffff' }} />
         </div>
+        {/* )} */}
+        {/* {showAudioRecorder && <CaptureAudio hide={setShowAudioRecorder} />} */}
       </div>
     </Stack >
-    // <div>a</div>
+
   );
 };
 export default ChatBox;

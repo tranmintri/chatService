@@ -63,10 +63,6 @@ io.on("connection", (socket) => {
 
 
     socket.on("send-msg-private", (data) => {
-        console.log("send-msg-private")
-        console.log("send-msg-public")
-        console.log(data)
-        console.log(data.receiveId)
         const receiveUserSocket = onlineUsers.get(data.receiveId)
 
         if (receiveUserSocket) {
