@@ -74,6 +74,7 @@ io.on("connection", (socket) => {
             socket.to(receiveUserSocket).emit("msg-recieve-private", {
                 from: data.newMessage.senderId,
                 newMessage: {
+                    messageId : data.newMessage.messageId,
                     senderId: data.newMessage.senderId,
                     senderName: data.newMessage.senderName,
                     senderPicture: data.newMessage.senderPicture,
@@ -93,6 +94,7 @@ io.on("connection", (socket) => {
                 socket.to(receiveUserSocket).emit("msg-recieve-public", {
                     from: data.newMessage.senderId,
                     newMessage: {
+                        messageId : data.newMessage.messageId,
                         senderId: data.newMessage.senderId,
                         senderName: data.newMessage.senderName,
                         senderPicture: data.newMessage.senderPicture,
