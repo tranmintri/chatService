@@ -48,6 +48,7 @@ const findById = async (chatId) => {
        return null;
     }
 };
+
 const getChatData = async (collectionName, chatId) => {
     const documentRef = db.collection(collectionName).doc(chatId);
 

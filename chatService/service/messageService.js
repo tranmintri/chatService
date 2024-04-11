@@ -6,13 +6,12 @@ const { v4: uuidv4 } = require('uuid');
 const {findById,save} = require("./chatService");
 
 const addMessageOneByOne = async (chatId,messageData) => {
-    const messageId = uuidv4();
     const getUser = onlineUsers.get(messageData.receiveId)
     await db.collection('Chats')
         .doc(chatId)
         .update({
             messages: admin.firestore.FieldValue.arrayUnion({
-                messageId: messageId,
+                messageId: messageData.newMessage.messageId,
                 senderId: messageData.newMessage.senderId,
                 senderName: messageData.newMessage.senderName,
                 senderPicture:messageData.newMessage.senderPicture,
@@ -23,6 +22,30 @@ const addMessageOneByOne = async (chatId,messageData) => {
             })
         });
     return 'Record saved successfully'
+};
+const shareMessage = async (data) => {
+    const batch = db.batch(); // Khởi tạo batch để thực hiện nhiều thay đổi cùng một lúc
+    console.log(data)
+    const messageId = uuidv4()
+    data.selectedGroups.forEach((chat) => {
+        const chatRef = db.collection('Chats').doc(chat);
+        batch.update(chatRef, {
+            messages: admin.firestore.FieldValue.arrayUnion({
+                messageId: messageId,
+                senderId: data.shareMessage.senderId,
+                senderName: data.shareMessage.senderName,
+                senderPicture: data.shareMessage.senderPicture,
+                type: "share " +data.shareMessage.type,
+                content: data.shareMessage.content,
+                timestamp: data.shareMessage.timestamp,
+                status: "sent"
+            })
+        });
+    });
+
+     await batch.commit(); // Thực hiện các thay đổi một cách đồng thời
+
+    return 'Record saved successfully';
 };
 
 const findAll = async (chatId) => {
@@ -70,4 +93,4 @@ const deleteById = async (chatId,messageId) => {
 };
 
 
-module.exports = {addMessageOneByOne,findAll,deleteById}
+module.exports = {addMessageOneByOne,findAll,deleteById,shareMessage}
