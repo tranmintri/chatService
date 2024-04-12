@@ -6,7 +6,6 @@ const { v4: uuidv4 } = require('uuid');
 const {findById,save} = require("./chatService");
 
 const addMessageOneByOne = async (chatId,messageData) => {
-    const getUser = onlineUsers.get(messageData.receiveId)
     await db.collection('Chats')
         .doc(chatId)
         .update({
@@ -18,10 +17,33 @@ const addMessageOneByOne = async (chatId,messageData) => {
                 type:messageData.newMessage.type,
                 content: messageData.newMessage.content,
                 timestamp: messageData.newMessage.timestamp,
-                status: getUser ? "delivered" : "sent"
+                status: "sent"
             })
         });
     return 'Record saved successfully'
+};
+const removeAtYourSide = async (chatId, messageId) => {
+    if (!chatId || !messageId) {
+        throw new Error('Invalid request. chatId, messageId, and newStatus are required.');
+    }
+    console.log("removeAtYourSide")
+    const chatData = await getChatData('Chats', chatId);
+
+    const messages = chatData.messages || [];
+
+    // Find the message with the specified ID and update its status
+    const updatedMessages = messages.map(message => {
+        if (message.messageId === messageId) {
+            return { ...message, status: "removed" };
+        }
+        return message;
+    });
+
+    // Update the chat document with the modified array
+    await db.collection('Chats').doc(chatId).update({ messages: updatedMessages });
+
+    console.log('Message status updated successfully.');
+    return 'Message status updated successfully.';
 };
 const shareMessage = async (data) => {
     const batch = db.batch(); // Khởi tạo batch để thực hiện nhiều thay đổi cùng một lúc
@@ -93,4 +115,4 @@ const deleteById = async (chatId,messageId) => {
 };
 
 
-module.exports = {addMessageOneByOne,findAll,deleteById,shareMessage}
+module.exports = {addMessageOneByOne,findAll,deleteById,shareMessage,removeAtYourSide}
