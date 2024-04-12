@@ -74,7 +74,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleEmojiClick = (emoji) => {
     setSendMessages((prevMessage) => (prevMessage += emoji.emoji))
   }
-
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter')
+      handleSendMessage()
+  }
   // useEffect(() => {
   //   const handleOutSideClick = (event) => {
   //     if (event.target.id !== "emoji-open") {
@@ -366,6 +369,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   }, [messages, scrollToMessageId]); // useEffect sẽ chạy lại khi messages hoặc scrollToMessageId thay đổi
 
+
+
   return (
 
     <Stack className={`chat-box border-1 ${showInfo ? 'w-full' : ''}`}>
@@ -389,12 +394,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       <div >
 
       </div>
-
-
-
-
       {messages && (
-        <Stack gap={3} className="messages tw-max-h-60 tw-flex tw-cursor-pointer items-end" >
+        <Stack gap={2} className="messages tw-max-h-60 tw-cursor-pointer items-end" >
           {messages && messages.map((message, index) => (
             <Stack key={index} className={`tw-my-3 tw-flex tw-break-words tw-relative tw-items-center`} onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
@@ -682,6 +683,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             placeholder="Type your message here..."
             className=" custom-scrollbar tw-overflow-auto tw-text-sm  focus:outline-none tw-text-black pt-3 tw-rounded-lg tw-w-full tw-max-h-14 tw-min-h-11"
             onChange={(e) => setSendMessages(e.target.value)}
+            onKeyPress={handleKeyPress}
             value={sendMessages}
           />
           <IoIosSend className="send-btn tw-cursor-pointer tw-text-white ms-2" onClick={handleSendMessage} style={{ backgroundColor: 'white', color: '#fffffff' }} />
