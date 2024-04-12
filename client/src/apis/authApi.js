@@ -68,6 +68,7 @@ export const logout = async (tokenId) => {
   }
 };
 
+
 export const sendVerifyEmail = async (email) => {
   try {
     return await axios.post("/auth/verify/email/send", {

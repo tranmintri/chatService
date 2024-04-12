@@ -29,6 +29,8 @@ import ForwardModal from "../contact/modal/ForwardModal";
 import { FaMicrophone } from "react-icons/fa6";
 import { CiMicrophoneOn } from "react-icons/ci";
 import CaptureAudio from "./CaptureAudio";
+import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
+
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
@@ -45,10 +47,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [scrollToMessageId, setScrollToMessageId] = useState(null);
   const [showFormShareMessage, setShowFormShareMessage] = useState(false);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
+  const [showFormRemoveMessage, setShowFormRemoveMessage] = useState(false);
+
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
+  const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
+
   const handleCloseModal = () => {
     setShowFormShareMessage(false);
     setShareMessage({})
+  }
+  const handleCloseRemoveMessageModal = () => {
+    setShowFormRemoveMessage(false);
   }
   const handleEmojiModal = () => {
     setShowEmojiPicker(!showEmojiPicker)
@@ -189,7 +198,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         }
         if (currentChat.type == "public") {
 
-          socket.current.emit("send-msg-public", {
+          socket.current.emit("send-msg-public", currentChat.chatId, {
 
             receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
             newMessage: {
@@ -322,7 +331,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     setScrollToMessageId(messageId); // Set messageId cần cuộn đế
   }
   const handleRemove = (messageId) => {
-    window.alert(messageId)
+    // window.alert(messageId)
+    handleShowFormRemoveMessage()
+
   }
 
   const handleCloseReply = () => {
@@ -552,6 +563,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                   <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
                   <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
                   <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
+                  <RemoveMessageModal showModal={showFormRemoveMessage} handleCloseModal={handleCloseRemoveMessageModal} backdrop="static" />
                   <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
                 </div>
               )}
