@@ -381,9 +381,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
 
       {messages && (
-        <Stack gap={3} className="messages tw-max-h-60 tw-flex tw-cursor-pointer  ">
+        <Stack gap={3} className="messages tw-max-h-60 tw-flex tw-cursor-pointer items-end" >
           {messages && messages.map((message, index) => (
-            <Stack key={index} className={`tw-my-3 tw-flex tw-break-words`} onMouseEnter={() => handleMouseEnter(index)}
+            <Stack key={index} className={`tw-my-3 tw-flex tw-break-words tw-relative tw-items-center`} onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
               ref={(element) => updateMessageRefs(element, index)}
               onClick={() => scrollToMessage(index)}
@@ -542,18 +542,15 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                 <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                   {calculateTime(message.timestamp)}
                 </span>
-
               </Stack>
-
               {hoveredIndex === index && (
-                <div className={`tw-mt-2 message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} `} >
+                <Stack className={`message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self-end' : 'self-start'}`} direction="horizontal">
                   <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
                   <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
                   <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
                   <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
-                </div>
+                </Stack>
               )}
-
             </Stack>
           ))}
         </Stack>
