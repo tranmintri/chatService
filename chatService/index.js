@@ -43,7 +43,7 @@ const server = app.listen(PORT, () => {
 })
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
     },
 });
 global.onlineUsers = new Map();
@@ -63,10 +63,6 @@ io.on("connection", (socket) => {
 
 
     socket.on("send-msg-private", (data) => {
-        console.log("send-msg-private")
-        console.log("send-msg-public")
-        console.log(data)
-        console.log(data.receiveId)
         const receiveUserSocket = onlineUsers.get(data.receiveId)
 
         if (receiveUserSocket) {
@@ -74,7 +70,7 @@ io.on("connection", (socket) => {
             socket.to(receiveUserSocket).emit("msg-recieve-private", {
                 from: data.newMessage.senderId,
                 newMessage: {
-                    messageId : data.newMessage.messageId,
+                    messageId: data.newMessage.messageId,
                     senderId: data.newMessage.senderId,
                     senderName: data.newMessage.senderName,
                     senderPicture: data.newMessage.senderPicture,
@@ -85,42 +81,41 @@ io.on("connection", (socket) => {
             })
         }
     })
-    socket.on("send-msg-public", (data) => {
 
-        console.log(data)
-        data.receiveId.forEach(p => {
-            const receiveUserSocket = onlineUsers.get(p)
-            if (receiveUserSocket) {
-                socket.to(receiveUserSocket).emit("msg-recieve-public", {
-                    from: data.newMessage.senderId,
-                    newMessage: {
-                        messageId : data.newMessage.messageId,
-                        senderId: data.newMessage.senderId,
-                        senderName: data.newMessage.senderName,
-                        senderPicture: data.newMessage.senderPicture,
-                        type: data.newMessage.type,
-                        content: data.newMessage.content,
-                        timestamp: data.newMessage.timestamp
-                    }
-                })
-            }
-        })
-    })
-
-
-    socket.on("disconnect", () => {
-        console.log("A user disconnected");
-        // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-        onlineUsers.forEach((value, key) => {
-            if (value === socket.id) {
-                onlineUsers.delete(key);
-            }
-        });
+    socket.on('joinRoom', (chatId) => {
+        socket.join(chatId);
     });
+    socket.on("send-msg-public", (chatId, data) => {
+            socket.to(chatId).emit("msg-recieve-public", {
+                from: data.newMessage.senderId,
+                newMessage: {
+                    messageId: data.newMessage.messageId,
+                    senderId: data.newMessage.senderId,
+                    senderName: data.newMessage.senderName,
+                    senderPicture: data.newMessage.senderPicture,
+                    type: data.newMessage.type,
+                    content: data.newMessage.content,
+                    timestamp: data.newMessage.timestamp
+                }
+            })
+        }
+    )
 
-    socket.on('join-to-chat-public', (roomId) => {
-        socket.join(roomId);
+
+
+socket.on("disconnect", () => {
+    console.log("A user disconnected");
+    // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
+    onlineUsers.forEach((value, key) => {
+        if (value === socket.id) {
+            onlineUsers.delete(key);
+        }
     });
+});
+
+socket.on('join-to-chat-public', (roomId) => {
+    socket.join(roomId);
+});
 
 
 })

@@ -1,5 +1,5 @@
 import { Stack } from "react-bootstrap";
-import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined } from '@ant-design/icons'
+import { FileImageOutlined, SmileOutlined, LinkOutlined, SendOutlined, AudioOutlined } from '@ant-design/icons'
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
@@ -26,6 +26,9 @@ import { BiSolidQuoteRight } from "react-icons/bi";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { v4 as uuidv4 } from 'uuid';
 import ForwardModal from "../contact/modal/ForwardModal";
+import { FaMicrophone } from "react-icons/fa6";
+import { CiMicrophoneOn } from "react-icons/ci";
+import CaptureAudio from "./CaptureAudio";
 import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
@@ -43,6 +46,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const messageRefs = useRef([]);
   const [scrollToMessageId, setScrollToMessageId] = useState(null);
   const [showFormShareMessage, setShowFormShareMessage] = useState(false);
+  const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showFormRemoveMessage, setShowFormRemoveMessage] = useState(false);
 
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
@@ -194,7 +198,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         }
         if (currentChat.type == "public") {
 
-          socket.current.emit("send-msg-public", {
+          socket.current.emit("send-msg-public", currentChat.chatId, {
 
             receiveId: currentChat.participants.filter(p => p !== userInfo?.id),
             newMessage: {
@@ -319,7 +323,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
   }
   const handleReply = (message) => {
-    alert(message.messageId)
     setReplyMessage(message);
     setShowReplyTooltip(true);
 
@@ -560,7 +563,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                   <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
                   <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
                   <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
-                  <RemoveMessageModal showModal={showFormRemoveMessage} handleCloseModal={handleCloseRemoveMessageModal} backdrop="static"/>
+                  <RemoveMessageModal showModal={showFormRemoveMessage} handleCloseModal={handleCloseRemoveMessageModal} backdrop="static" />
                   <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
                 </div>
               )}
@@ -610,6 +613,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           <label htmlFor="file-input" >
             <LinkOutlined className="chat-input-icon px-2" title="Attach File" />
           </label>
+          <label >
+            <AudioOutlined className="chat-input-icon px-2" title="Attach File"
+              onClick={() => setShowAudioRecorder(true)}
+            />
+          </label>
+
         </div>
 
         <div className="selected-images">
@@ -668,6 +677,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             </div>
           )}
         </div>
+        {/* {!showAudioRecorder && ( */}
+
         <div className="d-flex w-100 tw-justify-center tw-items-center ">
           <TextArea
             type="text"
@@ -678,9 +689,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <IoIosSend className="send-btn tw-cursor-pointer tw-text-white ms-2" onClick={handleSendMessage} style={{ backgroundColor: 'white', color: '#fffffff' }} />
         </div>
+        {/* )} */}
+        {/* {showAudioRecorder && <CaptureAudio hide={setShowAudioRecorder} />} */}
       </div>
     </Stack >
-    // <div>a</div>
+
   );
 };
 export default ChatBox;

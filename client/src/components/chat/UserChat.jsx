@@ -12,6 +12,7 @@ const UserChat = () => {
     const [{ userInfo, groups, socket }, dispatch] = useStateProvider();
 
     const handleSelectChat = (chat) => {
+        socket.current.emit('joinRoom', chat.chatId);
         dispatch({
             type: reducerCases.SET_CURRENT_CHAT,
             chat: chat   // hoặc chat.chat nếu cần truy cập vào các thuộc tính khác của chat
