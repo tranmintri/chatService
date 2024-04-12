@@ -142,7 +142,7 @@ const ListAddFriend = () => {
 
 
   return (
-    <div className="px-3" style={{ backgroundColor: '#2b2d31', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
       <div className="friend-requests-header">
         <h2>
           {" "}
@@ -161,10 +161,10 @@ const ListAddFriend = () => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
-          color: 'white'
+          color: 'black'
         }}
       >
-        <u>Lời mời kết bạn đã nhận</u>{" "}
+        <u>Friend Requests Received</u>{" "}
         <span>({receivedInvitations.length ? receivedInvitations.length : 0})</span>
       </div>
 
@@ -173,7 +173,7 @@ const ListAddFriend = () => {
           <FontAwesomeIcon
             icon={faEnvelopeOpen}
             style={{ fontSize: "100px", margin: 15 }}
-            color="white"
+            color="black"
           />
           <Alert variant="info">Oops, this is no friend requests.</Alert>
         </div>
@@ -219,7 +219,7 @@ const ListAddFriend = () => {
           marginBottom: "20px",
         }}
       >
-        <u>Lời mời kết bạn đã gửi</u> <span>({sentInvitations.length})</span>
+        <u>Friend Requests Sent</u> <span>({sentInvitations.length})</span>
       </div>
 
       {sentInvitations.length === 0 ? (
