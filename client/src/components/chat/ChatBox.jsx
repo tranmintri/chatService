@@ -403,7 +403,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             >
               {message.status == "removed" ? (
                 <div className={`tw-rounded-lg tw-italic  tw-p-3 ${message.senderId == userInfo?.id ? 'tw-bg-[#e5efff] align-self-end' : 'tw-bg-black tw-text-white align-self-start tw-text-'}`}>
-                  <span className=" tw-text-sm ">message has been removed</span>
+                  <span className=" tw-text-sm ">message has been recovered</span>
                   <div>
                     <span span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                       {calculateTime(message.timestamp)}
@@ -558,33 +558,21 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                     )}
 
                   </div>
-                  <span span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
+
+                  <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                     {calculateTime(message.timestamp)}
                   </span>
-
-                    )
-                  )
-                )}
-                <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
-                  {calculateTime(message.timestamp)}
-                </span>
-              </Stack>
-              {hoveredIndex === index && (
-                <Stack className={`message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self-end' : 'self-start'}`} direction="horizontal">
-
                 </Stack>
-              )
-
-              }
+              )}
 
               {hoveredIndex === index && message.status != "removed" && (
-                <div className={`tw-mt-2 message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} `} >
+                <d className={`tw-mt-2 message-buttons-container tw-flex ${message.senderId == userInfo?.id ? 'self align-self-end' : 'align-self-start'} `} >
                   <BiSolidQuoteRight className="tw-mx-1 hover:tw-text-blue-700" title="Reply" onClick={() => handleReply(message)} size={18} />
                   <ForwardModal showModal={showFormShareMessage} handleCloseModal={handleCloseModal} shareMessage={shareMessage} />
                   <IoIosRedo className="tw-mx-1 hover:tw-text-blue-700" title="Forward" onClick={() => handleForward(message)} size={18} />
                   <RemoveMessageModal showModal={showFormRemoveMessage} handleCloseModal={handleCloseRemoveMessageModal} removeMessage={message} backdrop="static" />
                   <SlReload className="tw-mx-1 hover:tw-text-blue-700 " title="Remove" onClick={() => handleRemove(message.messageId)} size={18} />
-                </Stack>
+                </d>
               )}
             </Stack>
           ))}
