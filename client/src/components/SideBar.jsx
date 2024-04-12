@@ -168,10 +168,11 @@ const SideBar = () => {
 
     fetchData();
   }, [activeTab, dispatch, userInfo?.id]);
-  const logOut = useLogout();
 
+  const logOut = useLogout();
   const onLogout = () => {
     const data = localStorage.getItem('accessToken');
+    console.log("logout ne");
     logOut(data);
   };
 
@@ -362,7 +363,7 @@ const SideBar = () => {
                 <input onClick={() => setShowSearchTable(true)} type="text" placeholder='Tìm kiếm' className='tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-white' style={{ backgroundColor: '#eaedf0' }} value={searchTerm} onChange={handleSearch} />
                 <div className='tw-w-1/5 tw-flex-1 tw-flex'>
                   {showSearchTable ? (
-                    <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-white hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
+                    <button className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-black hover:tw-bg-gray-300 hover:tw-text-black" onClick={() => setShowSearchTable(false)}>
                       Close
                     </button>
                   ) : (

@@ -7,6 +7,8 @@ export const initialState = {
   currentChat: undefined,
   messages: [],
   groups: [],
+  receivedInvitations: [],
+  sentInvitations: [],
   socket: undefined,
   socket2: undefined,
   videoCall: undefined,
@@ -53,16 +55,26 @@ const reducer = (state, action) => {
         ...state,
         groups: action.groups,
       };
+    case reducerCases.SET_SENT_INVITATION:
+      return {
+        ...state,
+        sentInvitations: action.sentInvitations,
+      };
+    case reducerCases.SET_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: action.receivedInvitations,
+      };
     case reducerCases.SET_SOCKET:
       return {
         ...state,
         socket: action.socket,
       };
-      case reducerCases.SET_SOCKET2:
-        return {
-          ...state,
-          socket2: action.socket2,
-        };
+    case reducerCases.SET_SOCKET2:
+      return {
+        ...state,
+        socket2: action.socket2,
+      };
     case reducerCases.ADD_MESSAGES:
       return {
         ...state,

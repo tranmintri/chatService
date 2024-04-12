@@ -7,13 +7,13 @@ import axios from 'axios';
 import { CHAT_API } from '../../../router/ApiRoutes';
 
 const GroupCard = ({ chat }) => {
-    const [{ userInfo, contactsPage, currentChat, currentChatUser }, dispatch] = useStateProvider()
+    const [{ userInfo, contactsPage, currentChat, currentChatUser, socket }, dispatch] = useStateProvider()
 
     const DeleteFriend = () => {
         console.log("delete")
     }
     const StartChat = async () => {
-
+        socket.current.emit('joinRoom', chat.chatId);
         dispatch({
             type: reducerCases.SET_ALL_CONTACTS_PAGE, contactsPage: false
         })
