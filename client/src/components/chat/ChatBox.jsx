@@ -398,7 +398,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             >
               {message.status == "removed" ? (
                 <div className={`tw-rounded-lg tw-italic  tw-p-3 ${message.senderId == userInfo?.id ? 'tw-bg-[#e5efff] align-self-end' : 'tw-bg-black tw-text-white align-self-start tw-text-'}`}>
-                  <span className=" tw-text-sm ">message has been recovered</span>
+                  <span className=" tw-text-sm ">message has been removed</span>
                   <div>
                     <span span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                       {calculateTime(message.timestamp)}
