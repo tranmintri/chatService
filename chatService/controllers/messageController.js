@@ -1,6 +1,6 @@
 'use strict';
 
-const {findAll,addMessageOneByOne,deleteById,shareMessage} = require("../service/messageService");
+const {findAll,addMessageOneByOne,deleteById,shareMessage,removeAtYourSide} = require("../service/messageService");
 const {Message} = require("../models/chat");
 const multer = require('multer');
 const upload = multer();
@@ -125,7 +125,19 @@ const saveMessageInChat = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const remove_At_Your_Side = async (req, res, next) => {
 
+    try {
+        const { chatId, messageId } = req.params;
+
+        const result = await removeAtYourSide(chatId,messageId)
+        if(result){
+            res.status(200).json({ success: true, data:result });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 const share_Message = async (req, res, next) => {
 
     try {
@@ -161,5 +173,6 @@ module.exports = {
     getAllMessageInChat,
     deleteMessageByIdInChat,
     saveFileInChat,
-    share_Message
+    share_Message,
+    remove_At_Your_Side
 }
