@@ -170,7 +170,6 @@ const findByEmail = async (email) => {
 };
 const findById = async (id) => {
     const userData = await getUserData('Users', 'id', id);
-
     if (userData) {
         return userData;
     } else {
@@ -214,5 +213,36 @@ const addFriend = async (id,data) => {
     return privateChatData
 };
 
+const removeFriend = async (id, data) => {
+    try {
+        const userRef = db.collection('Users').doc(id);
+        const userDoc = await userRef.get();
 
-module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser}
+        if (!userDoc.exists) {
+            throw new Error('User not found');
+        }
+        const userFriends = userDoc.data().friends;
+        const updatedUserFriends = userFriends.filter(friend => friend.id !== data.data.id);
+        await userRef.update({
+            friends: updatedUserFriends
+        });
+        const friendRef = db.collection('Users').doc(data.data.id);
+        const friendDoc = await friendRef.get();
+
+        if (!friendDoc.exists) {
+            throw new Error('Friend not found');
+        }
+        const friendFriends = friendDoc.data().friends;
+        const updatedFriendFriends = friendFriends.filter(friend => friend.id !== id);
+        await friendRef.update({
+            friends: updatedFriendFriends
+        });
+
+        console.log('Friend removed successfully');
+    } catch (error) {
+        console.error('Error removing friend:', error);
+    }
+};
+
+
+module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser,removeFriend}

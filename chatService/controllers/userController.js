@@ -1,7 +1,7 @@
 'use strict';
 const admin = require("firebase-admin")
 const {db} = require('../config/firebase')
-const {save, findByEmail, findAll,addFriend,findById,updateUser} = require("../service/userService");
+const {save, findByEmail, findAll,addFriend,findById,updateUser,removeFriend} = require("../service/userService");
 
 
 const addUser= async (req, res, next) => {
@@ -104,5 +104,22 @@ const addFriendToList = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+const removeFriendFromList = async (req, res, next) => {
+    const id  = req.params.id;
+    const data  = req.body;
+    try {
+        const result = await removeFriend(id, data);
+        if (result) {
+            res.status(200).json({data:result, messages:"remove friend success", status:true});
+        } else {
+            res.json({msg:"remove friend failed", status:false});
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
-module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon}
+module.exports = {removeFriendFromList, /* other exports */};
+
+module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon, removeFriendFromList}
