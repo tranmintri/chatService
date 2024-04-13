@@ -1,73 +1,65 @@
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect, useCallback } from "react";
-import {
-  Container,
-  Form,
-  FormControl,
-  Button,
-  Dropdown,
-  DropdownButton,
-  ListGroup,
-} from "react-bootstrap";
+import { Form, FormControl, DropdownButton, Dropdown, ListGroup } from "react-bootstrap";
 import { GET_ALL_USER } from "../../router/ApiRoutes";
 import axios from "axios";
 import { useStateProvider } from "../../context/StateContext";
-import GroupCard from "./card/GroupCard";
+import { MdDelete } from "react-icons/md";
 
 const ListContact = ({ data }) => {
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [friendList, setFriendList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [{ userInfo, groups }] = useStateProvider();
+  const [{ userInfo }] = useStateProvider();
+  const [friends, setFriends] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // const [letter, setLetter] = useState({});
+  const fetchData = useCallback(async () => {
+    try {
+      const { data } = await axios.get(GET_ALL_USER);
+      const userData = data.data.find(user => user.id === userInfo.id);
+      setFriends(userData?.friends);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, [userInfo.id]);
 
-  // const convertLetter = useCallback(() => {
-  //   const usersGroupsByInitialLetter = {};
-  //   if (friendList) {
-  //     friendList.forEach((user) => {
-  //       const initialLetter = user.displayName.charAt(0).toUpperCase();
-  //       if (!usersGroupsByInitialLetter[initialLetter]) {
-  //         usersGroupsByInitialLetter[initialLetter] = [];
-  //       }
-  //       usersGroupsByInitialLetter[initialLetter].push(user);
-  //     });
-  //   }
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  //   setLetter(usersGroupsByInitialLetter);
-  // }, [friendList]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
-  //       console.log(data);
-  //       setFriendList(data.data?.friends);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [userInfo?.id]);
-
-  // useEffect(() => {
-  //   convertLetter();
-  // }, [friendList, convertLetter]);
-
-  const handleSearch = () => {
-    const results = friendList.filter((friend) =>
+  useEffect(() => {
+    // Filter friends based on search term
+    const results = friends.filter((friend) =>
       friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(results);
-  };
+  }, [searchTerm, friends]);
 
-  const handleFilterSelect = (selectedFilter) => {
-    console.log(`Selected filter: ${selectedFilter}`);
-  };
-
+  const DeleteFriend = (id) => {
+    return async () => {
+      try {
+        const response = await axios.post(GET_ALL_USER + 'delete/' + userInfo.id, { data: { id } })
+        console.log(response);
+        fetchData(); // Fetch data again after deleting a friend
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+  const handleFilterSelect = (option) => {
+    let sortedResults;
+    switch (option) {
+        case "Option 1":
+            sortedResults = [...searchResults].sort((a, b) => a.displayName.localeCompare(b.displayName));
+            break;
+        case "Option 2":
+            sortedResults = [...searchResults].sort((a, b) => b.displayName.localeCompare(a.displayName));
+            break;
+        default:
+            sortedResults = searchResults;
+    }
+    setSearchResults(sortedResults);
+};
   return (
     <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
       <div className="friend-list-header">
@@ -93,13 +85,6 @@ const ListContact = ({ data }) => {
           style={{ width: "50%", marginRight: "10px" }}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button
-          variant="outline-secondary"
-          onClick={handleSearch}
-          style={{ marginRight: "20px" }}
-        >
-          Search
-        </Button>
 
         <DropdownButton
           id="filter-dropdown"
@@ -115,31 +100,21 @@ const ListContact = ({ data }) => {
           </Dropdown.Item>
         </DropdownButton>
       </Form>
-      {searchResults.length > 0 && (
-        <ListGroup className="mt-5">
-          {searchResults.map((friend) => (
-            <ListGroup.Item key={friend.id}>{friend.displayName}</ListGroup.Item>
-          ))}
-        </ListGroup>
-      )}
-      {/* {Object.entries(letter).map(([initialLetter, friendList]) => {
-        return (
-          <div key={Date.now() + initialLetter}>
-            <div className='tw-pl-5 tw-py-5 tw-font-bold tw-text-2xl' >{initialLetter}</div>
-            {groups.map(group => (
-              {if(group.type == "private"){
-                <FriendCard friend={group} key={group.chatId} />
-              }}
-            ))}
+      <ListGroup className="mt-5">
+        {searchResults.map((friend, index) => (
+          <div key={index} className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2 tw-text-black'>
+            <div>
+              <img src={friend.profilePicture} className='tw-w-14' alt={friend.displayName} />
+            </div>
+            <div className="tw-flex-1 tw-ml-10">
+              <span className='tw-font-semibold tw-text-xl'>{friend.displayName}</span>
+            </div>
+            <button onClick={DeleteFriend(friend.id)}>
+              <MdDelete className='tw-text-2xl tw-flex tw-items-end' />
+            </button>
           </div>
-        );
-      })} */}
-      {Array.isArray(groups) && groups.map((el) => {
-        if (el.type === "private") {
-          return <GroupCard chat={el} key={el.chatId} />;
-        }
-        return null;
-      })}
+        ))}
+      </ListGroup>
     </div>
   );
 };
