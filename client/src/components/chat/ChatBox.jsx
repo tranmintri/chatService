@@ -37,6 +37,7 @@ import { CiMicrophoneOn } from "react-icons/ci";
 import CaptureAudio from "./CaptureAudio";
 import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 import RecordCard from "../contact/card/RecordCard";
+import { BsPersonAdd } from "react-icons/bs";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -83,8 +84,16 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleEmojiClick = (emoji) => {
     setSendMessages((prevMessage) => (prevMessage += emoji.emoji));
   };
+  // const [tempMessage, setTempMessage] = useState('');
+
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleSendMessage();
+    if (e.key === "Enter" && e.shiftKey) {
+      // Nếu nhấn Shift + Enter, thêm ký tự xuống dòng vào tin nhắn
+      setSendMessages(sendMessages);
+    } else if (e.key === "Enter") {
+      // Nếu chỉ nhấn Enter, gửi tin nhắn và reset tin nhắn
+      handleSendMessage();
+    }
   };
   // useEffect(() => {
   //   const handleOutSideClick = (event) => {
@@ -422,6 +431,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </div>
         </div>
         <div className="d-flex">
+          {currentChat.type == "public" && (
+            <BsPersonAdd
+              className="chat-header-icon px-2 bg-white"
+              title="Search"
+            /> //Add new member ne
+          )}
           <IoMdSearch
             className="chat-header-icon px-2 bg-white"
             title="Search"
@@ -1052,7 +1067,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             <TextArea
               type="text"
               placeholder="Type your message here..."
-              className=" custom-scrollbar tw-overflow-auto tw-text-sm  focus:outline-none tw-text-black pt-3 tw-rounded-lg tw-w-full tw-max-h-14 tw-min-h-11"
+              className="custom-scrollbar tw-overflow-auto tw-text-sm  focus:outline-none tw-text-black pt-3 tw-rounded-lg tw-w-full tw-max-h-14 tw-min-h-11"
               onChange={(e) => setSendMessages(e.target.value)}
               onKeyPress={handleKeyPress}
               value={sendMessages}

@@ -3,24 +3,22 @@ import { useStateProvider } from "../../context/StateContext";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
+import ModalGroupMembers from "./modal/ModalGroupMembers";
+import { FaPen } from "react-icons/fa";
+import ModalGroupInfo from "./modal/ModalGroupInfo";
+import xls from "../../assets/xls.png";
+import xlsx from "../../assets/xlsx.png";
+import txt from "../../assets/txt.png";
+import pdf from "../../assets/pdf.png";
+import doc from "../../assets/doc.png";
+import docx from "../../assets/docx.png";
+import ppt from "../../assets/ppt.png";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
-  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
-    useStateProvider();
-  const [showAllImage, setShowAllImage] = useState(false);
-  const [showAllFile, setShowAllFile] = useState(false);
-  const [showAllLink, setShowAllLink] = useState(false);
   const [showModal, setShowModal] = useState(false);
   // const []
   const toggleModal = () => {
     setShowModal(!showModal);
-  };
-
-  const toggleShowAllImage = () => {
-    setShowAllImage(!showAllImage);
-  };
-  const toggleShowAllFile = () => {
-    setShowAllFile(!showAllFile);
   };
 
   // const groupFilesByDate = (files) => {
@@ -34,6 +32,28 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   //     });
   //     return groupedFiles;
   // };
+  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
+    useStateProvider();
+  const [showAllImage, setShowAllImage] = useState(false);
+  const [showAllFile, setShowAllFile] = useState(false);
+  const [showAllLink, setShowAllLink] = useState(false);
+  const [showModalMembers, setShowModalMembers] = useState(false);
+  const [showModalInfo, setShowModalInfo] = useState(false);
+
+  const toggleModalInfo = () => {
+    setShowModalInfo(!showModalInfo);
+  };
+
+  const toggleModalMembers = () => {
+    setShowModalMembers(!showModalMembers);
+  };
+
+  const toggleShowAllImage = () => {
+    setShowAllImage(!showAllImage);
+  };
+  const toggleShowAllFile = () => {
+    setShowAllFile(!showAllFile);
+  };
 
   // // Nhóm các file theo ngày gửi
   // const groupedFiles = groupFilesByDate(files);
@@ -43,7 +63,32 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const toggleShowAllLink = () => {
     setShowAllLink(!showAllLink);
   };
-  const limitedImages = showAllImage ? images : images.slice(0, 6);
+  const splitImage = () => {
+    let url = "";
+    if (currentChat.messages && Array.isArray(currentChat.messages)) {
+      currentChat.messages.forEach((element) => {
+        if (element.type === "image") {
+          url += element.content.toString(); // Thêm "|" để phân biệt các URL
+        }
+      });
+    }
+    console.log(url);
+
+    return url.split("|");
+  };
+  const splitFile = () => {
+    let url = "";
+    if (currentChat.messages && Array.isArray(currentChat.messages)) {
+      currentChat.messages.forEach((element) => {
+        if (element.type === "files") {
+          url += element.content.toString(); // Thêm "|" để phân biệt các URL
+        }
+      });
+    }
+
+    return url.split("|");
+  };
+
   const limitedFiles = showAllFile ? files : files.slice(0, 3);
   const limitedLinks = showAllLink ? links : links.slice(0, 3);
 
@@ -114,17 +159,20 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               Photos / Videos{" "}
             </span>
             <div className="tw-flex tw-flex-wrap tw-mx-auto tw-overflow-auto custom-scrollbar tw-max-h-80">
-              {limitedImages.map((image, index) => (
+              {splitImage().map((image, index) => (
                 <div
                   key={index}
                   className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4"
                 >
                   <img
-                    src={image.url}
-                    alt={image.alt}
+                    src={image}
+                    alt={image}
                     className="w-full h-auto tw-mx-auto"
                     style={{ maxHeight: "85px" }}
                   />
+
+                  {/*  */}
+                  {/* <span>{image.content}</span> */}
                 </div>
               ))}
             </div>
@@ -141,27 +189,123 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           <div className="mb-2 tw-border-b tw-ml-2">
             <span className="tw-font-bold tw-text-[18px]">Files</span>
             <ul className="tw-block tw-p-0">
-              {limitedFiles.map((file, index) => (
-                <li
-                  key={index}
-                  className="tw-flex items-center py-1 hover:tw-bg-gray-200"
-                >
-                  {/* {file.imageUrl} */}
-                  <img
-                    src={file.imageUrl}
-                    alt={file.name}
-                    className="w-full h-auto"
-                    style={{ maxHeight: "60px" }}
-                  />
-                  <div className="tw-block tw-mx-2">
-                    <p className="">{file.name}</p>
-                    <div className="tw-flex ">
-                      <p className="tw-mr-32">{file.size}</p>
-                      <p className="tw-ms-auto">{file.date}</p>
-                    </div>
+              {splitFile().map((content, index) => {
+                const lastSlashIndex = content.lastIndexOf("?");
+                const filenameWithExtension = content.substring(
+                  0,
+                  lastSlashIndex
+                );
+
+                const lastSlashIndex1 = filenameWithExtension.lastIndexOf("/");
+                const filenameWithExtension1 = filenameWithExtension.substring(
+                  lastSlashIndex1 + 1
+                );
+
+                const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                const filename = filenameWithExtension1.substring(
+                  0,
+                  lastDotIndex
+                );
+                const extension =
+                  filenameWithExtension1.substring(lastDotIndex);
+
+                return (
+                  <div className="tw-flex" key={index}>
+                    {content.startsWith("https://") ? (
+                      <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                        <div className="tw-mr-3">
+                          {extension === ".doc" && (
+                            <img
+                              src={doc}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".xls" && (
+                            <img
+                              src={xls}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".xlsx" && (
+                            <img
+                              src={xlsx}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".pdf" && (
+                            <img
+                              src={pdf}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".txt" && (
+                            <img
+                              src={txt}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".docx" && (
+                            <img
+                              src={docx}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                          {extension === ".pptx" && (
+                            <img
+                              src={ppt}
+                              alt={`Document ${index + 1}`}
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                              }}
+                            />
+                          )}
+                        </div>
+                        <span>
+                          <a
+                            href={content}
+                            download={`${decodeURIComponent(
+                              decodeURI(filename)
+                            )}${extension}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                            }}
+                          >
+                            {decodeURIComponent(decodeURI(filename))}
+                          </a>
+                        </span>
+                      </div>
+                    ) : (
+                      <span>{content}</span>
+                    )}
                   </div>
-                </li>
-              ))}
+                );
+              })}
             </ul>
             {files.length > 3 && (
               <button

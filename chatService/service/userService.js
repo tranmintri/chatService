@@ -237,6 +237,14 @@ const removeFriend = async (id, data) => {
         await friendRef.update({
             friends: updatedFriendFriends
         });
+        const chatRef = db.collection('Chats');
+        const chatSnapshot = await chatRef.get();
+        chatSnapshot.forEach(doc => {
+            const chatData = doc.data();
+            if (chatData.participants.includes(id) && chatData.participants.includes(data.data.id) && chatData.participants.length === 2) {
+                doc.ref.delete();
+            }
+        });
 
         console.log('Friend removed successfully');
     } catch (error) {
