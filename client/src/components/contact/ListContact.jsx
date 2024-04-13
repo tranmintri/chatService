@@ -29,7 +29,7 @@ const ListContact = ({ data }) => {
 
   useEffect(() => {
     // Filter friends based on search term
-    const results = friends.filter((friend) =>
+    const results = friends?.filter((friend) =>
       friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(results);
@@ -101,7 +101,7 @@ const ListContact = ({ data }) => {
         </DropdownButton>
       </Form>
       <ListGroup className="mt-5">
-        {searchResults.map((friend, index) => (
+        {searchResults?.map((friend, index) => (
           <div key={index} className='tw-flex tw-items-center tw-w-full tw-border-b-2 hover:tw-bg-slate-100 tw-p-2 tw-text-black'>
             <div>
               <img src={friend.profilePicture} className='tw-w-14' alt={friend.displayName} />
