@@ -30,6 +30,7 @@ import { FaMicrophone } from "react-icons/fa6";
 import { CiMicrophoneOn } from "react-icons/ci";
 import CaptureAudio from "./CaptureAudio";
 import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
+import { BsPersonAdd } from "react-icons/bs";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -74,10 +75,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleEmojiClick = (emoji) => {
     setSendMessages((prevMessage) => (prevMessage += emoji.emoji))
   }
+  // const [tempMessage, setTempMessage] = useState('');
+
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter')
-      handleSendMessage()
-  }
+    if (e.key === 'Enter' && e.shiftKey) {
+      // Nếu nhấn Shift + Enter, thêm ký tự xuống dòng vào tin nhắn
+      setSendMessages(sendMessages);
+    } else if (e.key === 'Enter') {
+      // Nếu chỉ nhấn Enter, gửi tin nhắn và reset tin nhắn
+      handleSendMessage();
+    }
+  };
   // useEffect(() => {
   //   const handleOutSideClick = (event) => {
   //     if (event.target.id !== "emoji-open") {
@@ -383,6 +391,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </div>
         </div>
         <div className="d-flex">
+          {currentChat.type == 'public' && (
+            <BsPersonAdd className="chat-header-icon px-2 bg-white" title="Search" /> //Add new member ne
+          )}
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
           <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={() => handleClickOpenTab(chat.type == 'private' ? chat.participants[0] == userInfo?.id ? chat.participants[1] : chat.participants[0] : chat.chatId)} />
           {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} /> */}
