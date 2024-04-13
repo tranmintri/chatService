@@ -112,9 +112,13 @@ const Chat = () => {
     // Thêm các đối tượng liên kết khác vào đây
   ];
   const members = [
-    { id: 1, name: "Trú Nghi" },
-    { id: 2, name: "Cu Ngảnh" },
-    { id: 3, name: "Hủ Ngai" },
+    {
+      id: 1,
+      name: "Trú Nghi",
+      avatar: 'https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1'
+    },
+    { id: 2, name: "Cu Ngảnh", avatar: 'https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1' },
+    { id: 3, name: "Hủ Ngai", avatar: 'https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1' },
     // Các thành viên khác...
   ];
   return (

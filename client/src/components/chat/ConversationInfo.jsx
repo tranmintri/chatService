@@ -3,17 +3,26 @@ import { useStateProvider } from "../../context/StateContext";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
+import ModalGroupMembers from "./modal/ModalGroupMembers";
+import { FaPen } from "react-icons/fa";
+import ModalGroupInfo from "./modal/ModalGroupInfo";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
     const [{ messages, userInfo, currentChat, groups, socket }, dispatch] = useStateProvider()
     const [showAllImage, setShowAllImage] = useState(false);
     const [showAllFile, setShowAllFile] = useState(false);
     const [showAllLink, setShowAllLink] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    const [showModalMembers, setShowModalMembers] = useState(false);
+    const [showModalInfo, setShowModalInfo] = useState(false);
 
-    const toggleModal = () => {
-        setShowModal(!showModal);
+    const toggleModalInfo = () => {
+        setShowModalInfo(!showModalInfo);
     };
+
+    const toggleModalMembers = () => {
+        setShowModalMembers(!showModalMembers);
+    };
+
 
     const toggleShowAllImage = () => {
         setShowAllImage(!showAllImage);
@@ -59,44 +68,35 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     };
 
     return (
-        <div>
+        <div className="tw-w-full tw-h-full">
             <div className=" tw-bg-gray-50 tw-overflow-y-auto">
-                <p className="fs-4 text-center border-bottom fw-bold m-0">Conversation Info</p>
-                <div style={{ maxHeight: '95vh' }}>
+                <p className="tw-text-center tw-border-b tw-font-bold m-0 tw-text-[22px]">Conversation Info</p>
+                <div style={{ height: '95vh' }}>
                     <div className="mb-2 mt-2 border-bottom d-flex justify-content-center align-items-center">
-                        <div className="text-center">
+                        <div className="align-items-center">
                             <img
-                                src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} // Bạn cần thay đổi đường dẫn hình ảnh tương ứng
-                                className="me-2 mb-3 tw-h-20 tw-w-20 tw-rounded-full"
-                                // height={80}
-                                // width={80}
-                                // style={{ borderRadius: '50%' }}
-                                alt="Girl Friend"
+                                src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`}
+                                className="mx-auto mb-3 tw-h-20 tw-w-20 tw-rounded-full"
+                                alt="Group Avatar"
                             />
-                            <p className="fs-6 fw-bold">{chat.name}</p>
+                            <div className="tw-flex text-center">
+                                <p className="fs-6 fw-bold tw-mr-2">{chat.name}</p>
+                                <FaPen className="tw-cursor-pointer" size={13} onClick={toggleModalInfo} />
+                            </div>
+                            <ModalGroupInfo showModalInfo={showModalInfo} toggleModalInfo={toggleModalInfo} chat={chat} />
                         </div>
                     </div>
-                    <div className="mb-2 tw-border-b tw-ml-2">
-                        <span className="tw-font-bold tw-text-[18px]">Member List</span>
-                        {currentChat.type == 'public' && (
-                            <button className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200" style={{ width: '400px', height: '40px' }} onClick={toggleMemberList}>
-                                <div className="tw-flex  align-items-center">
-                                    <GrGroup size={20} />
-                                    <span className="tw-pl-5">{members.length} members</span>
-                                </div>
-                            </button>
-                        )}
-                        {showModal && (
-                            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
-                                <div className="bg-white p-8 rounded shadow-lg">
-                                    <h2 className="text-lg font-bold mb-4">Member List</h2>
-                                    <ul>
-                                        {members.map((member, index) => (
-                                            <li key={index}>{member.name}</li>
-                                        ))}
-                                    </ul>
-                                    <button className="mt-4" onClick={toggleModal}>Close</button>
-                                </div>
+                    <div>
+                        {currentChat.type === 'public' && (
+                            <div className="mb-2 tw-border-b tw-ml-2">
+                                <span className="tw-font-bold tw-text-[18px]">Member List</span>
+                                <button className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200" style={{ width: '400px', height: '40px' }} onClick={toggleModalMembers}>
+                                    <div className="tw-flex  align-items-center">
+                                        <GrGroup size={20} />
+                                        <span className="tw-pl-5">{members.length} members</span>
+                                    </div>
+                                </button>
+                                <ModalGroupMembers showModalMembers={showModalMembers} toggleModalMembers={toggleModalMembers} members={members} />
                             </div>
                         )}
                     </div>
