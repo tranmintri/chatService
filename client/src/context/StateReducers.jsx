@@ -55,11 +55,17 @@ const reducer = (state, action) => {
         ...state,
         groups: action.groups,
       };
+
     case reducerCases.SET_SENT_INVITATION:
       return {
         ...state,
-        sentInvitations: action.sentInvitations,
+        sentInvitations: action.send,
       };
+      case reducerCases.ADD_INVITATION:
+        return {
+          ...state,
+          sentInvitations: [...state.sentInvitations, action.newSend],
+        };
     case reducerCases.SET_RECEIVE_INVITATION:
       return {
         ...state,

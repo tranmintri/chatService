@@ -8,7 +8,7 @@ import { reducerCases } from "../../../context/constants";
 import { toast } from "react-toastify";
 
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
-    const [{ userInfo, groups, socket, socket2 }, dispatch] = useStateProvider()
+    const [{ userInfo, groups, socket, socket2, sentInvitations, receivedInvitations }, dispatch] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
 
@@ -39,11 +39,13 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
             receiverName: searchResults.display_name
         };
         try {
-            socket2.current.emit("sendFriendRequest", postData);
-            // alert('Friend added successfully!');
+            socket2.current.emit("sendFriendRequest", postData);   
             toast.success('Friend added successfully!');
             handleCloseModal();
-
+            dispatch({
+                type: reducerCases.ADD_INVITATION,
+                newSend: postData,
+            });
         } catch (error) {
             console.error('Error sending friend request:', error);
         }

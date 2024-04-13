@@ -79,9 +79,11 @@ io.on("connection", (socket) => {
     socket.on("sendFriendRequest", (data) => {
         friendRequestService.requestAddFriend(data)
         const postData = {
-            id: data.id_UserWantAdd,
-            display_name: data.receiverName,
-            profilePicture: data.profilePicture
+            id_UserWantAdd: data.id_UserWantAdd,
+            userId: data.userId,
+            profilePicture: data.profilePicture,
+            senderName: data.senderName,
+            receiverName: data.receiverName
         };
         socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
     });
