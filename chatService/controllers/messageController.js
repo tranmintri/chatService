@@ -2,17 +2,11 @@
 
 const {findAll, addMessageOneByOne, deleteById, shareMessage, removeAtYourSide} = require("../service/messageService");
 const {Message} = require("../models/chat");
-<<<<<<< Updated upstream
 const multer = require('multer');
-const upload = multer();
-
-=======
-
 
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { Upload } = require("@aws-sdk/lib-storage");
 const { Readable } = require("stream");
-const multer = require("multer");
 
 // Create S3 client
 const s3Client = new S3Client({
@@ -77,8 +71,6 @@ const saveRecordInChat = async (req, res) => {
 };
 
 // Định nghĩa route để gửi file từ client lên S3
->>>>>>> Stashed changes
-
 
 const upload = multer()
 // const  upload1
