@@ -32,7 +32,12 @@ const findAll = async () => {
                 doc.data().participants,
                 doc.data().messages,
                 doc.data().deleteId,
+<<<<<<< Updated upstream
                 doc.data().type
+=======
+                doc.data().managerId
+
+>>>>>>> Stashed changes
             );
             chatsArrays.push(conversation);
         });
@@ -67,22 +72,41 @@ const getChatData = async (collectionName, chatId) => {
         throw error;
     }
 }
-const addParticipant = async (chatId,userId) => {
+const addParticipant = async (chatId, memberAdd) => {
+    // Lấy thông tin tài liệu chat từ Firestore
+    const chatDoc = await db.collection('Chats').doc(chatId).get();
 
-    await db.collection('Chats')
-        .doc(chatId)
-        .update({
-            participants: admin.firestore.FieldValue.arrayUnion({
-                userId
-            })
+    if (chatDoc.exists) {
+        // Lấy mảng participants từ tài liệu chat
+        const participants = chatDoc.data().participants || [];
+
+        // Tạo mảng mới bằng cách kết hợp participants và memberAdd, loại bỏ các giá trị trùng lặp
+        const updatedParticipants = [...new Set([...participants, ...memberAdd])];
+
+        // Cập nhật mảng participants mới vào tài liệu chat
+        await db.collection('Chats').doc(chatId).update({
+            participants: updatedParticipants
         });
+    } else {
+        console.error('Chat document not found');
+    }
 };
+
 const deleteById = async (chatId,userId) => {
 
     await db.collection('Chats')
         .doc(chatId)
         .update({
             deleteId: userId
+        });
+};
+
+const updateRoleInChat = async (chatId,userId) => {
+    console.log("update Role")
+    await db.collection('Chats')
+        .doc(chatId)
+        .update({
+            managerId: userId
         });
 };
 
@@ -133,4 +157,4 @@ const getChatsByParticipants = async (participants) => {
         throw new Error('Error getting chats by participants:', error);
     }
 };
-module.exports = {save,findAll,findById,addParticipant,deleteById,getChatData,getChatsByOneParticipantID,getChatsByParticipants}
+module.exports = {save,findAll,findById,addParticipant,deleteById,getChatData,getChatsByOneParticipantID,getChatsByParticipants,updateRoleInChat}
