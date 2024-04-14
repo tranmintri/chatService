@@ -32,12 +32,8 @@ const findAll = async () => {
                 doc.data().participants,
                 doc.data().messages,
                 doc.data().deleteId,
-<<<<<<< Updated upstream
                 doc.data().type
-=======
                 doc.data().managerId
-
->>>>>>> Stashed changes
             );
             chatsArrays.push(conversation);
         });
