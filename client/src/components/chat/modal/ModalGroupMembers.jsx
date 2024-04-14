@@ -5,6 +5,7 @@ import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 import axios from "axios";
 import { useStateProvider } from "../../../context/StateContext";
 import { HiMiniKey } from "react-icons/hi2";
+
 const ModalGroupMembers = ({
   showModalMembers,
   toggleModalMembers,
@@ -12,9 +13,10 @@ const ModalGroupMembers = ({
 }) => {
   const [showOptions, setShowOptions] = useState({});
   const [selectedOptionPosition, setSelectedOptionPosition] = useState({});
-  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, groups, currentChat, socket }, dispatch] = useStateProvider();
   const [friendList, setFriendList] = useState([]);
-
+  const [modalShow, setModalShow] = useState(false);
+  const [currentMember, setCurrentMember] = useState(null);
   const filteredFriendList = friendList.filter((friend) => {
     return members.some((id) => id === friend.id);
   });
@@ -62,12 +64,51 @@ const ModalGroupMembers = ({
     toggleModalMembers();
     setShowOptions({});
   };
+  const handleRemove = (member) => {
+    setCurrentMember(member);
+    setModalShow(true);
+  };
+  
+  const confirmRemove = () => {
+    removeOutGroup(currentMember);
+    setModalShow(false);
+  };
   const removeOutGroup = (member) => {
-    alert(member.id);
+    console.log(member, "member")
     toggleModalMembers();
     setShowOptions({});
-  };
+    const postData = {
+      chatId: currentChat.chatId,
+      chatParticipants: currentChat.participants,
+      userId: member.id,
+      user_Name: member.display_name
+    }
+    console.log(postData, "data Leave")
+    try {
+      socket.current.emit("kick-from-group", postData);
+      alert("You have left the group");
+    }
+    catch (error) {
+      console.error('Error kick:', error);
+    }
 
+  };
+  // const onLeaveGroup = () => {
+  //   const postData = {
+  //     chatId: currentChat.chatId,
+  //     chatParticipants: currentChat.participants,
+  //     userId: userInfo.id,
+  //     user_Name: userInfo.display_name
+  //   }
+  //   console.log(postData, "data Leave")
+  //   try {
+  //     socket.current.emit("leave-group", postData);
+  //     alert("You have left the group");
+  //   }
+  //   catch (error) {
+  //     console.error('Error sending friend request:', error);
+  //   }
+  // };
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -135,8 +176,8 @@ const ModalGroupMembers = ({
                     </div>
                     <div
                       className="tw-h-[50%] hover:tw-bg-gray-200 tw-cursor-pointer tw-px-2 tw-py-1"
-                      onClick={() => removeOutGroup(member)}
-                    >
+                      onClick={() => handleRemove(member)}
+                      >
                       Remove from group
                     </div>
                   </div>
@@ -151,6 +192,20 @@ const ModalGroupMembers = ({
           Close
         </Button>
       </Modal.Footer>
+      <Modal show={modalShow} onHide={() => setModalShow(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Remove</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>Are you sure you want to remove this member from the group?</Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setModalShow(false)}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={confirmRemove}>
+      Remove
+    </Button>
+  </Modal.Footer>
+</Modal>
     </Modal>
   );
 };

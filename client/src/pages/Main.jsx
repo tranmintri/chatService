@@ -147,6 +147,15 @@ const Main = () => {
     }
   }, [socket.current])
 
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("kick-out", (data) => {
+        console.log(data, "data")
+        alert(data.user_Name + " has been kicked out of the group")
+      })
+      setSocketEvent(true)
+    }
+  }, [socket.current])
 
   return isLoading ? <SideBar /> : <Loading />;
 };

@@ -101,8 +101,6 @@ io.on("connection", (socket) => {
     }
     )
 
-
-
     socket.on("disconnect", () => {
         console.log("A user disconnected");
         // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
@@ -129,6 +127,22 @@ io.on("connection", (socket) => {
         data.chatParticipants.forEach(participant => {
             if (onlineUsers.has(participant)) {
                 socket.to(onlineUsers.get(participant)).emit("leave-group-noti", postData);
+            }
+        });
+    });
+
+    socket.on("kick-from-group", (data) => {
+        userService.leaveGroup(data)
+        const postData = {
+            chatId: data.chatId,
+            chatParticipants: data.chatParticipants,
+            userId: data.userId,
+            user_Name: data.user_Name
+        };
+        console.log(data.chatParticipants)
+        data.chatParticipants.forEach(participant => {
+            if (onlineUsers.has(participant)) {
+                socket.to(onlineUsers.get(participant)).emit("kick-out", postData);
             }
         });
     });
