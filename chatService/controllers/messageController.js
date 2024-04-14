@@ -174,48 +174,6 @@ const saveFileInChat = async (req, res, next) => {
     }
 };
 
-// const uploadRecord = upload.single('record'); // Chỉ cho phép tải lên một tệp record
-// const saveRecordInChat = async (req, res) => {
-//     try {
-//         uploadRecord(req, res, async (err) => {
-//             console.log(req.file)
-//             if (err) {
-//                 console.error('Error uploading file:', err);
-//                 return res.status(500).json({ error: 'Internal Server Error' });
-//             }
-
-//             if (!req.file) {
-//                 return res.status(400).send("No file uploaded.");
-//             }
-
-//             const recordFile = req.file;
-//             const timestamp = Date.now();
-//             const recordUploadPath = `record/${timestamp}_${decodeURIComponent(recordFile.originalname)}`;
-//             const recordRef = bucket.file(recordUploadPath);
-
-//             const blobStream = recordRef.createWriteStream({
-//                 metadata: { contentType: recordFile.mimetype },
-//             });
-
-//             blobStream.on("error", (error) => {
-//                 console.error("Error uploading file:", error);
-//                 return res.status(500).send("Error uploading file.");
-//             });
-
-//             blobStream.on("finish", async () => {
-//                 // Get signed URL of the uploaded file
-//                 const [url] = await recordRef.getSignedUrl({ action: "read", expires: "01-01-2025" });
-//                 console.log("File uploaded to Firebase Storage.",url);
-//                 res.status(200).json({ url:url });
-//             });
-
-//             blobStream.end(recordFile.buffer);
-//         });
-//     } catch (error) {
-//         console.error("Error handling upload:", error);
-//         res.status(500).send("Error handling upload.");
-//     }
-// };
 
 const saveMessageInChat = async (req, res, next) => {
 
