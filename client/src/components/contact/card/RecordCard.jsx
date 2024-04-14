@@ -4,7 +4,7 @@ import WaveSurfer from "wavesurfer.js";
 const RecordCard = ({ message }) => {
   return (
     <div>
-      <audio controls>
+      <audio controls volume={3.0}>
         <source src={message.content} type="audio/mp3" />
         Your browser does not support the audio element.
       </audio>

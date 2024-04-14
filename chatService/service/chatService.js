@@ -31,8 +31,8 @@ const findAll = async () => {
                 doc.data().picture,
                 doc.data().participants,
                 doc.data().messages,
-                doc.data().deleteId,
                 doc.data().type,
+                doc.data().deleteId,
                 doc.data().managerId
             );
             chatsArrays.push(conversation);
