@@ -86,36 +86,36 @@ io.on("connection", (socket) => {
         socket.join(chatId);
     });
     socket.on("send-msg-public", (chatId, data) => {
-            socket.to(chatId).emit("msg-recieve-public", {
-                from: data.newMessage.senderId,
-                newMessage: {
-                    messageId: data.newMessage.messageId,
-                    senderId: data.newMessage.senderId,
-                    senderName: data.newMessage.senderName,
-                    senderPicture: data.newMessage.senderPicture,
-                    type: data.newMessage.type,
-                    content: data.newMessage.content,
-                    timestamp: data.newMessage.timestamp
-                }
-            })
-        }
+        socket.to(chatId).emit("msg-recieve-public", {
+            from: data.newMessage.senderId,
+            newMessage: {
+                messageId: data.newMessage.messageId,
+                senderId: data.newMessage.senderId,
+                senderName: data.newMessage.senderName,
+                senderPicture: data.newMessage.senderPicture,
+                type: data.newMessage.type,
+                content: data.newMessage.content,
+                timestamp: data.newMessage.timestamp
+            }
+        })
+    }
     )
 
 
 
-socket.on("disconnect", () => {
-    console.log("A user disconnected");
-    // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-    onlineUsers.forEach((value, key) => {
-        if (value === socket.id) {
-            onlineUsers.delete(key);
-        }
+    socket.on("disconnect", () => {
+        console.log("A user disconnected");
+        // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
+        onlineUsers.forEach((value, key) => {
+            if (value === socket.id) {
+                onlineUsers.delete(key);
+            }
+        });
     });
-});
 
-socket.on('join-to-chat-public', (roomId) => {
-    socket.join(roomId);
-});
+    socket.on('join-to-chat-public', (roomId) => {
+        socket.join(roomId);
+    });
 
-
+    
 })
