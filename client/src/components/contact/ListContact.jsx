@@ -6,12 +6,15 @@ import { GET_ALL_USER } from "../../router/ApiRoutes";
 import axios from "axios";
 import { useStateProvider } from "../../context/StateContext";
 import { MdDelete } from "react-icons/md";
+import { Modal, Button } from 'react-bootstrap';
 
 const ListContact = ({ data }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [{ userInfo }] = useStateProvider();
   const [friends, setFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalShow, setModalShow] = useState(false);
+  const [currentFriendId, setCurrentFriendId] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -35,17 +38,26 @@ const ListContact = ({ data }) => {
     setSearchResults(results);
   }, [searchTerm, friends]);
 
-  const DeleteFriend = (id) => {
-    return async () => {
-      try {
-        const response = await axios.post(GET_ALL_USER + 'delete/' + userInfo.id, { data: { id } })
-        console.log(response);
-        fetchData(); // Fetch data again after deleting a friend
-      } catch (error) {
-        console.log(error)
-      }
+  const handleDelete = (id) => {
+    setCurrentFriendId(id);
+    setModalShow(true);
+  };
+  
+  const confirmDelete = async () => {
+    await DeleteFriend(currentFriendId);
+    console.log(currentFriendId)
+    setModalShow(false);
+  };
+  
+  const DeleteFriend = async (id) => {
+    try {
+      const response = await axios.post(GET_ALL_USER + 'delete/' + userInfo.id, { data: { id } });
+      console.log(response);
+      fetchData(); // Fetch data again after deleting a friend
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
   const handleFilterSelect = (option) => {
     let sortedResults;
     switch (option) {
@@ -109,12 +121,26 @@ const ListContact = ({ data }) => {
             <div className="tw-flex-1 tw-ml-10">
               <span className='tw-font-semibold tw-text-xl'>{friend.displayName}</span>
             </div>
-            <button onClick={DeleteFriend(friend.id)}>
+            <button onClick={() => handleDelete(friend.id)}>
               <MdDelete className='tw-text-2xl tw-flex tw-items-end' />
             </button>
           </div>
         ))}
       </ListGroup>
+      <Modal show={modalShow} onHide={() => setModalShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this friend?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setModalShow(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={confirmDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

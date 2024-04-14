@@ -14,6 +14,8 @@ import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
 import { GET_ALL_USER } from "../../router/ApiRoutes";
+import { Modal, Button } from 'react-bootstrap';
+
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
     useStateProvider();
@@ -23,6 +25,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [showModalInfo, setShowModalInfo] = useState(false);
   const [menberCount, setMemberCount] = useState(0);
+  const [modalShow, setModalShow] = useState(false);
 
   const toggleModalInfo = () => {
     setShowModalInfo(!showModalInfo);
@@ -69,6 +72,14 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
 
   const onDeleteHistory = () => {
     window.alert("xoas ruif nef");
+  };
+  const handleLeaveGroup = () => {
+    setModalShow(true);
+  };
+  
+  const confirmLeaveGroup = () => {
+    onLeaveGroup();
+    setModalShow(false);
   };
   const onLeaveGroup = () => {
     const postData = {
@@ -380,7 +391,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                   </div>
                 </button>
                 <button
-                  onClick={onLeaveGroup}
+                  onClick={handleLeaveGroup}
                   className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline"
                   style={{ width: "400px", height: "40px", color: "red" }}
                 >
@@ -394,6 +405,20 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
         </div>
       </div>
+      <Modal show={modalShow} onHide={() => setModalShow(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirm Leave Group</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>Are you sure you want to leave this group?</Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setModalShow(false)}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={confirmLeaveGroup}>
+      Leave Group
+    </Button>
+  </Modal.Footer>
+</Modal>
     </div>
   );
 };
