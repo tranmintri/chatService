@@ -15,7 +15,7 @@ router.post('/users/email', getUserByEmail);
 router.post("/users/:id",addFriendToList);
 router.get("/users/:id",getUserById);
 router.post("/users/delete/:id",removeFriendFromList)
-router.post("/users/leaveGroup",leaveGroupChat)
-module.exports = {
-    routes: router
+router.delete("/users/leaveGroup",leaveGroupChat)
+    module.exports = {
+        routes: router
 }

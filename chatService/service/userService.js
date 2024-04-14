@@ -253,10 +253,20 @@ const removeFriend = async (id, data) => {
 
 const leaveGroup = async (data) => {
     try {
-      const groupRef = firebase.firestore().collection('Chats').doc(data.chatId);
+      const groupRef = db.collection('Chats').doc(data.chatId);
       const groupSnapshot = await groupRef.get();
+  
+      if (!groupSnapshot.exists) {
+        console.error('Group does not exist');
+        return;
+      }
       const groupData = groupSnapshot.data();
       const updatedParticipants = groupData.participants.filter(participant => participant !== data.userId);
+      if (groupData.participants.length === updatedParticipants.length) {
+        console.error('User is not a member of the group');
+        return;
+      }
+  
       await groupRef.update({ participants: updatedParticipants });
       console.log('User left group successfully');
     } catch (error) {

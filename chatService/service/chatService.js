@@ -32,7 +32,7 @@ const findAll = async () => {
                 doc.data().participants,
                 doc.data().messages,
                 doc.data().deleteId,
-                doc.data().type
+                doc.data().type,
                 doc.data().managerId
             );
             chatsArrays.push(conversation);

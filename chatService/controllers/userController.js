@@ -120,6 +120,7 @@ const removeFriendFromList = async (req, res, next) => {
 }
 const leaveGroupChat = async (req, res, next) => {
     const data  = req.body;
+    console.log("leaveeee")
     try {
         const result = await leaveGroup(data);
         if (result) {
