@@ -31,6 +31,7 @@ import { CiMicrophoneOn } from "react-icons/ci";
 import CaptureAudio from "./CaptureAudio";
 import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 import { BsPersonAdd } from "react-icons/bs";
+import ModalAddMember from "./modal/ModalAddMember";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -49,10 +50,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [showFormShareMessage, setShowFormShareMessage] = useState(false);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showFormRemoveMessage, setShowFormRemoveMessage] = useState(false);
+  const [showModalAddMember, setShowModalAddMember] = useState(false);
 
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
   const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
 
+  const handleCloseModalAddMember = () => {
+    setShowModalAddMember(!showModalAddMember)
+  }
   const handleCloseModal = () => {
     setShowFormShareMessage(false);
     setShareMessage({})
@@ -392,7 +397,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
         <div className="d-flex">
           {currentChat.type == 'public' && (
-            <BsPersonAdd className="chat-header-icon px-2 bg-white" title="Search" /> //Add new member ne
+            <div>
+              <BsPersonAdd className="chat-header-icon px-2 bg-white" title="Search" onClick={handleCloseModalAddMember} />
+              <ModalAddMember showModalAddMember={showModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} />
+            </div>
           )}
           <IoMdSearch className="chat-header-icon px-2 bg-white" title="Search" />
           <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={() => handleClickOpenTab(chat.type == 'private' ? chat.participants[0] == userInfo?.id ? chat.participants[1] : chat.participants[0] : chat.chatId)} />

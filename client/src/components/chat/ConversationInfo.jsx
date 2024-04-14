@@ -81,7 +81,9 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                             />
                             <div className="tw-flex text-center">
                                 <p className="fs-6 fw-bold tw-mr-2">{chat.name}</p>
-                                <FaPen className="tw-cursor-pointer" size={13} onClick={toggleModalInfo} />
+                                {currentChat.type === 'public' && (
+                                    <FaPen className="tw-cursor-pointer" size={13} onClick={toggleModalInfo} />
+                                )}
                             </div>
                             <ModalGroupInfo showModalInfo={showModalInfo} toggleModalInfo={toggleModalInfo} chat={chat} />
                         </div>

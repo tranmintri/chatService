@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { FaPen } from 'react-icons/fa6';
 
 const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
     const handleConfirm = () => {
@@ -11,9 +12,9 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
                 <Modal.Title ><span className='tw-text-[20px]'>Change group name</span></Modal.Title>
             </Modal.Header>
             <Modal.Body>
-
                 <div className='tw-flex tw-justify-center'>
                     <img src={`https://lh3.googleusercontent.com/a/ACg8ocK1LMjQE59_kT4mNFmgxs6CmqzZ24lqR2bJ4jHjgB6yiW4=s96-c`} className="tw-w-24 tw-h-24 tw-rounded-full" alt="Group Avatar" />
+                    <FaPen className="tw-cursor-pointer" size={13} />
                 </div>
                 <div className='tw-flex tw-justify-center'>
                     <span className='text-center tw-text-[18px] tw-font-bold'>{chat.name}</span>
