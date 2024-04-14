@@ -83,8 +83,6 @@ const findAll = async () => {
                 doc.data().updated_at,
                 doc.data().created_at,
                 doc.data().friends,
-
-
             );
             usersArrays.push(user);
         });
@@ -207,7 +205,8 @@ const addFriend = async (data) => {
             participants: [data.sender, data.receiver],
             type: "private",
             deleteId: null,
-            messages:[]
+            messages:[],
+        managerId:null
     }
     await saveInChat(privateChatData)
     return privateChatData

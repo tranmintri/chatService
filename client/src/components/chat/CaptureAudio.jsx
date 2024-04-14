@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
 import { IoIosCloseCircle, IoMdSend } from "react-icons/io";
 import { CHAT_API } from "../../router/ApiRoutes";
 import { useStateProvider } from "../../context/StateContext";
@@ -14,7 +13,6 @@ const AudioRecorder = ({ hide }) => {
   const [recordedAudio, setRecordedAudio] = useState(null);
   const [formData, setFormData] = useState(null);
   const mediaRecorderRef = useRef(null);
-  const audioRef = useRef(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
 
   useEffect(() => {
@@ -42,11 +40,8 @@ const AudioRecorder = ({ hide }) => {
 
         mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: "audio/ogg" });
+          const blob = new Blob(chunks, { type: "audio/mp3" });
           setRecordedAudio(blob);
-          const newFormData = new FormData();
-          newFormData.append("record", blob, "recording.ogg");
-          setFormData(newFormData);
         };
 
         mediaRecorder.start();
@@ -59,19 +54,22 @@ const AudioRecorder = ({ hide }) => {
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
     }
   };
 
   const handleSend = async () => {
-    mediaRecorderRef.current.stop();
-    setIsRecording(false);
+    stopRecording(); // Stop recording before sending
 
-    // Tạo đối tượng Blob từ recordedAudio
-    const newBlob = new Blob([recordedAudio], { type: "audio/ogg" });
+    if (!recordedAudio) {
+      console.error("No recorded audio available.");
+      return;
+    }
 
     // Tạo FormData và cập nhật state formData
     const newFormData = new FormData();
-    newFormData.append("record", newBlob, "recording.ogg");
+    newFormData.append("record", recordedAudio, "recording.mp3");
     setFormData(newFormData); // Cập nhật formData với dữ liệu mới
 
     setRecordingDuration(0); // Đặt lại độ dài ghi âm
@@ -158,6 +156,7 @@ const AudioRecorder = ({ hide }) => {
         groups: group,
       });
       hide();
+      // Xử lý dữ liệu trả về từ server và các thao tác khác...
     } catch (error) {
       console.error("Error sending audio:", error);
     }

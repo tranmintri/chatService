@@ -1,6 +1,6 @@
 'use strict';
 
-const {save,findAll,findById,addParticipant,deleteById,getChatsByOneParticipantID,getChatsByParticipants} = require("../service/chatService")
+const {save,findAll,findById,addParticipant,deleteById,getChatsByOneParticipantID,getChatsByParticipants,updateRoleInChat} = require("../service/chatService")
 const {v4: uuidv4} = require("uuid");
 const addChats = async (req, res, next) => {
     try {
@@ -15,10 +15,12 @@ const addChats = async (req, res, next) => {
         const chatData = {
             chatId: chatId,
             name: data.name,
+            picture:data.picture,
             participants: data.participants,
             messages:[],
             type:data.type,
-            deleteId: null
+            deleteId: null,
+            managerId : data.managerId
         }
         console.log(data)
 
@@ -58,9 +60,9 @@ const getChatById = async (req, res, next) => {
 const addUserInChat = async (req, res, next) => {
     try {
         const { chatId } = req.params;
-        const  userId  = req.body;
+        const  memberAdd  = req.body;
 
-        await addParticipant(chatId,userId);
+        await addParticipant(chatId,memberAdd);
 
         console.log('userId added to conversation successfully.');
         res.status(200).json({ success: true, message: 'userId added to conversation successfully.' });
@@ -74,6 +76,18 @@ const deleteChatById = async (req, res, next) => {
         const { chatId } = req.params;
         const  userId  = req.body;
         await deleteById(chatId,userId)
+        console.log('Delete successfully.');
+        res.status(200).json({ success: true, message: 'Delete successfully.' });
+    } catch (error) {
+        console.error('Error delete to conversation:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+const UpdateRole = async (req, res, next) => {
+    try {
+        const { chatId,userId } = req.params;
+
+        await updateRoleInChat(chatId,userId)
         console.log('Delete successfully.');
         res.status(200).json({ success: true, message: 'Delete successfully.' });
     } catch (error) {
@@ -110,5 +124,6 @@ module.exports = {
     addUserInChat,
     deleteChatById,
     getChatsByParticipantId,
-    findChatsByParticipants
+    findChatsByParticipants,
+    UpdateRole
 }

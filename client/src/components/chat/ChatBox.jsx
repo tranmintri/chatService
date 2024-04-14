@@ -65,8 +65,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
 
   const handleCloseModalAddMember = () => {
-    setShowModalAddMember(!showModalAddMember)
-  }
+    setShowModalAddMember(!showModalAddMember);
+  };
   const handleCloseModal = () => {
     setShowFormShareMessage(false);
     setShareMessage({});
@@ -436,13 +436,18 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           </div>
         </div>
         <div className="d-flex">
-
-          {currentChat.type == 'public' && (
+          {currentChat.type == "public" && (
             <div>
-              <BsPersonAdd className="chat-header-icon px-2 bg-white" title="Search" onClick={handleCloseModalAddMember} />
-              <ModalAddMember showModalAddMember={showModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} />
+              <BsPersonAdd
+                className="chat-header-icon px-2 bg-white"
+                title="Search"
+                onClick={handleCloseModalAddMember}
+              />
+              <ModalAddMember
+                showModalAddMember={showModalAddMember}
+                handleCloseModalAddMember={handleCloseModalAddMember}
+              />
             </div>
-
           )}
           <IoMdSearch
             className="chat-header-icon px-2 bg-white"
@@ -980,7 +985,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             <AudioOutlined
               className="chat-input-icon px-2"
               title="Attach File"
-              // onClick={() => setShowAudioRecorder(true)}
+              onClick={() => setShowAudioRecorder(true)}
             />
           </label>
         </div>
