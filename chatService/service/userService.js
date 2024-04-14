@@ -268,7 +268,7 @@ const leaveGroup = async (data) => {
       }
   
       await groupRef.update({ participants: updatedParticipants });
-      console.log('User left group successfully');
+      console.log('User left group successfullyy');
     } catch (error) {
       console.error('Error leaving group:', error);
     }
