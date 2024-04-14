@@ -223,6 +223,39 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                                 height: "32px",
                               }}
                             />
+
+                            <div className="tw-flex text-center">
+                                <p className="fs-6 fw-bold tw-mr-2">{chat.name}</p>
+                                {currentChat.type === 'public' && (
+                                    <FaPen className="tw-cursor-pointer" size={13} onClick={toggleModalInfo} />
+                                )}
+                            </div>
+                            <ModalGroupInfo showModalInfo={showModalInfo} toggleModalInfo={toggleModalInfo} chat={chat} />
+                        </div>
+                    </div>
+                    <div>
+                        {currentChat.type === 'public' && (
+                            <div className="mb-2 tw-border-b tw-ml-2">
+                                <span className="tw-font-bold tw-text-[18px]">Member List</span>
+                                <button className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200" style={{ width: '400px', height: '40px' }} onClick={toggleModalMembers}>
+                                    <div className="tw-flex  align-items-center">
+                                        <GrGroup size={20} />
+                                        <span className="tw-pl-5">{members.length} members</span>
+                                    </div>
+                                </button>
+                                <ModalGroupMembers showModalMembers={showModalMembers} toggleModalMembers={toggleModalMembers} members={members} />
+                            </div>
+                        )}
+                    </div>
+                    <div className="mb-2 tw-border-b tw-ml-2">
+                        <span className="tw-font-bold tw-text-[18px]">Photos / Videos </span>
+                        <div className="tw-flex tw-flex-wrap tw-mx-auto">
+                            {limitedImages.map((image, index) => (
+                                <div key={index} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4">
+                                    <img src={image.url} alt={image.alt} className="w-full h-auto tw-mx-auto" style={{ maxHeight: '85px' }} />
+                                </div>
+                            ))}
+
                           )}
                           {extension === ".xls" && (
                             <img
