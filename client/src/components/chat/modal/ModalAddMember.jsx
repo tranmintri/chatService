@@ -1,20 +1,15 @@
-import axios from "axios";
-import { useState } from "react";
 import { Button, Form, ListGroup, Modal } from "react-bootstrap";
-import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 import { useStateProvider } from "../../../context/StateContext";
-import { reducerCases } from "../../../context/constants";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 
-const CreateGroupModal = ({ showModal, handleCloseModal }) => {
-  const [{ userInfo, groups }, dispatch] = useStateProvider();
-  const [groupName, setGroupName] = useState("");
-  const [selectedFriends, setSelectedFriends] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
+  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
   const [friendList, setFriendList] = useState([]);
-  const filteredFriendList = friendList?.filter((friend) =>
-    friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFriends, setSelectedFriends] = useState([]);
+
   const handleFriendSelect = (friendId) => {
     setSelectedFriends((prevSelectedFriends) => {
       const isSelected = prevSelectedFriends.includes(friendId);
@@ -23,6 +18,10 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
         : [...prevSelectedFriends, friendId];
     });
   };
+  const filteredFriendList = friendList.filter((friend) => {
+    return !currentChat.participants.some((id) => id === friend.id);
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,72 +39,46 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const handleCreateGroupChat = async () => {
-    console.log(selectedFriends);
-    if (groupName.trim() === "") {
-      alert("Please enter group name");
-      return;
+  const handleAddMember = async () => {
+    try {
+      const res = await axios.put(
+        CHAT_API + currentChat.chatId,
+        selectedFriends
+      );
+      handleCloseModalAddMember();
+    } catch (error) {
+      console.error(error);
     }
-    const participants = selectedFriends.concat(userInfo?.id);
-    const postData = {
-      name: groupName,
-      participants: participants,
-      type: "public",
-      picture:
-        "https://firebasestorage.googleapis.com/v0/b/chatservice-d1f1c.appspot.com/o/avatars%2FavatarGroup.jpg?alt=media&token=cc85e7a4-6bbc-40d2-941c-313db77a2745",
-      managerId: userInfo?.id,
-    };
-    const result = await axios.post(CHAT_API, postData);
-
-    if (result.data.data) {
-      dispatch({
-        type: reducerCases.SET_ALL_GROUP,
-        groups: [...groups, result.data.data],
-      });
-      alert("create chat success");
-    }
-    setGroupName("");
-    setSelectedFriends([]);
-    setSearchTerm("");
-    handleCloseModal();
-    setSelectedFriends([]);
   };
 
   return (
-    <Modal show={showModal} onHide={handleCloseModal} centered>
+    <Modal
+      show={showModalAddMember}
+      onHide={handleCloseModalAddMember}
+      centered
+    >
       <Modal.Header closeButton>
         <Modal.Title style={{ fontSize: "20px" }}>
-          Create group chat
+          Add new members into group
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group controlId="formGroupName" className="mb-3">
+          <Form.Group controlId="formAddMembers" className="mb-3">
             <Form.Control
               type="text"
-              placeholder="Enter group name"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              required={true}
-            />
-          </Form.Group>
-          <Form.Group controlId="formSearchFriends" className="mb-3">
-            <Form.Control
-              type="text"
-              placeholder="Search friends"
+              placeholder="Enter phone or name to add members into group"
               value={searchTerm}
               onChange={handleSearchTermChange}
             />
           </Form.Group>
-          <h5>Friend list</h5>
           <div style={{ maxHeight: "200px", overflowY: "scroll" }}>
             {/* Check if friendList is defined */}
             {filteredFriendList && filteredFriendList.length > 0 ? (
               <ListGroup>
                 {filteredFriendList.map((friend) => (
                   <ListGroup.Item
-                    className="mb-2 d-flex text-center align-items-center"
+                    className="mb-2 d-flex text-center align-items-center "
                     key={friend.id}
                     onClick={() => handleFriendSelect(friend.id)}
                   >
@@ -131,19 +104,18 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleCloseModal}>
+        <Button variant="secondary" onClick={handleCloseModalAddMember}>
           Cancel
         </Button>
         <Button
           variant="primary"
-          onClick={handleCreateGroupChat}
           disabled={selectedFriends.length <= 0}
+          onClick={handleAddMember}
         >
-          Create
+          Add
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
-
-export default CreateGroupModal;
+export default ModalAddMember;
