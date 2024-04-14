@@ -90,10 +90,9 @@ const getAllUser = async (req, res, next) => {
 const addFriendToList = async (req, res, next) => {
     const id  = req.params.id;
     const data  = req.body;
-    console.log(id)
-    console.log(data)
+    console.log(data, 'data')
     try {
-        const result = await addFriend(id,data);
+        const result = await addFriend(data);
         if (result) {
             res.status(200).json({data:result,messages:"add friend success",status:false});
         } else {

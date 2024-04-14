@@ -89,8 +89,15 @@ const Main = () => {
   useEffect(() => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("friendRequest", (data) => {
-        console.log("aaa");
-        toast.info("You have a new friend request " + data.display_name);
+        console.log(data, "data")
+        if (data.receiver === userInfo?.id) {
+          console.log("iffff")
+          dispatch({
+              type: reducerCases.ADD_RECEIVE_INVITATION,
+              newReceive: data,
+          });
+      }
+      toast.info("You have a new friend request " + data.senderName);
     })
       setSocketEvent2(true)
     }

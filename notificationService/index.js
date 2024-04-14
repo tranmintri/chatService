@@ -79,11 +79,14 @@ io.on("connection", (socket) => {
     socket.on("sendFriendRequest", (data) => {
         friendRequestService.requestAddFriend(data)
         const postData = {
-            id: data.id_UserWantAdd,
-            display_name: data.receiverName,
-            profilePicture: data.profilePicture
+            isAccepted: data.isAccepted,
+            receiver: data.receiver,
+            sender: data.sender,
+            profilePicture: data.profilePicture,
+            senderName: data.senderName,
+            receiverName: data.receiverName
         };
-        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("friendRequest", postData);
+        socket.to(onlineUsers.get(data.receiver)).emit("friendRequest", postData);
     });
 
     socket.on("acceptFriendRequest", (data) => {
@@ -94,16 +97,17 @@ io.on("connection", (socket) => {
         //     userId: data?.userId,
         //     requestId: data?.requestId
         // };
+        console.log(data, "acceptFriendRequest")
         const postData = {
-            id: data.id,
-            display_name: data.user.display_name,
+            id: data.receiver,
+            display_name: data.receiverName,
             profilePicture: data.profilePicture,
             user: data.user
         };
 
         console.log(postData, "postData")
         console.log(data.id, "data.userId")
-        socket.to(onlineUsers.get(data.id)).emit("acceptFriend", postData);
+        socket.to(onlineUsers.get(data.sender)).emit("acceptFriend", postData);
     });
 
 

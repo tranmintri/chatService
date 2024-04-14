@@ -8,7 +8,7 @@ import { reducerCases } from "../../../context/constants";
 import { toast } from "react-toastify";
 
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
-    const [{ userInfo, groups, socket, socket2 }, dispatch] = useStateProvider()
+    const [{ userInfo, groups, socket, socket2, sentInvitations, receivedInvitations }, dispatch] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
 
@@ -32,18 +32,30 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
     const handleAddFriend = async () => {
         if (!searchResults) return;
         const postData = {
-            id_UserWantAdd: searchResults.id,
-            userId: userInfo?.id,
+            isAccepted: false,
+            receiver: searchResults.id,
+            sender: userInfo?.id,
             profilePicture: userInfo?.avatar,
             senderName: userInfo?.display_name,
-            receiverName: searchResults.display_name
+            receiverName: searchResults.display_name,
+            requestId: null,
         };
         try {
-            socket2.current.emit("sendFriendRequest", postData);
-            // alert('Friend added successfully!');
+            socket2.current.emit("sendFriendRequest", postData);   
             toast.success('Friend added successfully!');
             handleCloseModal();
-
+            if (postData.sender === userInfo?.id) {
+                dispatch({
+                    type: reducerCases.ADD_INVITATION,
+                    newSend: postData,
+                });
+            }
+            else{
+            dispatch({
+                type: reducerCases.ADD_RECEIVE_INVITATION,
+                newReceive: postData,
+            });
+        }
         } catch (error) {
             console.error('Error sending friend request:', error);
         }

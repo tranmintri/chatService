@@ -55,16 +55,6 @@ const reducer = (state, action) => {
         ...state,
         groups: action.groups,
       };
-    case reducerCases.SET_SENT_INVITATION:
-      return {
-        ...state,
-        sentInvitations: action.sentInvitations,
-      };
-    case reducerCases.SET_RECEIVE_INVITATION:
-      return {
-        ...state,
-        receivedInvitations: action.receivedInvitations,
-      };
     case reducerCases.SET_SOCKET:
       return {
         ...state,
@@ -79,6 +69,26 @@ const reducer = (state, action) => {
       return {
         ...state,
         messages: [...state.messages, action.newMessage],
+      };
+    case reducerCases.SET_SENT_INVITATION:
+      return {
+        ...state,
+        sentInvitations: action.send,
+      };
+    case reducerCases.ADD_INVITATION:
+      return {
+        ...state,
+        sentInvitations: [...state.sentInvitations, action.newSend],
+      };
+    case reducerCases.SET_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: action.receive,
+      };
+    case reducerCases.ADD_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: [...state.receivedInvitations, action.newReceive],
       };
     default:
       return state;

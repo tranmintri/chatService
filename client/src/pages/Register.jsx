@@ -7,7 +7,6 @@ import {useNavigate} from 'react-router-dom'
 
 const Box = ()=>{
     const navigate = useNavigate();
-
     const [isHoTen, setHoTen] = useState("");
     const [isSoDienThoai, setSoDienThoai] = useState("");
     const [isNgaySinh, setNgaySinh] = useState("");
