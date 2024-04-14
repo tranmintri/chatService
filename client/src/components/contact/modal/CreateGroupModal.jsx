@@ -12,7 +12,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [friendList, setFriendList] = useState([])
-    const filteredFriendList = friendList?.filter(friend => 
+    const filteredFriendList = friendList?.filter(friend =>
         friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const handleFriendSelect = (friendId) => {
@@ -109,7 +109,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
                 <Button variant="secondary" onClick={handleCloseModal}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={handleCreateGroupChat}>
+                <Button variant="primary" onClick={handleCreateGroupChat} disabled={selectedFriends.length <= 0}>
                     Create
                 </Button>
             </Modal.Footer>
