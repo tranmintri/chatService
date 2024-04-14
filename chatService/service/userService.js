@@ -177,34 +177,34 @@ const findById = async (id) => {
     }
 };
 
-const addFriend = async (id,data) => {
-    console.log(data)
+const addFriend = async (data) => {
+    console.log(data, 'datazzzz')
     // add receive requset
     await db.collection('Users')
-        .doc(id)
+        .doc(data.sender)
         .update({
             friends: admin.firestore.FieldValue.arrayUnion({
-                id: data.id,
-                displayName: data.display_name,
+                id: data.receiver,
+                displayName: data.receiverName,
                 profilePicture: data.profilePicture,
             })
         });
     // add sender request
     await db.collection('Users')
-        .doc(data.id)
+        .doc(data.receiver)
         .update({
             friends: admin.firestore.FieldValue.arrayUnion({
-                id: id,
-                displayName: data.user.display_name,
-                profilePicture: data.user.avatar,
+                id: data.sender,
+                displayName: data.senderName,
+                profilePicture: data.profilePicture,
             })
         });
     const chatId = uuidv4()
     const privateChatData = {
             chatId: chatId,
-            name: data.display_name + "/" +data.user.display_name,
-            picture:data.profilePicture + "|" + data.user.avatar,
-            participants: [id, data.id],
+            name: data.receiverName + "/" +data.senderName,
+            picture:data.profilePicture + "|" + data.profilePicture,
+            participants: [data.sender, data.receiver],
             type: "private",
             deleteId: null,
             messages:[]
