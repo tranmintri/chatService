@@ -13,7 +13,7 @@ import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
-
+import { GET_ALL_USER } from "../../router/ApiRoutes";
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
     useStateProvider();
@@ -71,7 +71,20 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     window.alert("xoas ruif nef");
   };
   const onLeaveGroup = () => {
-    window.alert("roiwf nhoms rooif nef");
+    const postData = {
+      chatId: currentChat.chatId,
+      chatParticipants: currentChat.participants,
+      userId: userInfo.id,
+      user_Name: userInfo.display_name
+    }
+    console.log(postData, "data Leave")
+    try {
+      socket.current.emit("leave-group", postData);
+      alert("You have left the group");
+    }
+    catch (error) {
+      console.error('Error sending friend request:', error);
+    }
   };
   const [showMemberList, setShowMemberList] = useState(false);
 

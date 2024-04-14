@@ -1,7 +1,7 @@
 'use strict';
 const admin = require("firebase-admin")
 const {db} = require('../config/firebase')
-const {save, findByEmail, findAll,addFriend,findById,updateUser,removeFriend} = require("../service/userService");
+const {save, findByEmail, findAll,addFriend,findById,updateUser,removeFriend,leaveGroup} = require("../service/userService");
 
 
 const addUser= async (req, res, next) => {
@@ -118,7 +118,21 @@ const removeFriendFromList = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
-
+const leaveGroupChat = async (req, res, next) => {
+    const data  = req.body;
+    console.log("leaveeee")
+    try {
+        const result = await leaveGroup(data);
+        if (result) {
+            res.status(200).json({data:result, messages:"leave group success", status:true});
+        } else {
+            res.json({msg:"leave group failed", status:false});
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 module.exports = {removeFriendFromList, /* other exports */};
 
-module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon, removeFriendFromList}
+module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon, removeFriendFromList,leaveGroupChat}

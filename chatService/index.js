@@ -6,7 +6,7 @@ const chatRoutes = require('./routes/chat-routes');
 const messageRoutes = require('./routes/message-routes')
 const userRoutes = require('./routes/user-routes')
 const puppeteer = require('puppeteer');
-
+const userService = require('./service/userService')
 const app = express();
 const http = require("http");
 const {Server} = require("socket.io");
@@ -86,36 +86,50 @@ io.on("connection", (socket) => {
         socket.join(chatId);
     });
     socket.on("send-msg-public", (chatId, data) => {
-            socket.to(chatId).emit("msg-recieve-public", {
-                from: data.newMessage.senderId,
-                newMessage: {
-                    messageId: data.newMessage.messageId,
-                    senderId: data.newMessage.senderId,
-                    senderName: data.newMessage.senderName,
-                    senderPicture: data.newMessage.senderPicture,
-                    type: data.newMessage.type,
-                    content: data.newMessage.content,
-                    timestamp: data.newMessage.timestamp
-                }
-            })
-        }
+        socket.to(chatId).emit("msg-recieve-public", {
+            from: data.newMessage.senderId,
+            newMessage: {
+                messageId: data.newMessage.messageId,
+                senderId: data.newMessage.senderId,
+                senderName: data.newMessage.senderName,
+                senderPicture: data.newMessage.senderPicture,
+                type: data.newMessage.type,
+                content: data.newMessage.content,
+                timestamp: data.newMessage.timestamp
+            }
+        })
+    }
     )
 
 
 
-socket.on("disconnect", () => {
-    console.log("A user disconnected");
-    // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-    onlineUsers.forEach((value, key) => {
-        if (value === socket.id) {
-            onlineUsers.delete(key);
-        }
+    socket.on("disconnect", () => {
+        console.log("A user disconnected");
+        // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
+        onlineUsers.forEach((value, key) => {
+            if (value === socket.id) {
+                onlineUsers.delete(key);
+            }
+        });
     });
-});
 
-socket.on('join-to-chat-public', (roomId) => {
-    socket.join(roomId);
-});
+    socket.on('join-to-chat-public', (roomId) => {
+        socket.join(roomId);
+    });
 
-
+    socket.on("leave-group", (data) => {
+        userService.leaveGroup(data)
+        const postData = {
+            chatId: data.chatId,
+            chatParticipants: data.chatParticipants,
+            userId: data.userId,
+            user_Name: data.user_Name
+        };
+        console.log(data.chatParticipants)
+        data.chatParticipants.forEach(participant => {
+            if (onlineUsers.has(participant)) {
+                socket.to(onlineUsers.get(participant)).emit("leave-group-noti", postData);
+            }
+        });
+    });
 })

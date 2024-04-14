@@ -251,5 +251,29 @@ const removeFriend = async (id, data) => {
     }
 };
 
+const leaveGroup = async (data) => {
+    try {
+      const groupRef = db.collection('Chats').doc(data.chatId);
+      const groupSnapshot = await groupRef.get();
+  
+      if (!groupSnapshot.exists) {
+        console.error('Group does not exist');
+        return;
+      }
+      const groupData = groupSnapshot.data();
+      const updatedParticipants = groupData.participants.filter(participant => participant !== data.userId);
+      if (groupData.participants.length === updatedParticipants.length) {
+        console.error('User is not a member of the group');
+        return;
+      }
+  
+      await groupRef.update({ participants: updatedParticipants });
+      console.log('User left group successfullyy');
+    } catch (error) {
+      console.error('Error leaving group:', error);
+    }
+  };
 
-module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser,removeFriend}
+
+
+module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser,removeFriend, leaveGroup}

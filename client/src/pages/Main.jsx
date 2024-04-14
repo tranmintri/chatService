@@ -137,7 +137,15 @@ const Main = () => {
 
     getMessage();
   }, [currentChat]);
-
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("leave-group-noti", (data) => {
+        console.log(data, "data")
+        alert(data.user_Name + " leave group")
+      })
+      setSocketEvent(true)
+    }
+  }, [socket.current])
 
 
   return isLoading ? <SideBar /> : <Loading />;
