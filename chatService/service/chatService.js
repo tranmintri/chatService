@@ -98,7 +98,6 @@ const deleteById = async (chatId,userId) => {
 };
 
 const updateRoleInChat = async (chatId,userId) => {
-    console.log("update Role")
     await db.collection('Chats')
         .doc(chatId)
         .update({

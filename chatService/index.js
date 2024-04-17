@@ -121,14 +121,15 @@ io.on("connection", (socket) => {
             chatId: data.chatId,
             chatParticipants: data.chatParticipants,
             userId: data.userId,
-            user_Name: data.user_Name
+            user_Name: data.user_Name,
+            managerId : data.managerId,
         };
-        console.log(data.chatParticipants)
-        data.chatParticipants.forEach(participant => {
-            if (onlineUsers.has(participant)) {
-                socket.to(onlineUsers.get(participant)).emit("leave-group-noti", postData);
-            }
-        });
+        // console.log(data.chatParticipants)
+        // data.chatParticipants.forEach(participant => {
+        //     if (onlineUsers.has(participant)) {
+                socket.to(onlineUsers.get(data.userId)).emit("leave-group-noti", postData);
+            // }    e
+        // });
     });
 
     socket.on("kick-from-group", (data) => {
@@ -137,7 +138,8 @@ io.on("connection", (socket) => {
             chatId: data.chatId,
             chatParticipants: data.chatParticipants,
             userId: data.userId,
-            user_Name: data.user_Name
+            user_Name: data.user_Name,
+            managerId : data.managerId,
         };
         console.log(data.chatParticipants)
         data.chatParticipants.forEach(participant => {

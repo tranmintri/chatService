@@ -17,7 +17,7 @@ const addChats = async (req, res, next) => {
             name: data.name,
             picture:data.picture,
             participants: data.participants,
-            messages:[],
+            messages:data.messages,
             type:data.type,
             deleteId: null,
             managerId : data.managerId
