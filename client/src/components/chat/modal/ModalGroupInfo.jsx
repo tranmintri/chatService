@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+
 import { CiEdit } from "react-icons/ci";
+import axios from "axios";
+import { Button, Form, ListGroup, Modal } from "react-bootstrap";
 
 const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
   const [newImage, setNewImage] = useState(null);

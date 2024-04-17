@@ -17,6 +17,8 @@ import { GET_ALL_USER } from "../../router/ApiRoutes";
 import { Modal, Button } from "react-bootstrap";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import ModalAddMember from "./modal/ModalAddMember";
+import ChangeRoleModal from "../contact/modal/ChangeRoleModal";
+import { current } from "@reduxjs/toolkit";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
@@ -29,6 +31,9 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [menberCount, setMemberCount] = useState(0);
   const [modalShow, setModalShow] = useState(false);
   const [showModalAddMember, setShowModalAddMember] = useState(false);
+  const [showFormChangeRole, setShowFormChangeRole] = useState(false);
+  const handleCloseChangeRoleModal = () => setShowFormChangeRole(false);
+  const handleShowChangeRole = () => setShowFormChangeRole(true);
 
   const handleCloseModalAddMember = () => {
     setShowModalAddMember(!showModalAddMember);
@@ -97,14 +102,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     setModalShow(false);
   };
   const onLeaveGroup = () => {
-    if (
-      currentChat.managerId == userInfo?.id &&
-      currentChat.participants.length >= 2
-    ) {
-      alert(
-        "You are the host. Can't leave group. Please change role to other member"
-      );
-    } else {
+    if (currentChat.managerId !== userInfo?.id) {
       const postData = {
         chatId: currentChat.chatId,
         chatParticipants: currentChat.participants,
@@ -119,6 +117,8 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
       } catch (error) {
         console.error("Error sending friend request:", error);
       }
+    } else {
+      alert("you are owner");
     }
   };
   const [showMemberList, setShowMemberList] = useState(false);
@@ -447,7 +447,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                   </div>
                 </button>
                 <button
-                  onClick={handleLeaveGroup}
+                  onClick={handleShowChangeRole}
                   className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
                   style={{ height: "40px", color: "red" }}
                 >
@@ -461,20 +461,49 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
         </div>
       </div>
-      <Modal show={modalShow} onHide={() => setModalShow(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Leave Group</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to leave this group?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setModalShow(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={confirmLeaveGroup}>
-            Leave Group
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {showFormChangeRole && currentChat.managerId == userInfo?.id ? (
+        <ChangeRoleModal
+          showFormChangeRole={showFormChangeRole}
+          handleCloseChangeRoleModal={handleCloseChangeRoleModal}
+        />
+      ) : (
+        <Modal
+          show={showFormChangeRole}
+          onHide={() => handleCloseChangeRoleModal()}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title style={{ fontSize: "18px" }}>
+              Leave this conversation?
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <span className="tw-text-gray-500">
+              You won't be able to see messages in this group after leaving.
+            </span>
+            <div className="tw-w-full tw-flex tw-justify-center tw-items-center tw-mt-4">
+              <div className="tw-w-11/12 tw-bg-slate-200 tw-min-h-24 tw-rounded-lg tw-px-4   tw-py-4">
+                <span className="tw-font-semibold ">Leave group silently</span>
+                <span className="tw-text-wrap tw-text-gray-500">
+                  <br />
+                  No one knows you're leaving the group.
+                </span>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => handleCloseChangeRoleModal()}
+            >
+              Close
+            </Button>
+            <Button variant="danger" onClick={confirmLeaveGroup}>
+              Leave Group
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 };

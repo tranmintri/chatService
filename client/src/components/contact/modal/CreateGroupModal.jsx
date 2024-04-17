@@ -117,7 +117,13 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
             />
           </Form.Group>
           <h5>Friend list</h5>
-          <div style={{ maxHeight: "200px", overflowY: "scroll" }}>
+          <div
+            style={{
+              maxHeight: "350px",
+              overflowY: "scroll",
+              minHeight: "350px",
+            }}
+          >
             {/* Check if friendList is defined */}
             {filteredFriendList && filteredFriendList.length > 0 ? (
               <ListGroup>
