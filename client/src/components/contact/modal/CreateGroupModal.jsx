@@ -5,6 +5,7 @@ import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 import { useStateProvider } from "../../../context/StateContext";
 import { reducerCases } from "../../../context/constants";
 import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const CreateGroupModal = ({ showModal, handleCloseModal }) => {
   const [{ userInfo, groups }, dispatch] = useStateProvider();
@@ -47,6 +48,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
       alert("Please enter group name");
       return;
     }
+    const messageId = uuidv4();
     const participants = selectedFriends.concat(userInfo?.id);
     const postData = {
       name: groupName,
@@ -54,6 +56,22 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
       type: "public",
       picture:
         "https://firebasestorage.googleapis.com/v0/b/chatservice-d1f1c.appspot.com/o/avatars%2FavatarGroup.jpg?alt=media&token=cc85e7a4-6bbc-40d2-941c-313db77a2745",
+      messages: [
+        {
+          senderId: userInfo?.id,
+          senderName: userInfo?.display_name,
+          messageId: messageId,
+          senderPicture: userInfo?.avatar,
+          type: "init group",
+          content:
+            "You and " +
+            (participants.length - 1) +
+            " others added by " +
+            userInfo?.display_name,
+          timestamp: Date.now(),
+          status: "sent",
+        },
+      ],
       managerId: userInfo?.id,
     };
     const result = await axios.post(CHAT_API, postData);

@@ -14,7 +14,7 @@ import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
 import { GET_ALL_USER } from "../../router/ApiRoutes";
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from "react-bootstrap";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
@@ -69,32 +69,50 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const limitedImages = showAllImage ? images : images.slice(0, 6);
   const limitedFiles = showAllFile ? files : files.slice(0, 3);
   const limitedLinks = showAllLink ? links : links.slice(0, 3);
+  const convertName = () => {
+    if (chat.type == "private") {
+      const splitName = chat.name.split("/");
+      const displayName =
+        splitName[0] !== userInfo?.display_name ? splitName[0] : splitName[1];
 
+      return displayName;
+    }
+    return chat.name;
+  };
   const onDeleteHistory = () => {
     window.alert("xoas ruif nef");
   };
   const handleLeaveGroup = () => {
     setModalShow(true);
   };
-  
+
   const confirmLeaveGroup = () => {
     onLeaveGroup();
     setModalShow(false);
   };
   const onLeaveGroup = () => {
-    const postData = {
-      chatId: currentChat.chatId,
-      chatParticipants: currentChat.participants,
-      userId: userInfo.id,
-      user_Name: userInfo.display_name
-    }
-    console.log(postData, "data Leave")
-    try {
-      socket.current.emit("leave-group", postData);
-      alert("You have left the group");
-    }
-    catch (error) {
-      console.error('Error sending friend request:', error);
+    if (
+      currentChat.managerId == userInfo?.id &&
+      currentChat.participants.length >= 2
+    ) {
+      alert(
+        "You are the host. Can't leave group. Please change role to other member"
+      );
+    } else {
+      const postData = {
+        chatId: currentChat.chatId,
+        chatParticipants: currentChat.participants,
+        userId: userInfo.id,
+        user_Name: userInfo.display_name,
+        managerId: currentChat.managerId,
+      };
+      console.log(postData, "data Leave");
+      try {
+        socket.current.emit("leave-group", postData);
+        alert("You have left the group");
+      } catch (error) {
+        console.error("Error sending friend request:", error);
+      }
     }
   };
   const [showMemberList, setShowMemberList] = useState(false);
@@ -115,6 +133,16 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
 
     return url.split("|");
   };
+  const convertImage = () => {
+    if (chat.type == "private") {
+      const splitName = chat.picture.split("|");
+      const friendPicture =
+        splitName[0] !== userInfo?.avatar ? splitName[0] : splitName[1];
+
+      return friendPicture;
+    }
+    return chat.picture;
+  };
   const splitFile = () => {
     let url = "";
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
@@ -130,7 +158,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
 
   return (
     <div className="tw-w-full tw-h-full">
-      <div className=" tw-bg-gray-50 tw-overflow-y-auto">
+      <div className=" tw-bg-gray-50 tw-overflow-auto tw-max-h-screen custom-scrollbar">
         <p className="tw-text-center tw-border-b tw-font-bold m-0 tw-text-[22px]">
           Conversation Info
         </p>
@@ -138,12 +166,12 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           <div className="mb-2 mt-2 border-bottom d-flex justify-content-center align-items-center">
             <div className="align-items-center">
               <img
-                src={currentChat.picture}
+                src={convertImage()}
                 className="mx-auto mb-3 tw-h-20 tw-w-20 tw-rounded-full"
                 alt="Group Avatar"
               />
-              <div className="tw-flex text-center">
-                <p className="fs-6 fw-bold tw-mr-2">{chat.name}</p>
+              <div className="tw-flex text-center tw-justify-center tw-items-center">
+                <p className="fs-6 fw-bold tw-mr-2">{convertName(chat.name)}</p>
                 {currentChat.type === "public" && (
                   <FaPen
                     className="tw-cursor-pointer"
@@ -164,8 +192,8 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               <div className="mb-2 tw-border-b tw-ml-2">
                 <span className="tw-font-bold tw-text-[18px]">Member List</span>
                 <button
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200"
-                  style={{ width: "400px", height: "40px" }}
+                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200 tw-w-full"
+                  style={{ height: "40px" }}
                   onClick={toggleModalMembers}
                 >
                   <div className="tw-flex  align-items-center">
@@ -189,7 +217,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               {splitImage().map((image, index) => (
                 <div
                   key={index}
-                  className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4"
+                  className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar"
                 >
                   <img
                     src={image}
@@ -212,7 +240,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
           <div className="mb-2 tw-border-b tw-ml-2">
             <span className="tw-font-bold tw-text-[18px]">Files</span>
-            <ul className="tw-block tw-p-0">
+            <ul className="tw-block tw-p-0 tw-overflow-auto tw-max-h-60 custom-scrollbar">
               {splitFile().map((content, index) => {
                 const lastSlashIndex = content.split("?");
                 const filenameWithExtension = lastSlashIndex[0];
@@ -336,7 +364,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
           <div className="mb-2 tw-border-b tw-ml-2">
             <span className="tw-font-bold tw-text-[18px]">Links</span>
-            <ul className="tw-p-0">
+            <ul className="tw-p-0 tw-overflow-auto tw-max-h-32 custom-scrollbar">
               {limitedLinks.map((link, index) => (
                 <li key={index} className="tw-my-3 hover:tw-bg-gray-200">
                   <p className="tw-font-bold tw-text-[13px] tw-mb-0">
@@ -369,8 +397,8 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
             {currentChat.type == "private" && (
               <button
                 onClick={onDeleteHistory}
-                className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline"
-                style={{ width: "400px", height: "40px", color: "red" }}
+                className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                style={{ height: "40px", color: "red" }}
               >
                 <div className="tw-flex  align-items-center">
                   <FaRegTrashCan size={20} color="red" />
@@ -382,8 +410,8 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               <div>
                 <button
                   onClick={onDeleteHistory}
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline"
-                  style={{ width: "400px", height: "40px", color: "red" }}
+                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                  style={{ height: "40px", color: "red" }}
                 >
                   <div className="tw-flex  align-items-center">
                     <FaRegTrashCan size={20} color="red" />
@@ -392,10 +420,10 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                 </button>
                 <button
                   onClick={handleLeaveGroup}
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline"
-                  style={{ width: "400px", height: "40px", color: "red" }}
+                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                  style={{ height: "40px", color: "red" }}
                 >
-                  <div className="tw-flex  align-items-center">
+                  <div className="tw-flex align-items-center">
                     <MdLogout size={20} color="red" />
                     <span className="tw-pl-5">Leave Group</span>
                   </div>
@@ -406,19 +434,19 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
         </div>
       </div>
       <Modal show={modalShow} onHide={() => setModalShow(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Confirm Leave Group</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>Are you sure you want to leave this group?</Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setModalShow(false)}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={confirmLeaveGroup}>
-      Leave Group
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Leave Group</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to leave this group?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setModalShow(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={confirmLeaveGroup}>
+            Leave Group
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

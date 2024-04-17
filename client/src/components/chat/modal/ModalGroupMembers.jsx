@@ -5,6 +5,7 @@ import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 import axios from "axios";
 import { useStateProvider } from "../../../context/StateContext";
 import { HiMiniKey } from "react-icons/hi2";
+import { reducerCases } from "../../../context/constants";
 
 const ModalGroupMembers = ({
   showModalMembers,
@@ -13,7 +14,8 @@ const ModalGroupMembers = ({
 }) => {
   const [showOptions, setShowOptions] = useState({});
   const [selectedOptionPosition, setSelectedOptionPosition] = useState({});
-  const [{ userInfo, groups, currentChat, socket }, dispatch] = useStateProvider();
+  const [{ userInfo, groups, currentChat, socket }, dispatch] =
+    useStateProvider();
   const [friendList, setFriendList] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [currentMember, setCurrentMember] = useState(null);
@@ -53,45 +55,54 @@ const ModalGroupMembers = ({
   };
 
   const changeRole = async (member) => {
-    alert(member.id);
     try {
+      // Sử dụng template literals để tạo URL một cách rõ ràng và dễ đọc hơn
       const res = await axios.put(
-        CHAT_API + currentChat.chatId + "/update-role/" + member.id
+        `${CHAT_API}${currentChat.chatId}/update-role/${member.id}`
       );
+      // Cập nhật managerId trong currentChat
+      currentChat.managerId = member.id;
+      // Sử dụng dispatch để cập nhật state của currentChat
+      dispatch({
+        type: reducerCases.SET_CURRENT_CHAT,
+        chat: currentChat,
+      });
+      // Gỡ modal members
+      toggleModalMembers();
+      // Ẩn các options
+      setShowOptions({});
     } catch (error) {
       console.log(error);
     }
-    toggleModalMembers();
-    setShowOptions({});
   };
+
   const handleRemove = (member) => {
     setCurrentMember(member);
     setModalShow(true);
   };
-  
+
   const confirmRemove = () => {
     removeOutGroup(currentMember);
     setModalShow(false);
   };
   const removeOutGroup = (member) => {
-    console.log(member, "member")
+    console.log(member, "member");
     toggleModalMembers();
     setShowOptions({});
     const postData = {
       chatId: currentChat.chatId,
       chatParticipants: currentChat.participants,
       userId: member.id,
-      user_Name: member.display_name
-    }
-    console.log(postData, "data Leave")
+      user_Name: member.display_name,
+      managerId: currentChat.managerId,
+    };
+    console.log(postData, "data Leave");
     try {
       socket.current.emit("kick-from-group", postData);
       alert("You have left the group");
+    } catch (error) {
+      console.error("Error kick:", error);
     }
-    catch (error) {
-      console.error('Error kick:', error);
-    }
-
   };
   // const onLeaveGroup = () => {
   //   const postData = {
@@ -177,7 +188,7 @@ const ModalGroupMembers = ({
                     <div
                       className="tw-h-[50%] hover:tw-bg-gray-200 tw-cursor-pointer tw-px-2 tw-py-1"
                       onClick={() => handleRemove(member)}
-                      >
+                    >
                       Remove from group
                     </div>
                   </div>
@@ -193,19 +204,21 @@ const ModalGroupMembers = ({
         </Button>
       </Modal.Footer>
       <Modal show={modalShow} onHide={() => setModalShow(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Confirm Remove</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>Are you sure you want to remove this member from the group?</Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setModalShow(false)}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={confirmRemove}>
-      Remove
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Remove</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to remove this member from the group?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setModalShow(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={confirmRemove}>
+            Remove
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Modal>
   );
 };

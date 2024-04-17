@@ -3,22 +3,22 @@ const {user} = require('../models/user')
 const admin = require("firebase-admin")
 const {db} = require('../config/firebase')
 const {User} = require("../models/user");
-const { Kafka } = require('kafkajs');
-const  {save :saveInChat} = require("./chatService")
+const {Kafka} = require('kafkajs');
+const {save: saveInChat} = require("./chatService")
 
 const kafka = new Kafka({
     clientId: 'user-consumer',
     brokers: ['localhost:9092'],
 });
 
-const consumer = kafka.consumer({ groupId: 'user-group' });
+const consumer = kafka.consumer({groupId: 'user-group'});
 
 const run = async () => {
     await consumer.connect();
-    await consumer.subscribe({ topic: 'newuser', fromBeginning: false }); // Set fromBeginning to false to only receive new messages
+    await consumer.subscribe({topic: 'newuser', fromBeginning: false}); // Set fromBeginning to false to only receive new messages
 
     await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
+        eachMessage: async ({topic, partition, message}) => {
             console.log({
                 topic,
                 partition,
@@ -34,7 +34,7 @@ const run = async () => {
                 userData.id,
                 userData.username != null ? userData.username : userData.email,
                 userData.displayName,
-                 "",
+                "",
                 userData.email,
                 "https://www.signivis.com/img/custom/avatars/member-avatar-01.png",
                 userData.updatedAt,
@@ -48,7 +48,7 @@ const run = async () => {
             await save(userInfo);
 
             // Commit the offset to mark the message as processed
-            await consumer.commitOffsets([{ topic, partition, offset: message.offset }]);
+            await consumer.commitOffsets([{topic, partition, offset: message.offset}]);
         },
     });
 };
@@ -63,6 +63,7 @@ function generateRandomNumberString(length) {
     }
     return result;
 }
+
 const findAll = async () => {
 
     const users = await db.collection('Users');
@@ -128,8 +129,8 @@ const save = async (data) => {
         created_at: data.created_at,
         updated_at: data.updated_at,
         username: data.username,
-        phone:data.phone,
-        friends:[]
+        phone: data.phone,
+        friends: []
     });
 
     return 'Record saved successfully';
@@ -146,7 +147,7 @@ const updateUser = async (data) => {
         display_name: data.display_name,
         updated_at: data.updated_at,
         profilePicture: data.avatar,
-        username : data.username,
+        username: data.username,
         phone: data.phone,
 
 
@@ -179,34 +180,48 @@ const addFriend = async (data) => {
     console.log(data, 'datazzzz')
     // add receive requset
     await db.collection('Users')
-        .doc(data.sender)
+        .doc(data.senderId)
         .update({
             friends: admin.firestore.FieldValue.arrayUnion({
-                id: data.receiver,
-                displayName: data.receiverName,
-                profilePicture: data.profilePicture,
+                id: data.receiver.id,
+                displayName: data.receiver.display_name,
+                profilePicture: data.receiver.avatar
             })
         });
     // add sender request
     await db.collection('Users')
-        .doc(data.receiver)
+        .doc(data.receiver.id)
         .update({
             friends: admin.firestore.FieldValue.arrayUnion({
-                id: data.sender,
+                id: data.senderId,
                 displayName: data.senderName,
                 profilePicture: data.profilePicture,
             })
         });
     const chatId = uuidv4()
+    const messageId = uuidv4()
+    console.log("add friend")
+    console.log(data)
     const privateChatData = {
-            chatId: chatId,
-            name: data.receiverName + "/" +data.senderName,
-            picture:data.profilePicture + "|" + data.profilePicture,
-            participants: [data.sender, data.receiver],
-            type: "private",
-            deleteId: null,
-            messages:[],
-        managerId:null
+        chatId: chatId,
+        name: data.receiver.display_name + "/" + data.senderName,
+        picture: data.receiver.avatar + "|" + data.profilePicture,
+        participants: [data.senderId, data.receiver.id],
+        type: "private",
+        deleteId: null,
+        messages: [
+            {
+                senderId: data.senderId,
+                senderName: data.receiver.display_name + "/" + data.senderName,
+                messageId:messageId,
+                senderPicture: data.receiver.avatar + "|" + data.profilePicture,
+                type: "init friend",
+                content: "",
+                timestamp: Date.now(),
+                status: "sent"
+            }
+        ],
+        managerId: null
     }
     await saveInChat(privateChatData)
     return privateChatData
@@ -253,27 +268,26 @@ const removeFriend = async (id, data) => {
 
 const leaveGroup = async (data) => {
     try {
-      const groupRef = db.collection('Chats').doc(data.chatId);
-      const groupSnapshot = await groupRef.get();
-  
-      if (!groupSnapshot.exists) {
-        console.error('Group does not exist');
-        return;
-      }
-      const groupData = groupSnapshot.data();
-      const updatedParticipants = groupData.participants.filter(participant => participant !== data.userId);
-      if (groupData.participants.length === updatedParticipants.length) {
-        console.error('User is not a member of the group');
-        return;
-      }
-  
-      await groupRef.update({ participants: updatedParticipants });
-      console.log('User left group successfullyy');
+        const groupRef = db.collection('Chats').doc(data.chatId);
+        const groupSnapshot = await groupRef.get();
+
+        if (!groupSnapshot.exists) {
+            console.error('Group does not exist');
+            return;
+        }
+        const groupData = groupSnapshot.data();
+        const updatedParticipants = groupData.participants.filter(participant => participant !== data.userId);
+        if (groupData.participants.length === updatedParticipants.length) {
+            console.error('User is not a member of the group');
+            return;
+        }
+
+        await groupRef.update({participants: updatedParticipants});
+        console.log('User left group successfullyy');
     } catch (error) {
-      console.error('Error leaving group:', error);
+        console.error('Error leaving group:', error);
     }
-  };
+};
 
 
-
-module.exports = {save, findAll, findByEmail,addFriend,findById,updateUser,removeFriend, leaveGroup}
+module.exports = {save, findAll, findByEmail, addFriend, findById, updateUser, removeFriend, leaveGroup}

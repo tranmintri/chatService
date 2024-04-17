@@ -3,6 +3,7 @@ import { useStateProvider } from "../../../context/StateContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
+import { reducerCases } from "../../../context/constants";
 
 const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
   const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
@@ -45,6 +46,15 @@ const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
         CHAT_API + currentChat.chatId,
         selectedFriends
       );
+      const updatedParticipants = [
+        ...new Set([...currentChat.participants, ...selectedFriends]),
+      ];
+      currentChat.participants = updatedParticipants;
+      dispatch({
+        type: reducerCases.SET_CURRENT_CHAT,
+        chat: currentChat,
+      });
+
       handleCloseModalAddMember();
     } catch (error) {
       console.error(error);
