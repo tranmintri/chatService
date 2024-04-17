@@ -99,7 +99,13 @@ const ModalGroupMembers = ({
     console.log(postData, "data Leave");
     try {
       socket.current.emit("kick-from-group", postData);
-      alert("You have left the group");
+      currentChat.participants = currentChat.participants.filter(
+        (p) => p != member.id
+      );
+      dispatch({
+        type: reducerCases.SET_CURRENT_CHAT,
+        chat: currentChat,
+      });
     } catch (error) {
       console.error("Error kick:", error);
     }

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { FaPen } from "react-icons/fa6";
+import { CiEdit } from "react-icons/ci";
 
 const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
+  const [newImage, setNewImage] = useState(null);
   const handleConfirm = () => {
     window.alert("dooir teen thanhf coong!");
   };
@@ -24,7 +25,7 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
             className="tw-w-24 tw-h-24 tw-rounded-full"
             alt="Group Avatar"
           />
-          <FaPen className="tw-cursor-pointer" size={13} />
+          <CiEdit className="tw-cursor-pointer" size={20} />
         </div>
         <div className="tw-flex tw-justify-center">
           <span className="text-center tw-text-[18px] tw-font-bold">
@@ -32,7 +33,7 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
           </span>
         </div>
         <div className="tw-flex tw-justify-center">
-          <span className="text-center tw-text-[15px]">
+          <span className="text-center tw-text-[15px] tw-mb-2">
             Are you sure you want to rename the group, when confirming the new
             group name will be visible to all members.
           </span>

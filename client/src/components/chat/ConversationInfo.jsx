@@ -4,7 +4,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import ModalGroupMembers from "./modal/ModalGroupMembers";
-import { FaPen } from "react-icons/fa";
+import { CiEdit } from "react-icons/ci";
 import ModalGroupInfo from "./modal/ModalGroupInfo";
 import xls from "../../assets/xls.png";
 import xlsx from "../../assets/xlsx.png";
@@ -15,6 +15,8 @@ import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
 import { GET_ALL_USER } from "../../router/ApiRoutes";
 import { Modal, Button } from "react-bootstrap";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import ModalAddMember from "./modal/ModalAddMember";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
@@ -26,7 +28,11 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [showModalInfo, setShowModalInfo] = useState(false);
   const [menberCount, setMemberCount] = useState(0);
   const [modalShow, setModalShow] = useState(false);
+  const [showModalAddMember, setShowModalAddMember] = useState(false);
 
+  const handleCloseModalAddMember = () => {
+    setShowModalAddMember(!showModalAddMember);
+  };
   const toggleModalInfo = () => {
     setShowModalInfo(!showModalInfo);
   };
@@ -170,21 +176,43 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                 className="mx-auto mb-3 tw-h-20 tw-w-20 tw-rounded-full"
                 alt="Group Avatar"
               />
-              <div className="tw-flex text-center tw-justify-center tw-items-center">
-                <p className="fs-6 fw-bold tw-mr-2">{convertName(chat.name)}</p>
-                {currentChat.type === "public" && (
-                  <FaPen
-                    className="tw-cursor-pointer"
-                    size={13}
-                    onClick={toggleModalInfo}
-                  />
-                )}
+              <div className="tw-flex tw-justify-center tw-items-center tw-mb-3">
+                <div className="fs-6 fw-bold tw-mr-2">
+                  {convertName(chat.name)}
+                </div>
+                <div>
+                  {currentChat.type === "public" && (
+                    <CiEdit
+                      className="tw-cursor-pointer tw-bg-gray-300 tw-p-1 tw-rounded-full"
+                      size={25}
+                      onClick={toggleModalInfo}
+                    />
+                  )}
+                </div>
               </div>
               <ModalGroupInfo
                 showModalInfo={showModalInfo}
                 toggleModalInfo={toggleModalInfo}
                 chat={chat}
               />
+              <div className="tw-flex tw-justify-center tw-items-center">
+                {currentChat.type == "public" && (
+                  <div className="tw-flex tw-flex-col tw-items-center">
+                    <AiOutlineUserAdd
+                      className="tw-p-1 tw-bg-gray-200 tw-rounded-full tw-cursor-pointer tw-text-gray-500 tw-mb-2 tw-mt-2"
+                      size={30}
+                      onClick={handleCloseModalAddMember}
+                    />
+                    <ModalAddMember
+                      showModalAddMember={showModalAddMember}
+                      handleCloseModalAddMember={handleCloseModalAddMember}
+                    />
+                    <div className="tw-text-gray-500 tw-text-sm tw-mb-2">
+                      <span>Add member</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div>
