@@ -6,6 +6,7 @@ import {
   SendOutlined,
   AudioOutlined,
 } from "@ant-design/icons";
+import ReactPlayer from "react-player";
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
@@ -347,10 +348,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   //     });
   //   }
   // };
-  const handleClickOpenTab = (receiverId) => {
+  const handleClickOpenTab = (receiverId, roomId) => {
     // Tạo URL cho tab mới
     sendVoiceCallRequest(receiverId, userInfo?.id);
-    const newTabUrl = `${CLIENT_HOST}/chat/${receiverId}`;
+    const newTabUrl = `${CLIENT_HOST}/chat/${roomId}`;
     // Mở tab mới
     const newTab = window.open(newTabUrl, "_blank");
     // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
@@ -359,10 +360,20 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   };
   const sendVoiceCallRequest = (receiverId, senderId) => {
-    socket.current.emit("request-to-voice-call-private", {
+    const incomingVoiceCall = {
       receiveId: receiverId,
       senderId: senderId,
+      senderPicture: userInfo?.avatar,
+      senderName: userInfo?.display_name,
+      receiveName: convertName(),
+      receivePicture: convertPicture(),
+      chatId: currentChat.chatId,
+    };
+    dispatch({
+      type: reducerCases.SET_INCOMING_VOICE_CALL,
+      incomingVoiceCall: incomingVoiceCall,
     });
+    socket.current.emit("request-to-voice-call-private", incomingVoiceCall);
   };
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
@@ -463,9 +474,20 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                   ? chat.participants[0] == userInfo?.id
                     ? chat.participants[1]
                     : chat.participants[0]
-                  : chat.chatId
+                  : chat.chatId,
+                currentChat.chatId
               )
             }
+            // onClick={() =>
+            //   sendVoiceCallRequest(
+            //     chat.type == "private"
+            //       ? chat.participants[0] == userInfo?.id
+            //         ? chat.participants[1]
+            //         : chat.participants[0]
+            //       : chat.chatId,
+            //     userInfo?.id
+            //   )
+            // }
           />
           {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} /> */}
           {/* <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} /> */}

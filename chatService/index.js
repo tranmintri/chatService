@@ -50,11 +50,27 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
 
     global.chatSocket = socket;
+
+
     socket.on("add-user", (userId) => {
         console.log("add-user")
         console.log(userId)
         onlineUsers.set(userId, socket.id)
         console.log(Array.from(onlineUsers.keys()))
+    })
+
+
+    socket.on("request-to-voice-call-private",(data)=>{
+        io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private",data)
+    })
+    socket.on("request-accept-voice-call",(incomingVoiceCall,callAccepted)=>{
+        io.to(onlineUsers.get(incomingVoiceCall.senderId)).emit("response-accept-call-private",callAccepted)
+    })
+    socket.on("request-cancel-voice-call",(data)=>{
+        io.to(onlineUsers.get(data.senderId)).emit("response-cancel-call-private",data)
+    })
+    socket.on("request-end-voice-call",(data)=>{
+        io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private",data)
     })
 
     socket.on("get-online-user", () => {
@@ -102,14 +118,8 @@ io.on("connection", (socket) => {
     )
 
     socket.on("disconnect", () => {
-        console.log("A user disconnected");
-        // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-        onlineUsers.forEach((value, key) => {
-            if (value === socket.id) {
-                onlineUsers.delete(key);
-            }
-        });
-    });
+        socket.broadcast.emit("callEnded")
+    })
 
     socket.on('join-to-chat-public', (roomId) => {
         socket.join(roomId);

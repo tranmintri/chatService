@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import WaveSurfer from "wavesurfer.js";
 
 const RecordCard = ({ message }) => {
   return (

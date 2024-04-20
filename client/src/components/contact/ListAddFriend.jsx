@@ -8,7 +8,6 @@ import { useStateProvider } from "../../context/StateContext";
 import { reducerCases } from "../../context/constants";
 import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from "../../router/ApiRoutes";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 
 const ListAddFriend = () => {
   const [dataLoaded, setDataLoaded] = useState(false);
