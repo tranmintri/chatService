@@ -14,15 +14,70 @@ export const initialState = {
   videoCall: undefined,
   voiceCall: undefined,
   incomingVoiceCall: undefined,
-  incomingVideoCall: undefined
+  incomingVideoCall: undefined,
+
+  callPage: false,
+
+  callAccepted: false,
+  callEnded: false,
+  caller: undefined,
+  callerSignal: undefined,
+  myStream: undefined,
+  remoteStream: undefined,
+  myVideo: undefined,
+  remoteVideo: undefined,
+  peerConnections: undefined,
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case reducerCases.SET_PEER_CONNECTION:
+      console.log("setpeer");
+      console.log({ peer: action.setPeer });
+      return {
+        ...state,
+        peerConnections: action.peerConnections,
+      };
+    case reducerCases.SET_REMOTE_VIDEO:
+      return {
+        ...state,
+        remoteVideo: action.remoteVideo,
+      };
+    case reducerCases.SET_MY_VIDEO:
+      return {
+        ...state,
+        myVideo: action.myVideo,
+      };
+    case reducerCases.SET_REMOTE_STREAM:
+      return {
+        ...state,
+        remoteStream: action.remoteStream,
+      };
+    case reducerCases.SET_MY_STREAM:
+      return {
+        ...state,
+        myStream: action.myStream,
+      };
+    case reducerCases.SET_CALLER:
+      return {
+        ...state,
+        caller: action.caller,
+      };
+    case reducerCases.SET_CALLER_SIGNAL:
+      return {
+        ...state,
+        callerSignal: action.callerSignal,
+      };
+
     case reducerCases.SET_USER_INFO:
       return {
         ...state,
         userInfo: action.userInfo,
+      };
+    case reducerCases.SET_RECEIVE_SOCKET:
+      return {
+        ...state,
+        receiveSocket: action.receiveSocket,
       };
 
     case reducerCases.SET_NEW_USER:
@@ -35,6 +90,30 @@ const reducer = (state, action) => {
         ...state,
         contactsPage: action.contactsPage,
       };
+    case reducerCases.SET_CALL_PAGE:
+      return {
+        ...state,
+        callPage: action.callPage,
+      };
+    //start
+    case reducerCases.SET_INCOMING_VOICE_CALL:
+      return {
+        ...state,
+        incomingVoiceCall: action.incomingVoiceCall,
+      };
+
+    case reducerCases.SET_CALL_ACCEPTED:
+      return {
+        ...state,
+        callAccepted: action.callAccepted,
+      };
+    case reducerCases.SET_CALL_END:
+      return {
+        ...state,
+        callEnded: action.callEnded,
+      };
+
+    //end
     case reducerCases.CHANGE_CURRENT_CHAT_USER:
       return {
         ...state,

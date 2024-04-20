@@ -22,9 +22,6 @@ const ModalGroupMembers = ({
   const filteredFriendList = friendList.filter((friend) => {
     return members.some((id) => id === friend.id);
   });
-  console.log(members);
-  console.log(friendList);
-  console.log(filteredFriendList);
 
   useEffect(() => {
     const fetchData = async () => {

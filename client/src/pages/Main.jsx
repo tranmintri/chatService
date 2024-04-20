@@ -10,8 +10,12 @@ import { HOST } from "../router/ApiRoutes";
 import { HOST2 } from "../router/ApiRoutes";
 import Loading from "../components/chat/Loading";
 import { toast } from "react-toastify";
+import CallPage from "./../components/chat/CallPage";
+import CallPrivate from "../components/chat/CallPrivate";
 const Main = () => {
-  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, groups, currentChat, callPage }, dispatch] =
+    useStateProvider();
+  const [state] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef();
   const socket2 = useRef();
@@ -74,6 +78,89 @@ const Main = () => {
       setSocketEvent(true);
     }
   }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("callUser", (data) => {
+        dispatch({
+          type: reducerCases.SET_CALLER,
+          caller: data.from,
+        });
+        dispatch({
+          type: reducerCases.SET_CALLER_SIGNAL,
+          callerSignal: data.signal,
+        });
+      });
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-to-voice-call-private", (data) => {
+        console.log(data);
+
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: data,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-accpet-call-private", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.SET_CALL_ACCEPTED,
+          callAccepted: data,
+        });
+
+        toast.info("User is accept");
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-cancel-call-private", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.SET_CALL_PAGE,
+          callPage: false,
+        });
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: undefined,
+        });
+        toast.info("The call is canceled");
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-end-call-private", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.SET_CALL_PAGE,
+          callPage: false,
+        });
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: undefined,
+        });
+        toast.info("The call is ended");
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-public", (data) => {
@@ -173,7 +260,7 @@ const Main = () => {
     }
   }, [socket.current]);
 
-  return isLoading ? <SideBar /> : <Loading />;
+  return callPage ? <CallPrivate /> : isLoading ? <SideBar /> : <Loading />;
 };
 
 export default Main;

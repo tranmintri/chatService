@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Page from "../constants/Page";
 import CallPrivate from "../components/chat/CallPrivate";
 import MyAccountPage from "../pages/UserSettingPage/MyAccountPage/MyAccountPage";
+import CallPage from "../components/chat/CallPage";
 
 const AppRouter = () => {
   return (
