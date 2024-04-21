@@ -6,7 +6,7 @@ const chatRoutes = require('./routes/chat-routes');
 const messageRoutes = require('./routes/message-routes')
 const userRoutes = require('./routes/user-routes')
 const puppeteer = require('puppeteer');
-
+const userService = require('./service/userService')
 const app = express();
 const http = require("http");
 const {Server} = require("socket.io");
@@ -50,11 +50,27 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
 
     global.chatSocket = socket;
+
+
     socket.on("add-user", (userId) => {
         console.log("add-user")
         console.log(userId)
         onlineUsers.set(userId, socket.id)
         console.log(Array.from(onlineUsers.keys()))
+    })
+
+
+    socket.on("request-to-voice-call-private",(data)=>{
+        io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private",data)
+    })
+    socket.on("request-accept-voice-call",(incomingVoiceCall,callAccepted)=>{
+        io.to(onlineUsers.get(incomingVoiceCall.senderId)).emit("response-accept-call-private",callAccepted)
+    })
+    socket.on("request-cancel-voice-call",(data)=>{
+        io.to(onlineUsers.get(data.senderId)).emit("response-cancel-call-private",data)
+    })
+    socket.on("request-end-voice-call",(data)=>{
+        io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private",data)
     })
 
     socket.on("get-online-user", () => {
@@ -86,36 +102,60 @@ io.on("connection", (socket) => {
         socket.join(chatId);
     });
     socket.on("send-msg-public", (chatId, data) => {
-            socket.to(chatId).emit("msg-recieve-public", {
-                from: data.newMessage.senderId,
-                newMessage: {
-                    messageId: data.newMessage.messageId,
-                    senderId: data.newMessage.senderId,
-                    senderName: data.newMessage.senderName,
-                    senderPicture: data.newMessage.senderPicture,
-                    type: data.newMessage.type,
-                    content: data.newMessage.content,
-                    timestamp: data.newMessage.timestamp
-                }
-            })
-        }
+        socket.to(chatId).emit("msg-recieve-public", {
+            from: data.newMessage.senderId,
+            newMessage: {
+                messageId: data.newMessage.messageId,
+                senderId: data.newMessage.senderId,
+                senderName: data.newMessage.senderName,
+                senderPicture: data.newMessage.senderPicture,
+                type: data.newMessage.type,
+                content: data.newMessage.content,
+                timestamp: data.newMessage.timestamp
+            }
+        })
+    }
     )
 
+    socket.on("disconnect", () => {
+        socket.broadcast.emit("callEnded")
+    })
 
-
-socket.on("disconnect", () => {
-    console.log("A user disconnected");
-    // Loại bỏ người dùng khỏi danh sách người dùng đang trực tuyến
-    onlineUsers.forEach((value, key) => {
-        if (value === socket.id) {
-            onlineUsers.delete(key);
-        }
+    socket.on('join-to-chat-public', (roomId) => {
+        socket.join(roomId);
     });
-});
 
-socket.on('join-to-chat-public', (roomId) => {
-    socket.join(roomId);
-});
+    socket.on("leave-group", (data) => {
+        userService.leaveGroup(data)
+        const postData = {
+            chatId: data.chatId,
+            chatParticipants: data.chatParticipants,
+            userId: data.userId,
+            user_Name: data.user_Name,
+            managerId : data.managerId,
+        };
+        // console.log(data.chatParticipants)
+        // data.chatParticipants.forEach(participant => {
+        //     if (onlineUsers.has(participant)) {
+                socket.to(onlineUsers.get(data.userId)).emit("leave-group-noti", postData);
+            // }    e
+        // });
+    });
 
-
+    socket.on("kick-from-group", (data) => {
+        userService.leaveGroup(data)
+        const postData = {
+            chatId: data.chatId,
+            chatParticipants: data.chatParticipants,
+            userId: data.userId,
+            user_Name: data.user_Name,
+            managerId : data.managerId,
+        };
+        console.log(data.chatParticipants)
+        data.chatParticipants.forEach(participant => {
+            if (onlineUsers.has(participant)) {
+                socket.to(onlineUsers.get(participant)).emit("kick-out", postData);
+            }
+        });
+    });
 })

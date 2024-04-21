@@ -65,21 +65,21 @@ const checkSendRequest = async (senderId, receiverId) => {
 const requestAddFriend = async (data) => {
     console.log(data)
     try {
-        const userRef = db.collection('Users').doc(data.userId);
+        const userRef = db.collection('Users').doc(data.sender);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("ng dung k ton tai");
         }
         const userData = userDoc.data();
-        if (data.userId == data.id_UserWantAdd) {
+        if (data.sender == data.receiver) {
             throw new Error("bn k the gui loi moi kb cho chinh minh");
         }
-        if (userData.friends && userData.friends.includes(data.id_UserWantAdd)) {
+        if (userData.friends && userData.friends.includes(data.receiver)) {
             throw new Error("add fen roi");
         }
         const friendRequestSnapshot = await db.collection('FriendRequests')
-            .where('sender', '==', data.userId)
-            .where('receiver', '==', data.id_UserWantAdd)
+            .where('sender', '==', data.sender)
+            .where('receiver', '==', data.receiver)
             .get();
 
         if (!friendRequestSnapshot.empty) {
@@ -90,8 +90,8 @@ const requestAddFriend = async (data) => {
             receiverName: data.receiverName,
             requestId: uuidv4(),
             isAccepted: false,
-            sender: data.userId,
-            receiver: data.id_UserWantAdd,
+            sender: data.sender,
+            receiver: data.receiver,
             profilePicture: data.profilePicture
         };
         await db.collection('FriendRequests').doc(newFriendRequest.requestId).set(newFriendRequest);
@@ -215,8 +215,9 @@ const declineFriend = async (data) => {
     }
 }
 const deleteFriendRequest = async (data) => {
+    console.log(data,'data')
     const friendRequestsRef = db.collection('FriendRequests');
-    const snapshot = await friendRequestsRef.where('sender', '==', data.id).where('receiver', '==', data.user.id).get();
+    const snapshot = await friendRequestsRef.where('sender', '==', data.sender).where('receiver', '==', data.receiver).get();
     
     if (snapshot.empty) {
       console.log('No matching documents.');

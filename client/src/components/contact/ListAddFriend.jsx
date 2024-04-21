@@ -8,16 +8,34 @@ import { useStateProvider } from "../../context/StateContext";
 import { reducerCases } from "../../context/constants";
 import { GET_ALL_USER, GET_CHAT_BY_PARTICIPANTS } from "../../router/ApiRoutes";
 import { toast } from "react-toastify";
+
 const ListAddFriend = () => {
-  const [{ userInfo, sentInvitations, receivedInvitations, socket2 }, dispatch] = useStateProvider()
+  const [dataLoaded, setDataLoaded] = useState(false);
 
+  const [
+    { userInfo, receivedInvitations, socket2, sentInvitations },
+    dispatch,
+  ] = useStateProvider();
+
+  console.log(sentInvitations, "sentInvitations");
+  console.log(receivedInvitations, "receivedInvitations");
   //chuan
+  // NHAN
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
-        if (listSenderRequest.data) {
-          dispatch({ type: reducerCases.SET_SENT_INVITATION, sentInvitations: listSenderRequest.data ? listSenderRequest.data : [] })
+        const listReceiverRequest = await axios.get(
+          NOTI_API + "getListReceiverRequest/" + userInfo?.id
+        );
+        // if (listReceiverRequest.data) {
+        //   dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receive: listReceiverRequest.data ? listReceiverRequest.data : [] })
+        // }
+        if (listReceiverRequest.data && listReceiverRequest.data.length > 0) {
+          console.log(listReceiverRequest.data, "nhan lai");
+          dispatch({
+            type: reducerCases.SET_RECEIVE_INVITATION,
+            receive: listReceiverRequest.data,
+          });
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -26,123 +44,132 @@ const ListAddFriend = () => {
     fetchData();
   }, [userInfo?.id]);
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-        if (listReceiverRequest.data) {
-          dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receivedInvitations: listReceiverRequest.data ? listReceiverRequest.data : [] })
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [userInfo?.id]);
   const fetchReceiverData = async () => {
     try {
-      const listReceiverRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+      const listReceiverRequest = await axios.get(
+        NOTI_API + "getListReceiverRequest/" + userInfo?.id
+      );
       if (listReceiverRequest.data) {
-        // setReceivedInvitations(listReceiverRequest.data ? listReceiverRequest.data : []);
-        dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receivedInvitations: listReceiverRequest.data ? listReceiverRequest.data : [] })
+        dispatch({
+          type: reducerCases.SET_RECEIVE_INVITATION,
+          receive: listReceiverRequest.data ? listReceiverRequest.data : [],
+        });
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  //CHO
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const listSenderRequest = await axios.get(
+          NOTI_API + "getListSenderRequest/" + userInfo?.id
+        );
+
+        if (listSenderRequest.data && listSenderRequest.data.length > 0) {
+          console.log(listSenderRequest.data, "cho di");
+          dispatch({
+            type: reducerCases.SET_SENT_INVITATION,
+            send: listSenderRequest.data,
+          });
+        }
+        setDataLoaded(true);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [userInfo?.id]);
   const fetchSenderData = async () => {
     try {
-      const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-      if (listReceiverRequest.data) {
-
-        dispatch({ type: reducerCases.SET_SENT_INVITATION, sentInvitations: listReceiverRequest.data ? listReceiverRequest.data : [] })
+      const listSenderRequest = await axios.get(
+        NOTI_API + "getListSenderRequest/" + userInfo?.id
+      );
+      if (listSenderRequest.data) {
+        dispatch({
+          type: reducerCases.SET_SENT_INVITATION,
+          send: listSenderRequest.data ? listSenderRequest.data : [],
+        });
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  // id: searchResults.id,
-  // display_name: searchResults.display_name,
-  // profilePicture: searchResults.profilePicture,
-  // user: userInfo
 
   const handleAcceptInvite = async (invitation) => {
-    // const postData = {
-    //   userId: userInfo?.id,
-    //   requestId: invitation.sender,
-    // }
-    // console.log(invitation)
     const postData = {
-      id: invitation.sender,
-      display_name: invitation.senderName,
+      senderId: invitation.sender,
+      senderName: invitation.senderName,
       profilePicture: invitation.profilePicture,
-      user: userInfo
+      receiver: userInfo,
     };
-    console.log(postData)
-    console.log(postData, "postData")
+
     const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
-    const response2 = await axios.post(NOTI_API + 'delete', postData);
-    // sendFriendDataToModal(response.data.data);
-    // setFriendList(prevList => [...prevList, response.data.data]);
-    // dispatch({ type: reducerCases.SET_ALL_GROUP, groups: [...groups, response.data.data] });
+    const response2 = await axios.post(NOTI_API + "delete", invitation);
     try {
-      socket2.current.emit("acceptFriendRequest", postData);
+      socket2.current.emit("acceptFriendRequest", invitation);
       // alert('Acept successfully!');
       toast.success("Accept successfully!");
       fetchReceiverData();
-      const updatedReceivedInvitations = receivedInvitations.filter(
+      const updatedReceivedInvitations = receivedInvitations?.filter(
         (invitation) => invitation.id !== invitation.sender
       );
-      dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receivedInvitations: updatedReceivedInvitations ? updatedReceivedInvitations : [] })
+      dispatch({
+        type: reducerCases.SET_RECEIVE_INVITATION,
+        receive: updatedReceivedInvitations ? updatedReceivedInvitations : [],
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
+  };
 
   const handleRejectInvite = async (invitation) => {
     const postData = {
       userId: userInfo?.id,
-      requestId: invitation.sender
-    }
+      requestId: invitation.sender,
+    };
     try {
       socket2.current.emit("rejectFriendRequest", postData);
-      alert('Reject successfully!');
+      alert("Reject successfully!");
       fetchReceiverData();
-      const updatedReceivedInvitations = receivedInvitations.filter(
+      const updatedReceivedInvitations = receivedInvitations?.filter(
         (invitation) => invitation.id !== invitation.sender
       );
-      dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receivedInvitations: updatedReceivedInvitations ? updatedReceivedInvitations : [] })
+      dispatch({
+        type: reducerCases.SET_RECEIVE_INVITATION,
+        receive: updatedReceivedInvitations ? updatedReceivedInvitations : [],
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
+  };
 
   const handleCancelInvite = async (invitation) => {
     const postData = {
       userId: userInfo?.id,
-      requestId: invitation.receiver
-    }
+      requestId: invitation.receiver,
+    };
     try {
       socket2.current.emit("cancelFriendRequest", postData);
-      alert('Cancel successfully!');
+      alert("Cancel successfully!");
       fetchSenderData();
-      const updatedSendedInvitations = sentInvitations.filter(
+      const updatedSendedInvitations = sentInvitations?.filter(
         (invitation) => invitation.id !== invitation.sender
       );
-
-      dispatch({ type: reducerCases.SET_SENT_INVITATION, sentInvitations: updatedSendedInvitations ? updatedSendedInvitations : [] })
-      socket2.current.on("cancelFriend", (data) => {
-      })
+      dispatch({
+        type: reducerCases.SET_SENT_INVITATION,
+        send: updatedSendedInvitations ? updatedSendedInvitations : [],
+      });
+      socket2.current.on("cancelFriend", (data) => {});
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
-
+  };
 
   return (
-    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: "white", height: "100vh" }}>
       <div className="friend-requests-header">
         <h2>
           {" "}
@@ -161,14 +188,16 @@ const ListAddFriend = () => {
           fontWeight: "bold",
           marginTop: "20px",
           marginBottom: "20px",
-          color: 'black'
+          color: "black",
         }}
       >
         <u>Friend Requests Received</u>{" "}
-        <span>({receivedInvitations.length ? receivedInvitations.length : 0})</span>
+        <span>
+          ({receivedInvitations?.length ? receivedInvitations?.length : 0})
+        </span>
       </div>
 
-      {receivedInvitations.length === 0 ? (
+      {receivedInvitations?.length === 0 ? (
         <div className="text-center align-items-center">
           <FontAwesomeIcon
             icon={faEnvelopeOpen}
@@ -179,12 +208,10 @@ const ListAddFriend = () => {
         </div>
       ) : (
         <ListGroup className="m-3">
-          {receivedInvitations.map((invitation, index) => (
+          {receivedInvitations?.map((invitation, index) => (
             <div key={index}>
-              <ListGroup.Item
-                style={{ width: "350px", fontWeight: "bold" }}
-              >
-                {invitation.senderName}
+              <ListGroup.Item style={{ width: "350px", fontWeight: "bold" }}>
+                {invitation?.senderName}
                 <div className="d-flex justify-content-between">
                   <Col md={6}>
                     <Button
@@ -219,40 +246,39 @@ const ListAddFriend = () => {
           marginBottom: "20px",
         }}
       >
-        <u>Friend Requests Sent</u> <span>({sentInvitations.length})</span>
+        <u>Friend Requests Sent</u>{" "}
+        <span>({sentInvitations?.length || 0})</span>
       </div>
-
-      {sentInvitations.length === 0 ? (
+      {dataLoaded && sentInvitations.length === 0 ? (
         <div className="text-center align-items-center">
           <FontAwesomeIcon
             icon={faEnvelopeOpen}
             style={{ fontSize: "100px", margin: 15 }}
             color="black"
           />
-          <Alert variant="info">Oops, this is no friend requests.</Alert>
+          <Alert variant="info">Oops, there are no friend requests.</Alert>
         </div>
       ) : (
         <ListGroup className="m-3">
-          {sentInvitations.map((invitations, index) => (
-            <div key={index}>
-              <ListGroup.Item
-                style={{ width: "350px", fontWeight: "bold" }}
-              >
-                {invitations.receiverName}
-                <div className="d-flex justify-content-end">
-                  <Col md={12}>
-                    <Button
-                      variant="secondary"
-                      onClick={() => handleCancelInvite(invitations)}
-                      style={{ width: "100%" }}
-                    >
-                      Cancel
-                    </Button>
-                  </Col>
-                </div>
-              </ListGroup.Item>
-            </div>
-          ))}
+          {sentInvitations?.length > 0 &&
+            sentInvitations?.map((invitation, index) => (
+              <div key={index}>
+                <ListGroup.Item style={{ width: "350px", fontWeight: "bold" }}>
+                  {invitation?.receiverName}
+                  <div className="d-flex justify-content-end">
+                    <Col md={12}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleCancelInvite(invitation)}
+                        style={{ width: "100%" }}
+                      >
+                        Cancel
+                      </Button>
+                    </Col>
+                  </div>
+                </ListGroup.Item>
+              </div>
+            ))}
         </ListGroup>
       )}
     </div>

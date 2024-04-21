@@ -3,9 +3,76 @@
 const {findAll, addMessageOneByOne, deleteById, shareMessage, removeAtYourSide} = require("../service/messageService");
 const {Message} = require("../models/chat");
 const multer = require('multer');
-const upload = multer();
 
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
+const { Readable } = require("stream");
 
+// Create S3 client
+const s3Client = new S3Client({
+    region: process.env.REGION,
+    credentials: {
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY,
+    },
+});
+
+// Create a multer storage engine for handling file uploads
+const storage = multer.memoryStorage();
+const uploadRecord = multer({ storage }).single("record");
+
+const saveRecordInChat = async (req, res) => {
+    try {
+        uploadRecord(req, res, async (err) => {
+            if (err) {
+                console.error("Error uploading file:", err);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+
+            if (!req.file) {
+                return res.status(400).send("No file uploaded.");
+            }
+
+            const fileContent = req.file.buffer;
+            const fileName = `${Date.now()}_${req.file.originalname}`;
+            const bucketName = process.env.S3_BUCKET_NAME;
+
+            // Create a readable stream from the file content
+            const stream = Readable.from(fileContent);
+
+            // Set up the parameters for the PutObjectCommand
+            const params = {
+                Bucket: bucketName,
+                Key: `record/${fileName}`,
+                Body: stream,
+                ACL: "public-read",
+                ContentType: req.file.mimetype,
+            };
+
+            // Use Upload from @aws-sdk/lib-storage to upload the file to S3
+            const uploader = new Upload({
+                client: s3Client,
+                params,
+            });
+
+            // Perform the upload
+            const result = await uploader.done();
+
+            // Get the public URL of the uploaded file
+            const fileUrl = `https://${bucketName}.s3.${process.env.REGION}.amazonaws.com/${params.Key}`;
+
+            console.log("File uploaded to Amazon S3.", fileUrl);
+            res.status(200).json({ url: fileUrl });
+        });
+    } catch (error) {
+        console.error("Error handling upload:", error);
+        res.status(500).send("Error handling upload.");
+    }
+};
+
+// Định nghĩa route để gửi file từ client lên S3
+
+const upload = multer()
 // const  upload1
 const uploadImages = upload.array('images');
 
@@ -107,48 +174,6 @@ const saveFileInChat = async (req, res, next) => {
     }
 };
 
-const uploadRecord = upload.single('record'); // Chỉ cho phép tải lên một tệp record
-const saveRecordInChat = async (req, res) => {
-    try {
-        uploadRecord(req, res, async (err) => {
-            console.log(req.file)
-            if (err) {
-                console.error('Error uploading file:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            }
-
-            if (!req.file) {
-                return res.status(400).send("No file uploaded.");
-            }
-
-            const recordFile = req.file;
-            const timestamp = Date.now();
-            const recordUploadPath = `record/${timestamp}_${decodeURIComponent(recordFile.originalname)}`;
-            const recordRef = bucket.file(recordUploadPath);
-
-            const blobStream = recordRef.createWriteStream({
-                metadata: { contentType: recordFile.mimetype },
-            });
-
-            blobStream.on("error", (error) => {
-                console.error("Error uploading file:", error);
-                return res.status(500).send("Error uploading file.");
-            });
-
-            blobStream.on("finish", async () => {
-                // Get signed URL of the uploaded file
-                const [url] = await recordRef.getSignedUrl({ action: "read", expires: "01-01-2025" });
-                console.log("File uploaded to Firebase Storage.",url);
-                res.status(200).json({ url:url });
-            });
-
-            blobStream.end(recordFile.buffer);
-        });
-    } catch (error) {
-        console.error("Error handling upload:", error);
-        res.status(500).send("Error handling upload.");
-    }
-};
 
 const saveMessageInChat = async (req, res, next) => {
 
