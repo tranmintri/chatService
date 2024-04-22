@@ -10,6 +10,7 @@ const ChangeRoleModal = ({
   showFormLeaveConversation,
   handleLeaveConversation,
   handleLeaveGroup,
+  setSelectChangeRole,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [friendList, setFriendList] = useState([]);
@@ -18,27 +19,6 @@ const ChangeRoleModal = ({
   const confirmLeaveGroup = () => {
     handleCloseChangeRoleModal(); // Đóng modal "Change Role"
     handleLeaveGroup(); // Xử lý việc rời khỏi nhóm
-  };
-
-  const onLeaveGroup = () => {
-    if (currentChat.managerId !== userInfo?.id) {
-      const postData = {
-        chatId: currentChat.chatId,
-        chatParticipants: currentChat.participants,
-        userId: userInfo.id,
-        user_Name: userInfo.display_name,
-        managerId: currentChat.managerId,
-      };
-      console.log(postData, "data Leave");
-      try {
-        socket.current.emit("leave-group", postData);
-        alert("You have left the group");
-      } catch (error) {
-        console.error("Error leaving group:", error);
-      }
-    } else {
-      alert("You are the owner of this group.");
-    }
   };
 
   useEffect(() => {
@@ -55,10 +35,13 @@ const ChangeRoleModal = ({
   }, []);
 
   const filteredFriendList = friendList.filter((friend) => {
-    return currentChat.participants.some((id) => id === friend.id);
+    return currentChat.participants.some(
+      (id) => id === friend.id && id !== userInfo?.id
+    );
   });
 
   const handleSelectAndContinue = () => {
+    setSelectChangeRole(selectedOption);
     handleLeaveConversation(); // Hiển thị modal "Leave Conversation"
     handleCloseChangeRoleModal(); // Đóng modal "Change Role"
   };

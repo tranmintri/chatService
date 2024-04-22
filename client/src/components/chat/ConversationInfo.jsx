@@ -34,6 +34,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [showModalAddMember, setShowModalAddMember] = useState(false);
   const [showFormChangeRole, setShowFormChangeRole] = useState(false);
   const [showFormLeaveConversation, setShowLeaveConversation] = useState(false);
+  const [selectChangeRole, setSelectChangeRole] = useState();
   const handleLeaveConversation = () => {
     setShowLeaveConversation(!showFormLeaveConversation);
   };
@@ -488,19 +489,21 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
         </div>
       </div>
-      {showFormChangeRole && currentChat.managerId === userInfo?.id ? (
+      {/* {showFormChangeRole && currentChat.managerId != userInfo?.id ? (
         <ChangeRoleModal
           showFormChangeRole={showFormChangeRole}
           handleCloseChangeRoleModal={handleCloseChangeRoleModal}
           showFormLeaveConversation={showFormLeaveConversation}
           handleLeaveConversation={handleLeaveConversation}
+          setSelectChangeRole={setSelectChangeRole}
         />
-      ) : (
-        <ModalLeaveConversation
-          showFormLeaveConversation={showFormLeaveConversation}
-          handleLeaveConversation={handleLeaveConversation}
-        />
-      )}
+      ) : ( */}
+      <ModalLeaveConversation
+        showFormLeaveConversation={showFormLeaveConversation}
+        handleLeaveConversation={handleLeaveConversation}
+        selectChangeRole={selectChangeRole}
+      />
+      {/* )} */}
     </div>
   );
 };

@@ -24,10 +24,6 @@ const CallPage = () => {
       type: reducerCases.SET_INCOMING_VOICE_CALL,
       incomingVoiceCall: undefined,
     });
-    dispatch({
-      type: reducerCases.SET_CALL_PAGE,
-      callPage: false,
-    });
   };
 
   return (

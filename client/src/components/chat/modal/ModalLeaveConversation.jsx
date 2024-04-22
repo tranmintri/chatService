@@ -1,12 +1,65 @@
 import { Button, Modal } from "react-bootstrap";
+import { useStateProvider } from "../../../context/StateContext";
+import { CHAT_API, GET_CHAT_BY_PARTICIPANTS } from "../../../router/ApiRoutes";
+import { reducerCases } from "../../../context/constants";
+import axios from "axios";
 
 const ModalLeaveConversation = ({
   showFormLeaveConversation,
   handleLeaveConversation,
-  handleLeaveGroup,
+  selectChangeRole,
 }) => {
+  const [{ userInfo, currentChat, socket, groups }, dispatch] =
+    useStateProvider();
+  const onLeaveGroup = async () => {
+    if (selectChangeRole) {
+      try {
+        // Sử dụng template literals để tạo URL một cách rõ ràng và dễ đọc hơn
+        const res = await axios.put(
+          `${CHAT_API}${currentChat.chatId}/update-role/${selectChangeRole.id}`
+        );
+        // Cập nhật managerId trong currentChat
+        currentChat.managerId = selectChangeRole.id;
+        // Sử dụng dispatch để cập nhật state của currentChat
+        dispatch({
+          type: reducerCases.SET_CURRENT_CHAT,
+          chat: currentChat,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (currentChat.managerId !== userInfo?.id) {
+      const postData = {
+        chatId: currentChat.chatId,
+        chatParticipants: currentChat.participants,
+        userId: userInfo.id,
+        user_Name: userInfo.display_name,
+        managerId: currentChat.managerId,
+      };
+      console.log(postData, "data Leave");
+      try {
+        socket.current.emit("leave-group", postData);
+        alert("You have left the group");
+        const { data } = await axios.get(
+          GET_CHAT_BY_PARTICIPANTS + userInfo?.id
+        );
+        if (data) {
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: data.filter((d) => d.chatId !== currentChat.chatId),
+          });
+        }
+      } catch (error) {
+        console.error("Error leaving group:", error);
+      }
+    } else {
+      alert("owner");
+    }
+  };
+
   const confirmLeaveGroup = () => {
-    handleLeaveGroup(); // Xử lý việc rời khỏi nhóm
+    onLeaveGroup(); // Xử lý việc rời khỏi nhóm
     handleLeaveConversation(); // Đóng modal "Leave Conversation"
   };
 
