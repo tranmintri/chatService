@@ -19,6 +19,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import ModalAddMember from "./modal/ModalAddMember";
 import ChangeRoleModal from "../contact/modal/ChangeRoleModal";
 import { current } from "@reduxjs/toolkit";
+import ModalLeaveConversation from "./modal/ModalLeaveConversation";
 
 const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
@@ -32,8 +33,21 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [modalShow, setModalShow] = useState(false);
   const [showModalAddMember, setShowModalAddMember] = useState(false);
   const [showFormChangeRole, setShowFormChangeRole] = useState(false);
-  const handleCloseChangeRoleModal = () => setShowFormChangeRole(false);
+  const [showFormLeaveConversation, setShowLeaveConversation] = useState(false);
+  const handleLeaveConversation = () => {
+    setShowLeaveConversation(!showFormLeaveConversation);
+  };
+  const handleShowLeaveConversation = () => {
+    setShowLeaveConversation(!showFormLeaveConversation);
+  };
+  const handleCloseChangeRoleModal = () => {
+    setShowFormChangeRole(!showFormChangeRole);
+  };
   const handleShowChangeRole = () => setShowFormChangeRole(true);
+
+  const handleSubmitChangeRole = () => {
+    setShowLeaveConversation(true);
+  };
 
   const handleCloseModalAddMember = () => {
     setShowModalAddMember(!showModalAddMember);
@@ -434,75 +448,58 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                 </div>
               </button>
             )}
-            {currentChat.type == "public" && (
+            {currentChat.type === "public" && (
               <div>
                 <button
                   onClick={onDeleteHistory}
                   className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
                   style={{ height: "40px", color: "red" }}
                 >
-                  <div className="tw-flex  align-items-center">
+                  <div className="tw-flex align-items-center">
                     <FaRegTrashCan size={20} color="red" />
                     <span className="tw-pl-5">Delete History</span>
                   </div>
                 </button>
-                <button
-                  onClick={handleShowChangeRole}
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                  style={{ height: "40px", color: "red" }}
-                >
-                  <div className="tw-flex align-items-center">
-                    <MdLogout size={20} color="red" />
-                    <span className="tw-pl-5">Leave Group</span>
-                  </div>
-                </button>
+                {currentChat.managerId === userInfo?.id ? (
+                  <button
+                    onClick={handleShowChangeRole}
+                    className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                    style={{ height: "40px", color: "red" }}
+                  >
+                    <div className="tw-flex align-items-center">
+                      <MdLogout size={20} color="red" />
+                      <span className="tw-pl-5">Leave Group</span>
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleShowLeaveConversation}
+                    className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                    style={{ height: "40px", color: "red" }}
+                  >
+                    <div className="tw-flex align-items-center">
+                      <MdLogout size={20} color="red" />
+                      <span className="tw-pl-5">Leave Group</span>
+                    </div>
+                  </button>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
-      {showFormChangeRole && currentChat.managerId == userInfo?.id ? (
+      {showFormChangeRole && currentChat.managerId === userInfo?.id ? (
         <ChangeRoleModal
           showFormChangeRole={showFormChangeRole}
           handleCloseChangeRoleModal={handleCloseChangeRoleModal}
+          showFormLeaveConversation={showFormLeaveConversation}
+          handleLeaveConversation={handleLeaveConversation}
         />
       ) : (
-        <Modal
-          show={showFormChangeRole}
-          onHide={() => handleCloseChangeRoleModal()}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title style={{ fontSize: "18px" }}>
-              Leave this conversation?
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <span className="tw-text-gray-500">
-              You won't be able to see messages in this group after leaving.
-            </span>
-            <div className="tw-w-full tw-flex tw-justify-center tw-items-center tw-mt-4">
-              <div className="tw-w-11/12 tw-bg-slate-200 tw-min-h-24 tw-rounded-lg tw-px-4   tw-py-4">
-                <span className="tw-font-semibold ">Leave group silently</span>
-                <span className="tw-text-wrap tw-text-gray-500">
-                  <br />
-                  No one knows you're leaving the group.
-                </span>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => handleCloseChangeRoleModal()}
-            >
-              Close
-            </Button>
-            <Button variant="danger" onClick={confirmLeaveGroup}>
-              Leave Group
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        <ModalLeaveConversation
+          showFormLeaveConversation={showFormLeaveConversation}
+          handleLeaveConversation={handleLeaveConversation}
+        />
       )}
     </div>
   );

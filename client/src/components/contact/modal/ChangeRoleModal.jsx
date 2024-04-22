@@ -7,15 +7,17 @@ import { GET_ALL_USER } from "../../../router/ApiRoutes";
 const ChangeRoleModal = ({
   showFormChangeRole,
   handleCloseChangeRoleModal,
+  showFormLeaveConversation,
+  handleLeaveConversation,
+  handleLeaveGroup,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [friendList, setFriendList] = useState([]);
-  const [modalShowFinal, setModalShowFinal] = useState(false);
   const [{ userInfo, currentChat, socket }] = useStateProvider();
 
   const confirmLeaveGroup = () => {
-    onLeaveGroup();
-    handleCloseChangeRoleModal();
+    handleCloseChangeRoleModal(); // Đóng modal "Change Role"
+    handleLeaveGroup(); // Xử lý việc rời khỏi nhóm
   };
 
   const onLeaveGroup = () => {
@@ -51,12 +53,14 @@ const ChangeRoleModal = ({
 
     fetchData();
   }, []);
+
   const filteredFriendList = friendList.filter((friend) => {
     return currentChat.participants.some((id) => id === friend.id);
   });
+
   const handleSelectAndContinue = () => {
-    setModalShowFinal(true);
-    handleCloseChangeRoleModal();
+    handleLeaveConversation(); // Hiển thị modal "Leave Conversation"
+    handleCloseChangeRoleModal(); // Đóng modal "Change Role"
   };
 
   return (
