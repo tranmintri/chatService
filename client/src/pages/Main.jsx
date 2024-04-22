@@ -10,8 +10,7 @@ import { HOST } from "../router/ApiRoutes";
 import { HOST2 } from "../router/ApiRoutes";
 import Loading from "../components/chat/Loading";
 import { toast } from "react-toastify";
-import CallPage from "./../components/chat/CallPage";
-import CallPrivate from "../components/chat/CallPrivate";
+import CallPrivate from "./../components/chat/CallPrivate";
 const Main = () => {
   const [{ userInfo, groups, currentChat, callPage }, dispatch] =
     useStateProvider();
@@ -129,10 +128,6 @@ const Main = () => {
       socket.current.on("response-cancel-call-private", (data) => {
         console.log(data);
         dispatch({
-          type: reducerCases.SET_CALL_PAGE,
-          callPage: false,
-        });
-        dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: undefined,
         });
@@ -146,10 +141,6 @@ const Main = () => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-end-call-private", (data) => {
         console.log(data);
-        dispatch({
-          type: reducerCases.SET_CALL_PAGE,
-          callPage: false,
-        });
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: undefined,
