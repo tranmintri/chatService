@@ -60,24 +60,53 @@ io.on("connection", (socket) => {
     })
 
 
-    socket.on("request-to-voice-call-private",(data)=>{
-        io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private",data)
+    socket.on("request-to-voice-call-private", (data) => {
+        io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private", data)
     })
-    socket.on("request-accept-voice-call",(incomingVoiceCall,callAccepted)=>{
-        io.to(onlineUsers.get(incomingVoiceCall.senderId)).emit("response-accept-call-private",callAccepted)
+    socket.on("request-accept-voice-call", (incomingVoiceCall, callAccepted) => {
+        io.to(onlineUsers.get(incomingVoiceCall.senderId)).emit("response-accept-call-private", callAccepted)
     })
-    socket.on("request-cancel-voice-call",(data)=>{
-        io.to(onlineUsers.get(data.senderId)).emit("response-cancel-call-private",data)
+    socket.on("request-cancel-voice-call", (data) => {
+        io.to(onlineUsers.get(data.senderId)).emit("response-cancel-call-private", data)
     })
-    socket.on("request-end-voice-call",(data)=>{
-        io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private",data)
+    socket.on("request-end-voice-call", (data) => {
+        io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private", data)
     })
+    socket.on("request-disband-the-group", (data) => {
+        const {currentChat, userInfo} = data;
+        const receivers = currentChat.participants.filter(p => p !== userInfo.id);
 
-    socket.on("get-online-user", () => {
-        socket.emit("online-users", Array.from(onlineUsers.keys()));
-    })
+        console.log("disband");
+        console.log(receivers);
+        console.log(data);
 
+        receivers.forEach((receiverId) => {
+            const receiverSocket = onlineUsers.get(receiverId);
+            console.log(receiverSocket);
+            if (receiverSocket) {
+                socket.to(receiverSocket).emit("response-disband-the-group", currentChat.chatId);
+            } else {
+                console.log(`User ${receiverId} is not online.`);
+            }
+        });
+    });
+    socket.on("request-create-the-group", (data) => {
+        console.log("create group")
+        console.log(data)
+        const {newChat, userInfo} = data;
+        const receivers = newChat.participants.filter(p => p !== userInfo.id)
 
+        receivers.forEach((receiverId) => {
+            const receiverSocket = onlineUsers.get(receiverId);
+
+            if (receiverSocket) {
+                console.log("socketId " + receiverSocket);
+                socket.to(receiverSocket).emit("response-create-the-group", newChat);
+            } else {
+                console.log(`User ${receiverId} is not online.`);
+            }
+        });
+    });
     socket.on("send-msg-private", (data) => {
         const receiveUserSocket = onlineUsers.get(data.receiveId)
 
@@ -102,24 +131,61 @@ io.on("connection", (socket) => {
         socket.join(chatId);
     });
     socket.on("send-msg-public", (chatId, data) => {
-        socket.to(chatId).emit("msg-recieve-public", {
-            from: data.newMessage.senderId,
-            newMessage: {
-                messageId: data.newMessage.messageId,
-                senderId: data.newMessage.senderId,
-                senderName: data.newMessage.senderName,
-                senderPicture: data.newMessage.senderPicture,
-                type: data.newMessage.type,
-                content: data.newMessage.content,
-                timestamp: data.newMessage.timestamp
-            }
-        })
-    }
+            socket.to(chatId).emit("msg-recieve-public", {
+                from: data.newMessage.senderId,
+                newMessage: {
+                    messageId: data.newMessage.messageId,
+                    senderId: data.newMessage.senderId,
+                    senderName: data.newMessage.senderName,
+                    senderPicture: data.newMessage.senderPicture,
+                    type: data.newMessage.type,
+                    content: data.newMessage.content,
+                    timestamp: data.newMessage.timestamp
+                }
+            })
+        }
     )
+    socket.on("request-get-all-friend-online", (data) => {
+        console.log("all-friend-online")
+        console.log(data)
+        const onlineFriends = [];
+        // Kiểm tra xem trường "friends" có tồn tại và không phải là mảng trống
+        if (data.friends && data.friends.length > 0) {
+            // Lặp qua danh sách bạn bè của người dùng
+            data.friends.forEach((friend) => {
+                if (onlineUsers.has(friend.id)) {
+                    onlineFriends.push(friend.id);
+                }
+            });
+        }
+        io.to(onlineUsers.get(data.id)).emit("response-get-all-friend-online", onlineFriends);
+    });
 
-    socket.on("disconnect", () => {
-        socket.broadcast.emit("callEnded")
+
+    socket.on("request-connect-user",(data)=>{
+            console.log("connect-user")
+            console.log(data)
+        // Kiểm tra xem trường "friends" có tồn tại và không phải là mảng trống
+        if (data.friends && data.friends.length > 0) {
+            // Lặp qua danh sách bạn bè của người dùng
+            data.friends.forEach((friend) => {
+                const friendSocket = onlineUsers.get(friend.id)
+                socket.to(friendSocket).emit("response-connect-user",data.id)
+            });
+        }
     })
+
+    // Gửi danh sách người dùng trực tuyến khi một người dùng ngắt kết nối
+    socket.on("disconnect", () => {
+        const disconnectedUserId = [...onlineUsers.entries()]
+            .find(([key, value]) => value === socket.id)?.[0];
+
+        if (disconnectedUserId) {
+            const currentOnline = []
+
+            io.emit("disconnect-user",disconnectedUserId)
+        }
+    });
 
     socket.on('join-to-chat-public', (roomId) => {
         socket.join(roomId);
@@ -132,13 +198,13 @@ io.on("connection", (socket) => {
             chatParticipants: data.chatParticipants,
             userId: data.userId,
             user_Name: data.user_Name,
-            managerId : data.managerId,
+            managerId: data.managerId,
         };
         // console.log(data.chatParticipants)
         // data.chatParticipants.forEach(participant => {
         //     if (onlineUsers.has(participant)) {
-                socket.to(onlineUsers.get(data.userId)).emit("leave-group-noti", postData);
-            // }    e
+        socket.to(onlineUsers.get(data.userId)).emit("leave-group-noti", postData);
+        // }    e
         // });
     });
 
@@ -149,7 +215,7 @@ io.on("connection", (socket) => {
             chatParticipants: data.chatParticipants,
             userId: data.userId,
             user_Name: data.user_Name,
-            managerId : data.managerId,
+            managerId: data.managerId,
         };
         console.log(data.chatParticipants)
         data.chatParticipants.forEach(participant => {

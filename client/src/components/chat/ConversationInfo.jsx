@@ -39,6 +39,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     setShowLeaveConversation(!showFormLeaveConversation);
   };
   const handleShowLeaveConversation = () => {
+    // if (currentChat.participants.length == 2)
     setShowLeaveConversation(!showFormLeaveConversation);
   };
   const handleCloseChangeRoleModal = () => {
@@ -461,7 +462,8 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                     <span className="tw-pl-5">Delete History</span>
                   </div>
                 </button>
-                {currentChat.managerId === userInfo?.id ? (
+                {currentChat.managerId === userInfo?.id &&
+                currentChat.participants.length > 2 ? (
                   <button
                     onClick={handleShowChangeRole}
                     className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
@@ -489,7 +491,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           </div>
         </div>
       </div>
-      {/* {showFormChangeRole && currentChat.managerId != userInfo?.id ? (
+      {showFormChangeRole && currentChat.managerId === userInfo?.id ? (
         <ChangeRoleModal
           showFormChangeRole={showFormChangeRole}
           handleCloseChangeRoleModal={handleCloseChangeRoleModal}
@@ -497,13 +499,13 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
           handleLeaveConversation={handleLeaveConversation}
           setSelectChangeRole={setSelectChangeRole}
         />
-      ) : ( */}
-      <ModalLeaveConversation
-        showFormLeaveConversation={showFormLeaveConversation}
-        handleLeaveConversation={handleLeaveConversation}
-        selectChangeRole={selectChangeRole}
-      />
-      {/* )} */}
+      ) : (
+        <ModalLeaveConversation
+          showFormLeaveConversation={showFormLeaveConversation}
+          handleLeaveConversation={handleLeaveConversation}
+          selectChangeRole={selectChangeRole}
+        />
+      )}
     </div>
   );
 };

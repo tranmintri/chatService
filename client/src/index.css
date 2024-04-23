@@ -249,7 +249,8 @@ html,
 .chat-input-icon:hover {
   cursor: pointer;
   background-color: rgb(200, 200, 200);
-  padding: 5px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .send-btn {

@@ -29,7 +29,10 @@ const ModalLeaveConversation = ({
         console.log(error);
       }
     }
-    if (currentChat.managerId !== userInfo?.id) {
+    if (
+      currentChat.participants.length > 2 &&
+      currentChat.managerId !== userInfo?.id
+    ) {
       const postData = {
         chatId: currentChat.chatId,
         chatParticipants: currentChat.participants,
@@ -50,11 +53,38 @@ const ModalLeaveConversation = ({
             groups: data.filter((d) => d.chatId !== currentChat.chatId),
           });
         }
+        dispatch({
+          type: reducerCases.SET_CURRENT_CHAT,
+          chat: undefined,
+        });
       } catch (error) {
         console.error("Error leaving group:", error);
       }
     } else {
-      alert("owner");
+      socket.current.emit("request-disband-the-group", {
+        currentChat: currentChat,
+        userInfo: userInfo,
+      });
+      try {
+        // Sử dụng template literals để tạo URL một cách rõ ràng và dễ đọc hơn
+        const res = await axios.delete(`${CHAT_API}${currentChat.chatId}`);
+        // Cập nhật managerId trong currentChat
+        const { data } = await axios.get(
+          GET_CHAT_BY_PARTICIPANTS + userInfo?.id
+        );
+        if (data) {
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: data.filter((d) => d.chatId !== currentChat.chatId),
+          });
+        }
+        dispatch({
+          type: reducerCases.SET_CURRENT_CHAT,
+          chat: undefined,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

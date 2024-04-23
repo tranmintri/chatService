@@ -88,13 +88,13 @@ const addParticipant = async (chatId, memberAdd) => {
     }
 };
 
-const deleteById = async (chatId,userId) => {
-
-    await db.collection('Chats')
-        .doc(chatId)
-        .update({
-            deleteId: userId
-        });
+const deleteById = async (chatId, userId) => {
+    try {
+        await db.collection('Chats').doc(chatId).delete();
+        console.log('Document successfully deleted!');
+    } catch (error) {
+        console.error('Error removing document: ', error);
+    }
 };
 
 const updateRoleInChat = async (chatId,userId) => {

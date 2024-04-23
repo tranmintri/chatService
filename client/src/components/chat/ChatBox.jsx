@@ -1108,7 +1108,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       <div className="chat-input">
         <div className="w-100 items-center">
           <SmileOutlined
-            className="chat-input-icon px-2"
+            className="chat-input-icon px-2 tw-text-2xl"
             title="Send Emoji"
             size="2em"
             id="emoji-open"
@@ -1133,7 +1133,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <label htmlFor="image-input">
             <FileImageOutlined
-              className="chat-input-icon px-2"
+              className="chat-input-icon px-2 tw-text-2xl"
               title="Send Image"
             />
           </label>
@@ -1147,13 +1147,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <label htmlFor="file-input">
             <LinkOutlined
-              className="chat-input-icon px-2"
+              className="chat-input-icon px-2 tw-text-2xl"
               title="Attach File"
             />
           </label>
           <label>
             <AudioOutlined
-              className="chat-input-icon px-2"
+              className="chat-input-icon px-2 tw-text-2xl"
               title="Attach File"
               onClick={() => setShowAudioRecorder(true)}
             />

@@ -8,7 +8,8 @@ import { useEffect } from "react";
 
 const UserChat = () => {
   const [groupList, setGroupList] = useState([]);
-  const [{ userInfo, groups, socket }, dispatch] = useStateProvider();
+  const [{ userInfo, groups, socket, onlineUsers }, dispatch] =
+    useStateProvider();
 
   const handleSelectChat = (chat) => {
     socket.current.emit("joinRoom", chat.chatId);
@@ -29,10 +30,6 @@ const UserChat = () => {
 
     fetchData();
   }, [groups]);
-
-  // Tạo một mảng mới chứa tin nhắn cuối cùng từ mỗi người gửi có senderID khác userInfo?.id
-
-  // Nếu bạn muốn trả về newLastMessages, hãy thay đổi thành:
 
   return (
     <div className="tw-mt-20">
@@ -102,8 +99,11 @@ const UserChat = () => {
                   <div className="date">
                     {calculateTime(lastMessage.timestamp)}
                   </div>
-                  <div className="this-user-notifications">{1}</div>
-                  <span className="user-online mt-1"></span>
+                  {/* <div className="this-user-notifications">{1}</div> */}
+                  {chat.type == "private" &&
+                    onlineUsers.includes(
+                      chat.participants.filter((p) => p != userInfo?.id)[0]
+                    ) && <span className="user-online mt-1"></span>}
                 </div>
               </Stack>
             );

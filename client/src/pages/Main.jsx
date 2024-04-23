@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import SideBar from "../components/SideBar";
 import { useStateProvider } from "../context/StateContext";
 import { useNavigate } from "react-router-dom";
-import { CHAT_API, GET_CHAT_BY_PARTICIPANTS } from "../router/ApiRoutes";
+import {
+  CHAT_API,
+  GET_ALL_USER,
+  GET_CHAT_BY_PARTICIPANTS,
+} from "../router/ApiRoutes";
 import axios from "axios";
 import { reducerCases } from "../context/constants";
 import { io } from "socket.io-client";
@@ -12,7 +16,7 @@ import Loading from "../components/chat/Loading";
 import { toast } from "react-toastify";
 import CallPrivate from "./../components/chat/CallPrivate";
 const Main = () => {
-  const [{ userInfo, groups, currentChat, callPage }, dispatch] =
+  const [{ userInfo, groups, currentChat, callPage, onlineUsers }, dispatch] =
     useStateProvider();
   const [state] = useStateProvider();
   const navigate = useNavigate();
@@ -63,6 +67,26 @@ const Main = () => {
       dispatch({ type: reducerCases.SET_SOCKET2, socket2: socket2 });
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(GET_ALL_USER + userInfo.id);
+
+        socket.current.emit("request-get-all-friend-online", data.data);
+        socket.current.emit("request-connect-user", data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      // Cleanup code here (if needed)
+    };
+  }, [userInfo]);
+
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
@@ -72,21 +96,6 @@ const Main = () => {
           newMessage: {
             ...data.newMessage,
           },
-        });
-      });
-      setSocketEvent(true);
-    }
-  }, [socket.current]);
-  useEffect(() => {
-    if (socket.current && !socketEvent) {
-      socket.current.on("callUser", (data) => {
-        dispatch({
-          type: reducerCases.SET_CALLER,
-          caller: data.from,
-        });
-        dispatch({
-          type: reducerCases.SET_CALLER_SIGNAL,
-          callerSignal: data.signal,
         });
       });
       setSocketEvent(true);
@@ -107,6 +116,52 @@ const Main = () => {
       setSocketEvent(true);
     }
   }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-get-all-friend-online", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.SET_ALL_ONLINE_USER,
+          onlineUsers: data,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-connect-user", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.ADD_ONLINE_USER,
+          onlineUsers: { ...data },
+          fromSelf: true,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("disconnect-user", (data) => {
+        console.log(data);
+
+        console.log(onlineUsers);
+
+        // dispatch({
+        //   type: reducerCases.SET_ALL_ONLINE_USER,
+        //   onlineUsers: data,
+        // });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-accpet-call-private", (data) => {
@@ -148,6 +203,41 @@ const Main = () => {
         toast.info("The call is ended");
       });
 
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-disband-the-group", async (chatId) => {
+        console.log("aaaaaaa");
+        const { data } = await axios.get(
+          GET_CHAT_BY_PARTICIPANTS + userInfo?.id
+        );
+        console.log(data);
+        console.log(chatId);
+        if (data) {
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: data.filter((d) => d.chatId !== chatId),
+          });
+        }
+      });
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-create-the-group", async (group) => {
+        console.log("create-group");
+
+        if (group) {
+          dispatch({
+            type: reducerCases.CREATE_GROUP,
+            groups: { ...group },
+            fromSelf: true,
+          });
+        }
+      });
       setSocketEvent(true);
     }
   }, [socket.current]);
