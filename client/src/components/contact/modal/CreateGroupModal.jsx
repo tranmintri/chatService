@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const CreateGroupModal = ({ showModal, handleCloseModal }) => {
-  const [{ userInfo, groups }, dispatch] = useStateProvider();
+  const [{ userInfo, socket, groups }, dispatch] = useStateProvider();
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,10 +78,15 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
 
     if (result.data.data) {
       dispatch({
-        type: reducerCases.SET_ALL_GROUP,
-        groups: [...groups, result.data.data],
+        type: reducerCases.CREATE_GROUP,
+        groups: { ...result.data.data },
+        fromSelf: true,
       });
-      alert("create chat success");
+
+      socket.current.emit("request-create-the-group", {
+        newChat: result.data.data,
+        userInfo: userInfo,
+      });
     }
     setGroupName("");
     setSelectedFriends([]);

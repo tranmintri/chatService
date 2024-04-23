@@ -9,7 +9,7 @@ import { reducerCases } from "../context/constants";
 import { useStateProvider } from "../context/StateContext";
 export const useSignIn = () => {
   const navigate = useNavigate();
-  const [{ userInfo }, dispatch] = useStateProvider();
+  const [{ userInfo, socket }, dispatch] = useStateProvider();
   const { mutate: signInMutate } = useMutation({
     mutationFn: ({ username, password }) => signIn(username, password),
     onSuccess: (res) => {
@@ -23,10 +23,12 @@ export const useSignIn = () => {
       saveUser(data.user_info);
 
       toast.success("Đăng nhập thành công");
+
       dispatch({
         type: reducerCases.SET_USER_INFO,
         userInfo: data.user_info,
       });
+
       navigate(Page.MAIN_PAGE.path, { replace: true });
     },
     onError: (error) => {
