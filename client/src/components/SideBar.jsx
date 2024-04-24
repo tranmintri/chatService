@@ -32,7 +32,8 @@ import GroupCard from "./contact/card/GroupCard";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, groups }, dispatch] = useStateProvider();
+  const [{ userInfo, contactsPage, groups, messages }, dispatch] =
+    useStateProvider();
   const [activeKey, setActiveKey] = useState("first");
 
   const [showFormUser, setShowFormUser] = useState(false);
@@ -182,7 +183,7 @@ const SideBar = () => {
     };
 
     fetchData();
-  }, [activeTab, dispatch, userInfo?.id]);
+  }, [activeTab, dispatch, userInfo?.id, messages]);
 
   const logOut = useLogout();
   const onLogout = () => {

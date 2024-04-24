@@ -18,14 +18,6 @@ export const initialState = {
   incomingVideoCall: undefined,
   callPage: false,
   callAccepted: false,
-  callEnded: false,
-  caller: undefined,
-  callerSignal: undefined,
-  myStream: undefined,
-  remoteStream: undefined,
-  myVideo: undefined,
-  remoteVideo: undefined,
-  peerConnections: undefined,
 };
 
 const reducer = (state, action) => {

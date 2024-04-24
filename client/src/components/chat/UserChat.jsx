@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 const UserChat = () => {
   const [groupList, setGroupList] = useState([]);
-  const [{ userInfo, groups, socket, onlineUsers }, dispatch] =
+  const [{ userInfo, groups, socket, onlineUsers, messages }, dispatch] =
     useStateProvider();
 
   const handleSelectChat = (chat) => {
