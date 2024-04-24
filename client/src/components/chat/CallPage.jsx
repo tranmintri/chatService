@@ -6,12 +6,88 @@ import { reducerCases } from "../../context/constants";
 import { FaUserPlus } from "react-icons/fa6";
 import { ImHangouts, ImPhoneHangUp } from "react-icons/im";
 import { BiMicrophone } from "react-icons/bi";
+import { v4 as uuidv4 } from "uuid";
+import { CHAT_API } from "../../router/ApiRoutes";
+import axios from "axios";
 // import io from 'socket.io-client';
 
 const CallPage = () => {
-  const [{ incomingVoiceCall, socket, userInfo, currentChat }, dispatch] =
-    useStateProvider();
+  const [
+    { incomingVoiceCall, socket, userInfo, currentChat, callPage, groups },
+    dispatch,
+  ] = useStateProvider();
+  useEffect(() => {
+    let isMounted = true; // Biến để kiểm tra component có được mount hay không
+    const timer = setTimeout(async () => {
+      if (isMounted) {
+        const content = " missed the call from ";
 
+        try {
+          const messageId = uuidv4();
+          const { data } = await axios.put(
+            CHAT_API + currentChat?.chatId + "/messages",
+            {
+              newMessage: {
+                messageId: messageId,
+                senderId: incomingVoiceCall.senderId,
+                senderName: incomingVoiceCall.senderName,
+                senderPicture: incomingVoiceCall.senderPicture,
+                type: "missing call",
+                content: content,
+                timestamp: Date.now(),
+              },
+            }
+          );
+          if (currentChat.type == "private") {
+            socket.current.emit("send-msg-private", {
+              receiveId: incomingVoiceCall.receiveId,
+              newMessage: {
+                messageId: messageId,
+                senderId: incomingVoiceCall.senderId,
+                senderName: incomingVoiceCall.senderName,
+                senderPicture: incomingVoiceCall.senderPicture,
+                type: "missing call",
+                content: content,
+                timestamp: Date.now(),
+              },
+            });
+          }
+          dispatch({
+            type: reducerCases.ADD_MESSAGES,
+            newMessage: {
+              ...data.data.newMessage,
+            },
+            fromSelf: true,
+          });
+          let group = [
+            ...groups.filter((chat) => chat.chatId === currentChat.chatId),
+            ...groups.filter((chat) => chat.chatId !== currentChat.chatId),
+          ];
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: group,
+          });
+
+          dispatch({
+            type: reducerCases.SET_CALL_PAGE,
+            callPage: false,
+          });
+          dispatch({
+            type: reducerCases.SET_INCOMING_VOICE_CALL,
+            incomingVoiceCall: undefined,
+          });
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    }, 5000); // 5 giây
+
+    // Hàm clean up để clear timer khi component unmount
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, []);
   const handleEndCall = () => {
     socket.current.emit("request-end-voice-call", {
       senderId: userInfo?.id,
@@ -19,10 +95,6 @@ const CallPage = () => {
         incomingVoiceCall.senderId == userInfo?.id
           ? incomingVoiceCall.receiveId
           : incomingVoiceCall.senderId,
-    });
-    dispatch({
-      type: reducerCases.SET_INCOMING_VOICE_CALL,
-      incomingVoiceCall: undefined,
     });
   };
 
@@ -65,14 +137,6 @@ const CallPage = () => {
               // onClick={() => handleCancelVoiceCall()}
             >
               <MdScreenShare className="tw-cursor-pointer tw-text-gray-400 tw-text-2xl tw-shadow-2xl" />
-            </div>
-          </div>
-          <div>
-            <div
-              className="tw-bg-gray-700 tw-rounded-full tw-w-10 tw-min-h-10 tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-mr-5"
-              // onClick={() => handleCancelVoiceCall()}
-            >
-              <FaUserPlus className="tw-cursor-pointer tw-text-white tw-text-2xl tw-shadow-2xl" />
             </div>
           </div>
           <div>

@@ -29,7 +29,7 @@ import ppt from "../../assets/ppt.png";
 import EmojiPicker from "emoji-picker-react";
 import { SlReload } from "react-icons/sl";
 import { IoIosRedo } from "react-icons/io";
-import { BiSolidQuoteRight } from "react-icons/bi";
+import { BiPhone, BiSolidQuoteRight } from "react-icons/bi";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { v4 as uuidv4 } from "uuid";
 import ForwardModal from "../contact/modal/ForwardModal";
@@ -45,8 +45,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
 
-  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
-    useStateProvider();
+  const [
+    { messages, userInfo, currentChat, groups, socket, onlineUsers },
+    dispatch,
+  ] = useStateProvider();
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -349,14 +351,34 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   //   }
   // };
   const handleClickOpenTab = (receiverId, roomId) => {
-    // Tạo URL cho tab mới
-    sendVoiceCallRequest(receiverId, userInfo?.id);
-    const newTabUrl = `${CLIENT_HOST}/chat/${roomId}`;
-    // Mở tab mới
-    const newTab = window.open(newTabUrl, "_blank");
-    // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
-    if (newTab && newTab.focus) {
-      newTab.focus();
+    if (onlineUsers.includes(receiverId)) {
+      // Tạo URL cho tab mới
+      sendVoiceCallRequest(receiverId, userInfo?.id);
+      const newTabUrl = `${CLIENT_HOST}/chat/${roomId}`;
+      // Mở tab mới
+      const newTab = window.open(newTabUrl, "_blank");
+      // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
+      if (newTab && newTab.focus) {
+        newTab.focus();
+      }
+    } else {
+      const incomingVoiceCall = {
+        receiveId: receiverId,
+        senderId: userInfo?.id,
+        senderPicture: userInfo?.avatar,
+        senderName: userInfo?.display_name,
+        receiveName: convertName(),
+        receivePicture: convertPicture(),
+        chatId: currentChat.chatId,
+      };
+      dispatch({
+        type: reducerCases.SET_INCOMING_VOICE_CALL,
+        incomingVoiceCall: incomingVoiceCall,
+      });
+      dispatch({
+        type: reducerCases.SET_CALL_PAGE,
+        callPage: true,
+      });
     }
   };
   const sendVoiceCallRequest = (receiverId, senderId) => {
@@ -443,7 +465,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <div>
             <strong style={{ fontSize: "20px" }}>{convertName()}</strong>
-            <p className="chat-header-condition">online</p>
+            {chat.type == "private" &&
+            onlineUsers.includes(
+              chat.participants.filter((p) => p != userInfo?.id)[0]
+            ) ? (
+              <p className="chat-header-condition">online</p>
+            ) : (
+              <p className="chat-header-condition">offline</p>
+            )}
           </div>
         </div>
         <div className="d-flex">
@@ -1000,9 +1029,30 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                       </span>
                                     </div>
                                   ) : (
-                                    message.type === "record" && (
-                                      <RecordCard message={message} />
-                                    )
+                                    <div>
+                                      {message.type.includes("missing call") ? (
+                                        <div className="tw-flex tw-justify-center tw-items-center">
+                                          <div className="tw-mt-3 tw-mr-3 tw-w-10 tw-h-10 tw-bg-red-500 tw-p-2 tw-flex tw-justify-center tw-items-center tw-rounded-full">
+                                            <IoIosCall className="tw-text-white tw-text-3xl" />
+                                          </div>
+                                          <div className="tw-flex tw-justify-center tw-items-center tw-flex-wrap tw-break-words">
+                                            <span className="tw-break-words">
+                                              {message.senderId != userInfo?.id
+                                                ? "You"
+                                                : convertName()}{" "}
+                                              {message.content}{" "}
+                                              {message.senderId == userInfo?.id
+                                                ? "You"
+                                                : convertName()}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        message.type === "record" && (
+                                          <RecordCard message={message} />
+                                        )
+                                      )}
+                                    </div>
                                   )}
                                 </div>
 

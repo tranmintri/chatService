@@ -71,14 +71,14 @@ const UserChat = () => {
                 onClick={() => handleSelectChat(chat)}
                 direction="horizontal"
                 gap={3}
-                className="user-card align-items-center p-2 justify-content-between tw-overflow-x-clip"
+                className="user-card align-items-center p-2 justify-content-between tw-overflow-x-clip "
                 role="button"
               >
                 <div className="d-flex">
                   <div className="m-2">
                     <img
                       src={convertImage()}
-                      className="me-2 tw-h-16 tw-w-16 tw-rounded-full"
+                      className="me-2 tw-h-16 tw-w-16 tw-rounded-full tw-shadow-lg"
                       alt="Avatar"
                     />
                   </div>
@@ -100,10 +100,16 @@ const UserChat = () => {
                     {calculateTime(lastMessage.timestamp)}
                   </div>
                   {/* <div className="this-user-notifications">{1}</div> */}
-                  {chat.type == "private" &&
-                    onlineUsers.includes(
-                      chat.participants.filter((p) => p != userInfo?.id)[0]
-                    ) && <span className="user-online mt-1"></span>}
+                  {chat.type === "private" &&
+                  onlineUsers.includes(
+                    chat.participants.filter((p) => p !== userInfo?.id)[0]
+                  ) ? (
+                    <span className="user-online mt-1"></span>
+                  ) : (
+                    chat.type === "private" && (
+                      <span className="user-offline mt-1"></span>
+                    )
+                  )}
                 </div>
               </Stack>
             );
