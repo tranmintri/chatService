@@ -101,9 +101,18 @@ const reducer = (state, action) => {
         onlineUsers: action.onlineUsers,
       };
     case reducerCases.ADD_ONLINE_USER:
+      console.log(action.newOnlineUsers);
       return {
         ...state,
-        onlineUsers: [...state.onlineUsers, action.onlineUsers],
+        onlineUsers: [...state.onlineUsers, action.newOnlineUsers],
+      };
+    case reducerCases.REMOVE_ONLINE_USER:
+      const updatedOnlineUsers = state.onlineUsers.filter(
+        (id) => id !== action.onlineUsers
+      );
+      return {
+        ...state,
+        onlineUsers: updatedOnlineUsers,
       };
     case reducerCases.SET_SOCKET:
       return {

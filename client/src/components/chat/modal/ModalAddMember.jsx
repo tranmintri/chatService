@@ -4,19 +4,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
 import { reducerCases } from "../../../context/constants";
+import { v4 as uuidv4 } from "uuid";
 
 const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
-  const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
+  const [{ userInfo, groups, currentChat, socket }, dispatch] =
+    useStateProvider();
   const [friendList, setFriendList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
+  const [selectedFriendObject, setSelectedFriendObject] = useState();
 
-  const handleFriendSelect = (friendId) => {
+  const handleFriendSelect = (friend) => {
+    setSelectedFriendObject(friend);
     setSelectedFriends((prevSelectedFriends) => {
-      const isSelected = prevSelectedFriends.includes(friendId);
+      const isSelected = prevSelectedFriends.includes(friend.id);
       return isSelected
-        ? prevSelectedFriends.filter((id) => id !== friendId)
-        : [...prevSelectedFriends, friendId];
+        ? prevSelectedFriends.filter((id) => id !== friend.id)
+        : [...prevSelectedFriends, friend.id];
     });
   };
   const filteredFriendList = friendList.filter((friend) => {
@@ -46,6 +50,56 @@ const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
         CHAT_API + currentChat.chatId,
         selectedFriends
       );
+      const content =
+        userInfo?.display_name +
+        " added " +
+        selectedFriendObject.displayName +
+        " to the group";
+      const messageId = uuidv4();
+      const { data } = await axios.put(
+        CHAT_API + currentChat?.chatId + "/messages",
+        {
+          newMessage: {
+            messageId: messageId,
+            senderId: userInfo?.id,
+            senderName: userInfo?.display_name,
+            senderPicture: userInfo?.avatar,
+            type: "notification",
+            content: content,
+            timestamp: Date.now(),
+          },
+        }
+      );
+      if (currentChat.type == "public") {
+        socket.current.emit("send-msg-public", currentChat.chatId, {
+          receiveId: currentChat.participants.filter((p) => p !== userInfo?.id),
+          newMessage: {
+            messageId: messageId,
+            senderId: userInfo?.id,
+            senderName: userInfo?.display_name,
+            senderPicture: userInfo?.avatar,
+            type: "notification",
+            content: content,
+            timestamp: Date.now(),
+          },
+        });
+      }
+      dispatch({
+        type: reducerCases.ADD_MESSAGES,
+        newMessage: {
+          ...data.data.newMessage,
+        },
+        fromSelf: true,
+      });
+      let group = [
+        ...groups.filter((chat) => chat.chatId === currentChat.chatId),
+        ...groups.filter((chat) => chat.chatId !== currentChat.chatId),
+      ];
+      dispatch({
+        type: reducerCases.SET_ALL_GROUP,
+        groups: group,
+      });
+
       const updatedParticipants = [
         ...new Set([...currentChat.participants, ...selectedFriends]),
       ];
@@ -96,7 +150,7 @@ const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
                   <ListGroup.Item
                     className="mb-2 d-flex text-center align-items-center "
                     key={friend.id}
-                    onClick={() => handleFriendSelect(friend.id)}
+                    onClick={() => handleFriendSelect(friend)}
                   >
                     <img
                       src={friend.profilePicture}

@@ -60,6 +60,10 @@ io.on("connection", (socket) => {
         console.log(Array.from(onlineUsers.keys()))
     })
 
+    socket.on("leave room call",(data)=>{
+        console.log("leave room call")
+        console.log(data)
+    })
 
     socket.on("request-to-voice-call-private", (data) => {
         io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private", data)
@@ -180,13 +184,14 @@ io.on("connection", (socket) => {
             .find(([key, value]) => value === socket.id)?.[0];
 
         if (disconnectedUserId) {
+            onlineUsers.delete(disconnectedUserId);
             const user = await getUserData('Users', 'id', disconnectedUserId);
             if (user) {
                 const currentOnline = [];
                 user.friends.forEach((friend) => {
                     const friendSocket = onlineUsers.get(friend.id);
                     if (friendSocket) {
-                        socket.to(friendSocket).emit("response-disconnect-user", user.id);
+                            socket.to(friendSocket).emit("response-disconnect-user", user.id);
                     }
                 });
             }

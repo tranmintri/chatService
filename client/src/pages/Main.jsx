@@ -17,8 +17,10 @@ import { toast } from "react-toastify";
 import CallPrivate from "./../components/chat/CallPrivate";
 import CallPage from "../components/chat/CallPage";
 const Main = () => {
-  const [{ userInfo, groups, currentChat, callPage, onlineUsers }, dispatch] =
-    useStateProvider();
+  const [
+    { userInfo, groups, currentChat, callPage, onlineUsers, incomingVoiceCall },
+    dispatch,
+  ] = useStateProvider();
   const [state] = useStateProvider();
   const navigate = useNavigate();
   const socket = useRef();
@@ -134,15 +136,13 @@ const Main = () => {
   useEffect(() => {
     const fetchData = async (friendId) => {
       try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
-        const updatedFriends = [
-          ...data.data.friends.map((friend) => friend.id),
-          friendId,
-        ].filter((id, index, arr) => arr.indexOf(id) === index);
-
+        // const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
+        // const updatedFriends = [...onlineUsers, friendId];
+        // console.log(updatedFriends);
         dispatch({
-          type: reducerCases.SET_ALL_ONLINE_USER,
-          onlineUsers: updatedFriends,
+          type: reducerCases.ADD_ONLINE_USER,
+          newOnlineUsers: friendId,
+          fromSelf: true,
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -160,13 +160,9 @@ const Main = () => {
   useEffect(() => {
     const fetchData = async (friendId) => {
       try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
-        const updatedFriends = data.data.friends
-          .map((friend) => friend.id)
-          .filter((id) => id !== friendId);
         dispatch({
-          type: reducerCases.SET_ALL_ONLINE_USER,
-          onlineUsers: updatedFriends,
+          type: reducerCases.REMOVE_ONLINE_USER,
+          onlineUsers: friendId,
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -178,23 +174,6 @@ const Main = () => {
         console.log("response-disconnect-user" + friendId); // Kiểm tra friendId đã nhận được chưa
         await fetchData(friendId);
       });
-      setSocketEvent(true);
-    }
-  }, [socket.current]);
-
-  useEffect(() => {
-    if (socket.current && !socketEvent) {
-      socket.current.on("disconnect-user", (data) => {
-        console.log(data);
-
-        console.log(onlineUsers);
-
-        // dispatch({
-        //   type: reducerCases.SET_ALL_ONLINE_USER,
-        //   onlineUsers: data,
-        // });
-      });
-
       setSocketEvent(true);
     }
   }, [socket.current]);
