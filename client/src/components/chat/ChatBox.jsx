@@ -463,15 +463,22 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             src={convertPicture()}
             className="me-2 tw-w-12 tw-h-12 tw-rounded-full"
           />
-          <div>
-            <strong style={{ fontSize: "20px" }}>{convertName()}</strong>
-            {chat.type == "private" &&
-            onlineUsers.includes(
-              chat.participants.filter((p) => p != userInfo?.id)[0]
-            ) ? (
-              <p className="chat-header-condition">online</p>
+          <div className="tw-flex tw-justify-center tw-items-center">
+            {chat.type === "private" ? (
+              <div>
+                <strong style={{ fontSize: "20px" }}>{convertName()}</strong>
+                {onlineUsers.includes(
+                  chat.participants.filter((p) => p !== userInfo?.id)[0]
+                ) ? (
+                  <p className="chat-header-condition">online</p>
+                ) : (
+                  <p className="chat-header-condition">offline</p>
+                )}
+              </div>
             ) : (
-              <p className="chat-header-condition">offline</p>
+              <strong style={{ fontSize: "20px", alignItems: "center" }}>
+                {convertName()}
+              </strong>
             )}
           </div>
         </div>
@@ -543,334 +550,157 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         >
           {messages.map((message, index) => (
             <div>
-              {message.type.includes("init group") ? (
+              {message.type.includes("notification") ? (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-ful tw-mt-5">
-                  <div className="tw-w-5/12 tw-bg-slate-50 tw-items-center tw-flex tw-justify-center tw-py-1 tw-text-slate-700 tw-rounded-lg tw-shadow-2xl">
-                    <img
-                      src={currentChat.picture}
-                      width={30}
-                      height={30}
-                      alt=""
-                      className="tw-rounded-full tw-mr-6"
-                    />
+                  <div className="tw-w-3/12 tw-bg-gray-200 tw-text-[13px] tw-items-center tw-flex tw-justify-center tw-py-0.5 tw-text-slate-500 tw-rounded-lg tw-shadow-2xl">
                     <span>{message.content}</span>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div key={index}>
-                    {message.type.includes("init friend") ? (
-                      <div className="tw-flex tw-justify-center tw-items-center tw-w-ful tw-mt-5">
-                        <div className="tw-w-5/12 tw-bg-slate-50 tw-items-center tw-min-h-60 tw-rounded-lg tw-shadow-2xl">
-                          <img
-                            src="https://res-zalo.zadn.vn/upload/media/2019/10/11/artboard_5_4_x_2x_1570759790847_74009.png"
-                            alt=""
-                            className="tw-z-10"
-                          />
-                          <div className="tw-flex tw-w-full tw-items-center tw-justify-center">
-                            <img
-                              src={userInfo?.avatar}
-                              width={70}
-                              height={70}
-                              alt=""
-                              className="-tw-mt-8 tw-rounded-full tw-p-1 tw-z-20 -tw-mr-3 tw-border-white"
-                            />
-                            <img
-                              src={convertPicture()}
-                              width={70}
-                              height={70}
-                              alt=""
-                              className="-tw-mt-8 tw-rounded-full tw-p-1 tw-z-30 tw-border-white "
-                            />
-                          </div>
-                          <div className="tw-items-center tw-text-center tw-mt-2 tw-font-bold">
-                            You and {convertName()} are now friends
-                          </div>
-
-                          <div className="tw-items-center tw-text-center tw-mt-2 tw-text-slate-500 tw-w-full tw-z-20">
-                            <span>Let's send any message your friend</span>
-                          </div>
-                          <img
-                            src="https://res-zalo.zadn.vn/upload/media/2019/10/11/artboard_5_4_x_2x_1570759790847_74009.png"
-                            alt=""
-                            className="tw-z-10 -tw-mt-2"
-                          />
-                        </div>
+                  {message.type.includes("init group") ? (
+                    <div className="tw-flex tw-justify-center tw-items-center tw-w-ful tw-mt-5">
+                      <div className="tw-w-5/12 tw-bg-slate-50 tw-items-center tw-flex tw-justify-center tw-py-1 tw-text-slate-700 tw-rounded-lg tw-shadow-2xl">
+                        <img
+                          src={currentChat.picture}
+                          width={30}
+                          height={30}
+                          alt=""
+                          className="tw-rounded-full tw-mr-6"
+                        />
+                        <span>{message.content}</span>
                       </div>
-                    ) : (
-                      <div>
-                        {
-                          <Stack
-                            key={index}
-                            className={`tw-my-3 tw-flex tw-break-words tw-relative tw-items-center`}
-                            onMouseEnter={() => handleMouseEnter(index)}
-                            onMouseLeave={handleMouseLeave}
-                            ref={(element) => updateMessageRefs(element, index)}
-                            onClick={() => scrollToMessage(index)}
-                          >
-                            {message.status == "removed" &&
-                            message.senderId == userInfo?.id ? (
-                              <div
-                                className={`tw-rounded-lg tw-italic  tw-p-3 ${
-                                  message.senderId == userInfo?.id
-                                    ? "tw-bg-[#e5efff] align-self-end"
-                                    : "tw-bg-black tw-text-white align-self-start tw-text-"
-                                }`}
-                              >
-                                <span className=" tw-text-sm ">
-                                  message has been recovered
-                                </span>
-                                <div>
-                                  <span
-                                    span
-                                    className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit"
-                                  >
-                                    {calculateTime(message.timestamp)}
-                                  </span>
-                                </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div key={index}>
+                        {message.type.includes("init friend") ? (
+                          <div className="tw-flex tw-justify-center tw-items-center tw-w-ful tw-mt-5">
+                            <div className="tw-w-5/12 tw-bg-slate-50 tw-items-center tw-min-h-60 tw-max-h-64 tw-rounded-lg tw-shadow-2xl">
+                              <img
+                                src="https://res-zalo.zadn.vn/upload/media/2019/10/11/artboard_5_4_x_2x_1570759790847_74009.png"
+                                alt=""
+                                className="tw-z-10"
+                              />
+                              <div className="tw-flex tw-w-full tw-items-center tw-justify-center">
+                                <img
+                                  src={userInfo?.avatar}
+                                  width={70}
+                                  height={70}
+                                  alt=""
+                                  className="-tw-mt-8 tw-rounded-full tw-p-1 tw-z-20 -tw-mr-3 tw-border-white"
+                                />
+                                <img
+                                  src={convertPicture()}
+                                  width={70}
+                                  height={70}
+                                  alt=""
+                                  className="-tw-mt-8 tw-rounded-full tw-p-1 tw-z-30 tw-border-white "
+                                />
                               </div>
-                            ) : (
+                              <div className="tw-items-center tw-text-center tw-mt-2 tw-font-bold">
+                                You and {convertName()} are now friends
+                              </div>
+
+                              <div className="tw-items-center tw-text-center tw-mt-2 tw-text-slate-500 tw-w-full tw-z-20">
+                                <span>Let's send any message your friend</span>
+                              </div>
+                              <img
+                                src="https://res-zalo.zadn.vn/upload/media/2019/10/11/artboard_5_4_x_2x_1570759790847_74009.png"
+                                alt=""
+                                className="tw-z-10 -tw-mt-2"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            {
                               <Stack
-                                className={`tw-flex message ${
-                                  message.senderId == userInfo?.id
-                                    ? "self align-self-end"
-                                    : "align-self-start"
-                                } flex-grow-0`}
+                                key={index}
+                                className={`tw-my-3 tw-flex tw-break-words tw-relative tw-items-center`}
+                                onMouseEnter={() => handleMouseEnter(index)}
+                                onMouseLeave={handleMouseLeave}
+                                ref={(element) =>
+                                  updateMessageRefs(element, index)
+                                }
+                                onClick={() => scrollToMessage(index)}
                               >
-                                <div>
+                                {message.status == "removed" &&
+                                message.senderId == userInfo?.id ? (
                                   <div
-                                    className="tw-right-1 tw-text-start tw-italic"
-                                    style={{ fontSize: "13px" }}
+                                    className={`tw-rounded-lg tw-italic  tw-p-3 ${
+                                      message.senderId == userInfo?.id
+                                        ? "tw-bg-[#e5efff] align-self-end"
+                                        : "tw-bg-black tw-text-white align-self-start tw-text-"
+                                    }`}
                                   >
-                                    {message.type.includes("share") ? (
-                                      <div>
-                                        <div className="tw-flex tw-justify-items-center tw-items-center">
-                                          <IoIosRedo className="tw-mr-2" />
-                                          <span>
-                                            {message.senderId == userInfo?.id
-                                              ? "You've"
-                                              : "Your friend"}{" "}
-                                            forwarded a message
-                                          </span>
-                                        </div>
-                                        <div></div>
-                                      </div>
-                                    ) : (
-                                      message.senderName
-                                    )}
-                                  </div>
-
-                                  {message.type.includes("text") ? (
-                                    <span className="tw-text-[16px]">
-                                      {message.content}
+                                    <span className=" tw-text-sm ">
+                                      message has been recovered
                                     </span>
-                                  ) : message.type.includes("files") ? (
                                     <div>
-                                      {message.content &&
-                                        message.content
-                                          .split("|")
-                                          .map((content, index) => {
-                                            const lastSlashIndex =
-                                              content.split("?");
-                                            const filenameWithExtension =
-                                              lastSlashIndex[0];
-
-                                            const lastSlashIndex1 =
-                                              filenameWithExtension.split("/");
-                                            const filenameWithExtension1 =
-                                              lastSlashIndex1[
-                                                lastSlashIndex1.length - 1
-                                              ];
-
-                                            const lastDotIndex =
-                                              filenameWithExtension1.lastIndexOf(
-                                                "."
-                                              );
-                                            const filename =
-                                              filenameWithExtension1.substring(
-                                                0,
-                                                lastDotIndex
-                                              );
-                                            const extension =
-                                              filenameWithExtension1.substring(
-                                                lastDotIndex
-                                              );
-                                            return (
-                                              <div
-                                                className="tw-flex"
-                                                key={index}
-                                              >
-                                                {content.startsWith(
-                                                  "https://"
-                                                ) ? (
-                                                  <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
-                                                    <div className="tw-mr-3 ">
-                                                      {extension === ".doc" && (
-                                                        <img
-                                                          src={doc}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension === ".xls" && (
-                                                        <img
-                                                          src={xls}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension ===
-                                                        ".xlsx" && (
-                                                        <img
-                                                          src={xlsx}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension === ".pdf" && (
-                                                        <img
-                                                          src={pdf}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension === ".txt" && (
-                                                        <img
-                                                          src={txt}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension ===
-                                                        ".docx" && (
-                                                        <img
-                                                          src={docx}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                      {extension ===
-                                                        ".pptx" && (
-                                                        <img
-                                                          src={ppt}
-                                                          alt={`Document ${
-                                                            index + 1
-                                                          }`}
-                                                          style={{
-                                                            width: "32px",
-                                                            height: "32px",
-                                                          }}
-                                                        />
-                                                      )}
-                                                    </div>
-                                                    <span>
-                                                      <a
-                                                        href={content}
-                                                        download={
-                                                          filename + extension
-                                                        }
-                                                        style={{
-                                                          textDecoration:
-                                                            "none",
-                                                          color: "black",
-                                                        }}
-                                                      >
-                                                        {decodeURIComponent(
-                                                          decodeURI(filename)
-                                                        )}
-                                                      </a>
-                                                    </span>
-                                                  </div>
-                                                ) : (
-                                                  <span>{content}</span>
-                                                )}
-                                              </div>
-                                            );
-                                          })}
+                                      <span
+                                        span
+                                        className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit"
+                                      >
+                                        {calculateTime(message.timestamp)}
+                                      </span>
                                     </div>
-                                  ) : message.type.includes("image") ? (
-                                    message.content &&
-                                    message.content
-                                      .split("|")
-                                      .map((content, index) => (
-                                        <div className="tw-flex" key={index}>
-                                          {content.startsWith("https://") ? (
-                                            <ChatImage
-                                              imageUrl={content}
-                                              alt="Image"
-                                              className="tw-mb-1 tw-mr-1"
-                                            />
-                                          ) : (
-                                            <span>{content}</span>
-                                          )}
-                                        </div>
-                                      ))
-                                  ) : message.type === "reply" ? (
+                                  </div>
+                                ) : (
+                                  <Stack
+                                    className={`tw-flex message ${
+                                      message.senderId == userInfo?.id
+                                        ? "self align-self-end"
+                                        : "align-self-start"
+                                    } flex-grow-0`}
+                                  >
                                     <div>
                                       <div
-                                        className="tw-border-l-4 tw-border-blue-500 tw-pl-3 tw-mb-2"
-                                        onClick={() =>
-                                          handleClickReply(message.messageId)
-                                        }
+                                        className="tw-right-1 tw-text-start tw-italic"
+                                        style={{ fontSize: "13px" }}
                                       >
-                                        <span
-                                          className={`${
-                                            message.senderId == userInfo?.id
-                                              ? "tw-text-black"
-                                              : "tw-text-white"
-                                          }  tw-text-sm`}
-                                        >
-                                          {findMessageById(message.messageId)
-                                            ?.content &&
-                                            findMessageById(message.messageId)
-                                              ?.content.split("|")
+                                        {message.type.includes("share") ? (
+                                          <div>
+                                            <div className="tw-flex tw-justify-items-center tw-items-center">
+                                              <IoIosRedo className="tw-mr-2" />
+                                              <span>
+                                                {message.senderId ==
+                                                userInfo?.id
+                                                  ? "You've"
+                                                  : "Your friend"}{" "}
+                                                forwarded a message
+                                              </span>
+                                            </div>
+                                            <div></div>
+                                          </div>
+                                        ) : (
+                                          message.senderName
+                                        )}
+                                      </div>
+
+                                      {message.type.includes("text") ? (
+                                        <span className="tw-text-[16px]">
+                                          {message.content}
+                                        </span>
+                                      ) : message.type.includes("files") ? (
+                                        <div>
+                                          {message.content &&
+                                            message.content
+                                              .split("|")
                                               .map((content, index) => {
                                                 const lastSlashIndex =
-                                                  content.lastIndexOf("?");
+                                                  content.split("?");
                                                 const filenameWithExtension =
-                                                  content.substring(
-                                                    0,
-                                                    lastSlashIndex
-                                                  );
+                                                  lastSlashIndex[0];
 
                                                 const lastSlashIndex1 =
-                                                  filenameWithExtension.lastIndexOf(
+                                                  filenameWithExtension.split(
                                                     "/"
                                                   );
                                                 const filenameWithExtension1 =
-                                                  filenameWithExtension.substring(
-                                                    lastSlashIndex1 + 1
-                                                  );
+                                                  lastSlashIndex1[
+                                                    lastSlashIndex1.length - 1
+                                                  ];
 
                                                 const lastDotIndex =
                                                   filenameWithExtension1.lastIndexOf(
@@ -885,7 +715,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   filenameWithExtension1.substring(
                                                     lastDotIndex
                                                   );
-
                                                 return (
                                                   <div
                                                     className="tw-flex"
@@ -895,7 +724,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                       "https://"
                                                     ) ? (
                                                       <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
-                                                        <div className="tw-mr-3">
+                                                        <div className="tw-mr-3 ">
                                                           {extension ===
                                                             ".doc" && (
                                                             <img
@@ -991,11 +820,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                         <span>
                                                           <a
                                                             href={content}
-                                                            download={`${decodeURIComponent(
-                                                              decodeURI(
-                                                                filename
-                                                              )
-                                                            )}${extension}`}
+                                                            download={
+                                                              filename +
+                                                              extension
+                                                            }
                                                             style={{
                                                               textDecoration:
                                                                 "none",
@@ -1016,138 +844,368 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   </div>
                                                 );
                                               })}
-                                        </span>
-                                      </div>
-                                      <span
-                                        className={`${
-                                          message.senderId == userInfo?.id
-                                            ? "tw-text-black"
-                                            : "tw-text-white"
-                                        }`}
-                                      >
-                                        {message.content}
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      {message.type.includes("missing call") ? (
-                                        <div className="tw-flex tw-justify-center tw-items-center">
-                                          <div className="tw-mt-3 tw-mr-3 tw-w-10 tw-h-10 tw-bg-red-500 tw-p-2 tw-flex tw-justify-center tw-items-center tw-rounded-full">
-                                            <IoIosCall className="tw-text-white tw-text-3xl" />
-                                          </div>
-                                          <div className="tw-flex tw-justify-center tw-items-center tw-flex-wrap tw-break-words">
-                                            <span className="tw-break-words">
-                                              {message.senderId != userInfo?.id
-                                                ? "You"
-                                                : convertName()}{" "}
-                                              {message.content}{" "}
-                                              {message.senderId == userInfo?.id
-                                                ? "You"
-                                                : convertName()}
+                                        </div>
+                                      ) : message.type.includes("image") ? (
+                                        message.content &&
+                                        message.content
+                                          .split("|")
+                                          .map((content, index) => (
+                                            <div
+                                              className="tw-flex"
+                                              key={index}
+                                            >
+                                              {content.startsWith(
+                                                "https://"
+                                              ) ? (
+                                                <ChatImage
+                                                  imageUrl={content}
+                                                  alt="Image"
+                                                  className="tw-mb-1 tw-mr-1"
+                                                />
+                                              ) : (
+                                                <span>{content}</span>
+                                              )}
+                                            </div>
+                                          ))
+                                      ) : message.type === "reply" ? (
+                                        <div>
+                                          <div
+                                            className="tw-border-l-4 tw-border-blue-500 tw-pl-3 tw-mb-2"
+                                            onClick={() =>
+                                              handleClickReply(
+                                                message.messageId
+                                              )
+                                            }
+                                          >
+                                            <span
+                                              className={`${
+                                                message.senderId == userInfo?.id
+                                                  ? "tw-text-black"
+                                                  : "tw-text-white"
+                                              }  tw-text-sm`}
+                                            >
+                                              {findMessageById(
+                                                message.messageId
+                                              )?.content &&
+                                                findMessageById(
+                                                  message.messageId
+                                                )
+                                                  ?.content.split("|")
+                                                  .map((content, index) => {
+                                                    const lastSlashIndex =
+                                                      content.lastIndexOf("?");
+                                                    const filenameWithExtension =
+                                                      content.substring(
+                                                        0,
+                                                        lastSlashIndex
+                                                      );
+
+                                                    const lastSlashIndex1 =
+                                                      filenameWithExtension.lastIndexOf(
+                                                        "/"
+                                                      );
+                                                    const filenameWithExtension1 =
+                                                      filenameWithExtension.substring(
+                                                        lastSlashIndex1 + 1
+                                                      );
+
+                                                    const lastDotIndex =
+                                                      filenameWithExtension1.lastIndexOf(
+                                                        "."
+                                                      );
+                                                    const filename =
+                                                      filenameWithExtension1.substring(
+                                                        0,
+                                                        lastDotIndex
+                                                      );
+                                                    const extension =
+                                                      filenameWithExtension1.substring(
+                                                        lastDotIndex
+                                                      );
+
+                                                    return (
+                                                      <div
+                                                        className="tw-flex"
+                                                        key={index}
+                                                      >
+                                                        {content.startsWith(
+                                                          "https://"
+                                                        ) ? (
+                                                          <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                                                            <div className="tw-mr-3">
+                                                              {extension ===
+                                                                ".doc" && (
+                                                                <img
+                                                                  src={doc}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".xls" && (
+                                                                <img
+                                                                  src={xls}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".xlsx" && (
+                                                                <img
+                                                                  src={xlsx}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".pdf" && (
+                                                                <img
+                                                                  src={pdf}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".txt" && (
+                                                                <img
+                                                                  src={txt}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".docx" && (
+                                                                <img
+                                                                  src={docx}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                              {extension ===
+                                                                ".pptx" && (
+                                                                <img
+                                                                  src={ppt}
+                                                                  alt={`Document ${
+                                                                    index + 1
+                                                                  }`}
+                                                                  style={{
+                                                                    width:
+                                                                      "32px",
+                                                                    height:
+                                                                      "32px",
+                                                                  }}
+                                                                />
+                                                              )}
+                                                            </div>
+                                                            <span>
+                                                              <a
+                                                                href={content}
+                                                                download={`${decodeURIComponent(
+                                                                  decodeURI(
+                                                                    filename
+                                                                  )
+                                                                )}${extension}`}
+                                                                style={{
+                                                                  textDecoration:
+                                                                    "none",
+                                                                  color:
+                                                                    "black",
+                                                                }}
+                                                              >
+                                                                {decodeURIComponent(
+                                                                  decodeURI(
+                                                                    filename
+                                                                  )
+                                                                )}
+                                                              </a>
+                                                            </span>
+                                                          </div>
+                                                        ) : (
+                                                          <span>{content}</span>
+                                                        )}
+                                                      </div>
+                                                    );
+                                                  })}
                                             </span>
                                           </div>
+                                          <span
+                                            className={`${
+                                              message.senderId == userInfo?.id
+                                                ? "tw-text-black"
+                                                : "tw-text-white"
+                                            }`}
+                                          >
+                                            {message.content}
+                                          </span>
                                         </div>
                                       ) : (
-                                        message.type === "record" && (
-                                          <RecordCard message={message} />
-                                        )
+                                        <div>
+                                          {message.type.includes(
+                                            "missing call"
+                                          ) ? (
+                                            <div className="tw-flex tw-justify-center tw-items-center">
+                                              <div className="tw-mt-3 tw-mr-3 tw-w-10 tw-h-10 tw-bg-red-500 tw-p-2 tw-flex tw-justify-center tw-items-center tw-rounded-full">
+                                                <IoIosCall className="tw-text-white tw-text-3xl" />
+                                              </div>
+                                              <div className="tw-flex tw-justify-center tw-items-center tw-flex-wrap tw-break-words">
+                                                <span className="tw-break-words">
+                                                  {message.senderId !=
+                                                  userInfo?.id
+                                                    ? "You"
+                                                    : convertName()}{" "}
+                                                  {message.content}{" "}
+                                                  {message.senderId ==
+                                                  userInfo?.id
+                                                    ? "You"
+                                                    : convertName()}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            message.type === "record" && (
+                                              <RecordCard message={message} />
+                                            )
+                                          )}
+                                        </div>
                                       )}
                                     </div>
-                                  )}
-                                </div>
 
-                                <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
-                                  {calculateTime(message.timestamp)}
-                                </span>
+                                    <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
+                                      {calculateTime(message.timestamp)}
+                                    </span>
+                                  </Stack>
+                                )}
+                                {hoveredIndex === index &&
+                                  message.status != "removed" &&
+                                  userInfo?.id === message.senderId && (
+                                    <d
+                                      className={`tw-mt-2 message-buttons-container tw-flex ${
+                                        message.senderId == userInfo?.id
+                                          ? "self align-self-end"
+                                          : "align-self-start"
+                                      } `}
+                                    >
+                                      <BiSolidQuoteRight
+                                        className="tw-mx-1 hover:tw-text-blue-700"
+                                        title="Reply"
+                                        onClick={() => handleReply(message)}
+                                        size={18}
+                                      />
+                                      <ForwardModal
+                                        showModal={showFormShareMessage}
+                                        handleCloseModal={handleCloseModal}
+                                        shareMessage={shareMessage}
+                                      />
+                                      <IoIosRedo
+                                        className="tw-mx-1 hover:tw-text-blue-700"
+                                        title="Forward"
+                                        onClick={() => handleForward(message)}
+                                        size={18}
+                                      />
+                                      <RemoveMessageModal
+                                        showModal={showFormRemoveMessage}
+                                        handleCloseModal={
+                                          handleCloseRemoveMessageModal
+                                        }
+                                        removeMessage={message}
+                                        backdrop="static"
+                                      />
+                                      <SlReload
+                                        className="tw-mx-1 hover:tw-text-blue-700"
+                                        title="Remove"
+                                        onClick={() =>
+                                          handleRemove(message.messageId)
+                                        }
+                                        size={18}
+                                      />
+                                    </d>
+                                  )}
+                                {hoveredIndex === index &&
+                                  userInfo?.id !== message.senderId && (
+                                    <d
+                                      className={`tw-mt-2 message-buttons-container tw-flex ${
+                                        message.senderId == userInfo?.id
+                                          ? "self align-self-end"
+                                          : "align-self-start"
+                                      } `}
+                                    >
+                                      <BiSolidQuoteRight
+                                        className="tw-mx-1 hover:tw-text-blue-700"
+                                        title="Reply"
+                                        onClick={() => handleReply(message)}
+                                        size={18}
+                                      />
+                                      <ForwardModal
+                                        showModal={showFormShareMessage}
+                                        handleCloseModal={handleCloseModal}
+                                        shareMessage={shareMessage}
+                                      />
+                                      <IoIosRedo
+                                        className="tw-mx-1 hover:tw-text-blue-700"
+                                        title="Forward"
+                                        onClick={() => handleForward(message)}
+                                        size={18}
+                                      />
+                                      <RemoveMessageModal
+                                        showModal={showFormRemoveMessage}
+                                        handleCloseModal={
+                                          handleCloseRemoveMessageModal
+                                        }
+                                        removeMessage={message}
+                                        backdrop="static"
+                                      />
+                                    </d>
+                                  )}
+                                {/* {userInfo?.id === message.senderId && ( */}
                               </Stack>
-                            )}
-                            {hoveredIndex === index &&
-                              message.status != "removed" &&
-                              userInfo?.id === message.senderId && (
-                                <d
-                                  className={`tw-mt-2 message-buttons-container tw-flex ${
-                                    message.senderId == userInfo?.id
-                                      ? "self align-self-end"
-                                      : "align-self-start"
-                                  } `}
-                                >
-                                  <BiSolidQuoteRight
-                                    className="tw-mx-1 hover:tw-text-blue-700"
-                                    title="Reply"
-                                    onClick={() => handleReply(message)}
-                                    size={18}
-                                  />
-                                  <ForwardModal
-                                    showModal={showFormShareMessage}
-                                    handleCloseModal={handleCloseModal}
-                                    shareMessage={shareMessage}
-                                  />
-                                  <IoIosRedo
-                                    className="tw-mx-1 hover:tw-text-blue-700"
-                                    title="Forward"
-                                    onClick={() => handleForward(message)}
-                                    size={18}
-                                  />
-                                  <RemoveMessageModal
-                                    showModal={showFormRemoveMessage}
-                                    handleCloseModal={
-                                      handleCloseRemoveMessageModal
-                                    }
-                                    removeMessage={message}
-                                    backdrop="static"
-                                  />
-                                  <SlReload
-                                    className="tw-mx-1 hover:tw-text-blue-700"
-                                    title="Remove"
-                                    onClick={() =>
-                                      handleRemove(message.messageId)
-                                    }
-                                    size={18}
-                                  />
-                                </d>
-                              )}
-                            {hoveredIndex === index &&
-                              userInfo?.id !== message.senderId && (
-                                <d
-                                  className={`tw-mt-2 message-buttons-container tw-flex ${
-                                    message.senderId == userInfo?.id
-                                      ? "self align-self-end"
-                                      : "align-self-start"
-                                  } `}
-                                >
-                                  <BiSolidQuoteRight
-                                    className="tw-mx-1 hover:tw-text-blue-700"
-                                    title="Reply"
-                                    onClick={() => handleReply(message)}
-                                    size={18}
-                                  />
-                                  <ForwardModal
-                                    showModal={showFormShareMessage}
-                                    handleCloseModal={handleCloseModal}
-                                    shareMessage={shareMessage}
-                                  />
-                                  <IoIosRedo
-                                    className="tw-mx-1 hover:tw-text-blue-700"
-                                    title="Forward"
-                                    onClick={() => handleForward(message)}
-                                    size={18}
-                                  />
-                                  <RemoveMessageModal
-                                    showModal={showFormRemoveMessage}
-                                    handleCloseModal={
-                                      handleCloseRemoveMessageModal
-                                    }
-                                    removeMessage={message}
-                                    backdrop="static"
-                                  />
-                                </d>
-                              )}
-                            {/* {userInfo?.id === message.senderId && ( */}
-                          </Stack>
-                        }
+                            }
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
