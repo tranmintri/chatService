@@ -15,6 +15,7 @@ import { HOST2 } from "../router/ApiRoutes";
 import Loading from "../components/chat/Loading";
 import { toast } from "react-toastify";
 import CallPrivate from "./../components/chat/CallPrivate";
+import CallPage from "../components/chat/CallPage";
 const Main = () => {
   const [{ userInfo, groups, currentChat, callPage, onlineUsers }, dispatch] =
     useStateProvider();
@@ -131,16 +132,52 @@ const Main = () => {
     }
   }, [socket.current]);
   useEffect(() => {
-    if (socket.current && !socketEvent) {
-      socket.current.on("response-connect-user", (data) => {
-        console.log(data);
-        dispatch({
-          type: reducerCases.ADD_ONLINE_USER,
-          onlineUsers: { ...data },
-          fromSelf: true,
-        });
-      });
+    const fetchData = async (friendId) => {
+      try {
+        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
+        const updatedFriends = [
+          ...data.data.friends.map((friend) => friend.id),
+          friendId,
+        ].filter((id, index, arr) => arr.indexOf(id) === index);
 
+        dispatch({
+          type: reducerCases.SET_ALL_ONLINE_USER,
+          onlineUsers: updatedFriends,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (socket.current && !socketEvent && userInfo) {
+      socket.current.on("response-connect-user", async (data) => {
+        console.log(data);
+        await fetchData(data);
+      });
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    const fetchData = async (friendId) => {
+      try {
+        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
+        const updatedFriends = data.data.friends
+          .map((friend) => friend.id)
+          .filter((id) => id !== friendId);
+        dispatch({
+          type: reducerCases.SET_ALL_ONLINE_USER,
+          onlineUsers: updatedFriends,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (socket.current && !socketEvent && userInfo) {
+      socket.current.on("response-disconnect-user", async (friendId) => {
+        console.log("response-disconnect-user" + friendId); // Kiểm tra friendId đã nhận được chưa
+        await fetchData(friendId);
+      });
       setSocketEvent(true);
     }
   }, [socket.current]);
@@ -341,7 +378,7 @@ const Main = () => {
     }
   }, [socket.current]);
 
-  return callPage ? <CallPrivate /> : isLoading ? <SideBar /> : <Loading />;
+  return callPage ? <CallPage /> : isLoading ? <SideBar /> : <Loading />;
 };
 
 export default Main;

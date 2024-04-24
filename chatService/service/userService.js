@@ -290,4 +290,4 @@ const leaveGroup = async (data) => {
 };
 
 
-module.exports = {save, findAll, findByEmail, addFriend, findById, updateUser, removeFriend, leaveGroup}
+module.exports = {save, findAll, findByEmail, addFriend, findById, updateUser, removeFriend, leaveGroup,getUserData}
