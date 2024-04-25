@@ -73,28 +73,9 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     setShowAllFile(!showAllFile);
   };
 
-  // const groupFilesByDate = (files) => {
-  //     const groupedFiles = {};
-  //     files.forEach((file) => {
-  //         const date = file.date;
-  //         if (!groupedFiles[date]) {
-  //             groupedFiles[date] = [];
-  //         }
-  //         groupedFiles[date].push(file);
-  //     });
-  //     return groupedFiles;
-  // };
-
-  // // Nhóm các file theo ngày gửi
-  // const groupedFiles = groupFilesByDate(files);
-  // // Lấy danh sách ngày gửi để sắp xếp
-  // const sortedDates = Object.keys(groupedFiles).sort();
-
   const toggleShowAllLink = () => {
     setShowAllLink(!showAllLink);
   };
-  const limitedImages = showAllImage ? images : images.slice(0, 6);
-  const limitedFiles = showAllFile ? files : files.slice(0, 3);
   const limitedLinks = showAllLink ? links : links.slice(0, 3);
   const convertName = () => {
     if (chat.type == "private") {
@@ -177,15 +158,16 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
 
     return url.split("|");
   };
+  // tw-max-h-[32.5vh]
 
   return (
     <div className="tw-w-full tw-h-full">
-      <div className=" tw-bg-gray-50 tw-overflow-auto tw-max-h-screen custom-scrollbar">
-        <p className="tw-text-center tw-border-b tw-font-bold m-0 tw-text-[22px]">
+      <div className=" tw-bg-gray-50 tw-h-full">
+        <p className="tw-text-center tw-border-b tw-font-bold m-0 tw-text-[22px] tw-max-h-[5vh]">
           Conversation Info
         </p>
         <div style={{ height: "95vh" }}>
-          <div className="mb-2 mt-2 border-bottom d-flex justify-content-center align-items-center">
+          <div className=" border-bottom d-flex justify-content-center align-items-center tw-min-h-[27.5vh]">
             <div className="align-items-center">
               <img
                 src={convertImage()}
@@ -231,263 +213,269 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               </div>
             </div>
           </div>
-          <div>
-            {currentChat.type === "public" && (
-              <div className="mb-2 tw-border-b tw-ml-2">
-                <span className="tw-font-bold tw-text-[18px]">Member List</span>
-                <button
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200 tw-w-full"
-                  style={{ height: "40px" }}
-                  onClick={toggleModalMembers}
-                >
-                  <div className="tw-flex  align-items-center">
-                    <GrGroup size={20} />
-                    <span className="tw-pl-5">{menberCount} members</span>
-                  </div>
-                </button>
-                <ModalGroupMembers
-                  showModalMembers={showModalMembers}
-                  toggleModalMembers={toggleModalMembers}
-                  members={currentChat.participants}
-                />
-              </div>
-            )}
-          </div>
-          <div className="mb-2 tw-border-b tw-ml-2">
-            <span className="tw-font-bold tw-text-[18px]">
-              Photos / Videos{" "}
-            </span>
-            <div className="tw-flex tw-flex-wrap tw-mx-auto">
-              {splitImage().map((image, index) => (
-                <div
-                  key={index}
-                  className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar"
-                >
-                  <img
-                    src={image}
-                    alt={image}
-                    className="w-full h-auto tw-mx-auto"
-                    style={{ maxHeight: "85px" }}
+          <div className="tw-overflow-y-auto tw-max-h-[67.5vh] custom-scrollbar">
+            <div>
+              {currentChat.type === "public" && (
+                <div className="mb-2 tw-border-b tw-ml-2">
+                  <span className="tw-font-bold tw-text-[18px]">
+                    Member List
+                  </span>
+                  <button
+                    className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline hover:tw-bg-gray-200 tw-w-full"
+                    style={{ height: "40px" }}
+                    onClick={toggleModalMembers}
+                  >
+                    <div className="tw-flex  align-items-center">
+                      <GrGroup size={20} />
+                      <span className="tw-pl-5">{menberCount} members</span>
+                    </div>
+                  </button>
+                  <ModalGroupMembers
+                    showModalMembers={showModalMembers}
+                    toggleModalMembers={toggleModalMembers}
+                    members={currentChat.participants}
                   />
                 </div>
-              ))}
+              )}
             </div>
-            {images.length > 6 && (
-              <button
-                onClick={toggleShowAllImage}
-                className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                style={{ backgroundColor: "#eaedf0" }}
-              >
-                {showAllImage ? "Collapse" : "Show all"}
-              </button>
-            )}
-          </div>
-          <div className="mb-2 tw-border-b tw-ml-2">
-            <span className="tw-font-bold tw-text-[18px]">Files</span>
-            <ul className="tw-block tw-p-0 tw-overflow-auto tw-max-h-60 custom-scrollbar">
-              {splitFile().map((content, index) => {
-                const lastSlashIndex = content.split("?");
-                const filenameWithExtension = lastSlashIndex[0];
-
-                const lastSlashIndex1 = filenameWithExtension.split("/");
-                const filenameWithExtension1 =
-                  lastSlashIndex1[lastSlashIndex1.length - 1];
-
-                const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
-                const filename = filenameWithExtension1.substring(
-                  0,
-                  lastDotIndex
-                );
-                const extension =
-                  filenameWithExtension1.substring(lastDotIndex);
-                return (
-                  <div className="tw-flex" key={index}>
-                    {content.startsWith("https://") ? (
-                      <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
-                        <div className="tw-mr-3 ">
-                          {extension === ".doc" && (
-                            <img
-                              src={doc}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".xls" && (
-                            <img
-                              src={xls}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".xlsx" && (
-                            <img
-                              src={xlsx}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".pdf" && (
-                            <img
-                              src={pdf}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".txt" && (
-                            <img
-                              src={txt}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".docx" && (
-                            <img
-                              src={docx}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                          {extension === ".pptx" && (
-                            <img
-                              src={ppt}
-                              alt={`Document ${index + 1}`}
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                              }}
-                            />
-                          )}
-                        </div>
-                        <span>
-                          <a
-                            href={content}
-                            download={filename + extension}
-                            style={{
-                              textDecoration: "none",
-                              color: "black",
-                            }}
-                          >
-                            {decodeURIComponent(decodeURI(filename))}
-                          </a>
-                        </span>
-                      </div>
-                    ) : (
-                      <span>{content}</span>
-                    )}
-                  </div>
-                );
-              })}
-            </ul>
-            {files.length > 3 && (
-              <button
-                onClick={toggleShowAllFile}
-                className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                style={{ backgroundColor: "#eaedf0" }}
-              >
-                {showAllFile ? "Collapse" : "Show all"}
-              </button>
-            )}
-          </div>
-          <div className="mb-2 tw-border-b tw-ml-2">
-            <span className="tw-font-bold tw-text-[18px]">Links</span>
-            <ul className="tw-p-0 tw-overflow-auto tw-max-h-32 custom-scrollbar">
-              {limitedLinks.map((link, index) => (
-                <li key={index} className="tw-my-3 hover:tw-bg-gray-200">
-                  <p className="tw-font-bold tw-text-[13px] tw-mb-0">
-                    {link.title}
-                  </p>
-                  <a
-                    href={link.url}
-                    className="text-blue-500"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: "none" }}
+            <div className="mb-2 tw-border-b tw-ml-2">
+              <span className="tw-font-bold tw-text-[18px]">
+                Photos / Videos{" "}
+              </span>
+              <div className="tw-flex tw-flex-wrap tw-mx-auto">
+                {splitImage().map((image, index) => (
+                  <div
+                    key={index}
+                    className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar"
                   >
-                    {link.url}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            {links.length > 3 && (
-              <button
-                onClick={toggleShowAllLink}
-                className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                style={{ backgroundColor: "#eaedf0" }}
-              >
-                {showAllLink ? "Collapse" : "Show all"}
-              </button>
-            )}
-          </div>
-          <div className="mb-2 tw-ml-2 ">
-            <span className="tw-font-bold tw-text-[18px]">Privacy Setting</span>
-            {currentChat.type == "private" && (
-              <button
-                onClick={onDeleteHistory}
-                className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                style={{ height: "40px", color: "red" }}
-              >
-                <div className="tw-flex  align-items-center">
-                  <FaRegTrashCan size={20} color="red" />
-                  <span className="tw-pl-5">Delete History</span>
-                </div>
-              </button>
-            )}
-            {currentChat.type === "public" && (
-              <div>
+                    <img
+                      src={image}
+                      alt={image}
+                      className="w-full h-auto tw-mx-auto"
+                      style={{ maxHeight: "85px" }}
+                    />
+                  </div>
+                ))}
+              </div>
+              {images.length > 6 && (
+                <button
+                  onClick={toggleShowAllImage}
+                  className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
+                  style={{ backgroundColor: "#eaedf0" }}
+                >
+                  {showAllImage ? "Collapse" : "Show all"}
+                </button>
+              )}
+            </div>
+            <div className="mb-2 tw-border-b tw-ml-2">
+              <span className="tw-font-bold tw-text-[18px]">Files</span>
+              <ul className="tw-block tw-p-0 tw-overflow-auto tw-max-h-60 custom-scrollbar">
+                {splitFile().map((content, index) => {
+                  const lastSlashIndex = content.split("?");
+                  const filenameWithExtension = lastSlashIndex[0];
+
+                  const lastSlashIndex1 = filenameWithExtension.split("/");
+                  const filenameWithExtension1 =
+                    lastSlashIndex1[lastSlashIndex1.length - 1];
+
+                  const lastDotIndex = filenameWithExtension1.lastIndexOf(".");
+                  const filename = filenameWithExtension1.substring(
+                    0,
+                    lastDotIndex
+                  );
+                  const extension =
+                    filenameWithExtension1.substring(lastDotIndex);
+                  return (
+                    <div className="tw-flex" key={index}>
+                      {content.startsWith("https://") ? (
+                        <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                          <div className="tw-mr-3 ">
+                            {extension === ".doc" && (
+                              <img
+                                src={doc}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".xls" && (
+                              <img
+                                src={xls}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".xlsx" && (
+                              <img
+                                src={xlsx}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".pdf" && (
+                              <img
+                                src={pdf}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".txt" && (
+                              <img
+                                src={txt}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".docx" && (
+                              <img
+                                src={docx}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                            {extension === ".pptx" && (
+                              <img
+                                src={ppt}
+                                alt={`Document ${index + 1}`}
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                }}
+                              />
+                            )}
+                          </div>
+                          <span>
+                            <a
+                              href={content}
+                              download={filename + extension}
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                              }}
+                            >
+                              {decodeURIComponent(decodeURI(filename))}
+                            </a>
+                          </span>
+                        </div>
+                      ) : (
+                        <span>{content}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </ul>
+              {files.length > 3 && (
+                <button
+                  onClick={toggleShowAllFile}
+                  className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
+                  style={{ backgroundColor: "#eaedf0" }}
+                >
+                  {showAllFile ? "Collapse" : "Show all"}
+                </button>
+              )}
+            </div>
+            <div className="mb-2 tw-border-b tw-ml-2">
+              <span className="tw-font-bold tw-text-[18px]">Links</span>
+              <ul className="tw-p-0 tw-overflow-auto tw-max-h-32 custom-scrollbar">
+                {limitedLinks.map((link, index) => (
+                  <li key={index} className="tw-my-3 hover:tw-bg-gray-200">
+                    <p className="tw-font-bold tw-text-[13px] tw-mb-0">
+                      {link.title}
+                    </p>
+                    <a
+                      href={link.url}
+                      className="text-blue-500"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: "none" }}
+                    >
+                      {link.url}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {links.length > 3 && (
+                <button
+                  onClick={toggleShowAllLink}
+                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
+                  style={{ backgroundColor: "#eaedf0" }}
+                >
+                  {showAllLink ? "Collapse" : "Show all"}
+                </button>
+              )}
+            </div>
+            <div className="mb-2 tw-ml-2 ">
+              <span className="tw-font-bold tw-text-[18px]">
+                Privacy Setting
+              </span>
+              {currentChat.type == "private" && (
                 <button
                   onClick={onDeleteHistory}
                   className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
                   style={{ height: "40px", color: "red" }}
                 >
-                  <div className="tw-flex align-items-center">
+                  <div className="tw-flex  align-items-center">
                     <FaRegTrashCan size={20} color="red" />
                     <span className="tw-pl-5">Delete History</span>
                   </div>
                 </button>
-                {currentChat.managerId === userInfo?.id &&
-                currentChat.participants.length > 2 ? (
+              )}
+              {currentChat.type === "public" && (
+                <div>
                   <button
-                    onClick={handleShowChangeRole}
+                    onClick={onDeleteHistory}
                     className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
                     style={{ height: "40px", color: "red" }}
                   >
                     <div className="tw-flex align-items-center">
-                      <MdLogout size={20} color="red" />
-                      <span className="tw-pl-5">Leave Group</span>
+                      <FaRegTrashCan size={20} color="red" />
+                      <span className="tw-pl-5">Delete History</span>
                     </div>
                   </button>
-                ) : (
-                  <button
-                    onClick={handleShowLeaveConversation}
-                    className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                    style={{ height: "40px", color: "red" }}
-                  >
-                    <div className="tw-flex align-items-center">
-                      <MdLogout size={20} color="red" />
-                      <span className="tw-pl-5">Leave Group</span>
-                    </div>
-                  </button>
-                )}
-              </div>
-            )}
+                  {currentChat.managerId === userInfo?.id &&
+                  currentChat.participants.length > 2 ? (
+                    <button
+                      onClick={handleShowChangeRole}
+                      className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                      style={{ height: "40px", color: "red" }}
+                    >
+                      <div className="tw-flex align-items-center">
+                        <MdLogout size={20} color="red" />
+                        <span className="tw-pl-5">Leave Group</span>
+                      </div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleShowLeaveConversation}
+                      className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
+                      style={{ height: "40px", color: "red" }}
+                    >
+                      <div className="tw-flex align-items-center">
+                        <MdLogout size={20} color="red" />
+                        <span className="tw-pl-5">Leave Group</span>
+                      </div>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

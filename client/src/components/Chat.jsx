@@ -249,8 +249,11 @@ const Chat = () => {
           </div>
         </div>
       )}
-      <div className="col-3">
-        <Stack className="message-box flex-grow-0" gap={3}>
+      <div className="col-3 tw-bg-slate-600">
+        <Stack
+          className=" message-box tw-overflow-auto custom-scrollbar tw-max-h-[100vh] tw-z-30"
+          gap={3}
+        >
           <UserChat chats={chats ? chats : []} />
         </Stack>
       </div>

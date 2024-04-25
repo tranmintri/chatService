@@ -1,8 +1,4 @@
-import {
-  Col,
-  Nav,
-  Tab,
-} from "react-bootstrap";
+import { Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -15,7 +11,7 @@ import ListGroups from "./contact/ListGroups";
 import { useState } from "react";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
-import avatar from "../assets/2Q.png"
+import avatar from "../assets/2Q.png";
 import { useEffect } from "react";
 import { reducerCases } from "../context/constants";
 import { useStateProvider } from "../context/StateContext";
@@ -24,7 +20,7 @@ import axios from "axios";
 const Contact = ({ data }) => {
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
-  const [{ userInfo }, dispatch] = useStateProvider()
+  const [{ userInfo }, dispatch] = useStateProvider();
   const handleAddFriend = () => {
     setShowAddFriendModal(true);
   };
@@ -48,12 +44,15 @@ const Contact = ({ data }) => {
     console.log("Searching...");
   };
 
-  const [activeTab, setActiveTab] = useState('first');
+  const [activeTab, setActiveTab] = useState("first");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
-        if (data && Array.isArray(data)) { // Ensure data exists and is an array
+        const { data } = await axios.get(
+          GET_CHAT_BY_PARTICIPANTS + userInfo?.id
+        );
+        if (data && Array.isArray(data)) {
+          // Ensure data exists and is an array
           dispatch({
             type: reducerCases.SET_ALL_GROUP,
             groups: data.sort((a, b) => {
@@ -68,7 +67,7 @@ const Contact = ({ data }) => {
                 // For example, you might want to handle these cases differently
                 return 0; // For simplicity, assuming equal timestamp for now
               }
-            })
+            }),
           });
         } else {
           console.error("Data is undefined or not in the expected format");
@@ -81,23 +80,26 @@ const Contact = ({ data }) => {
     fetchData();
   }, [activeTab, dispatch, userInfo?.id]);
 
-
   return (
     <Tab.Container
       defaultActiveKey={"first"}
       activeKey={activeTab}
-      onSelect={(selectedTab) => setActiveTab(selectedTab)}>
-      <div
-        className="d-flex"
-      >
-        <Col md={3} style={{ backgroundColor: 'white' }}>
+      onSelect={(selectedTab) => setActiveTab(selectedTab)}
+    >
+      <div className="d-flex">
+        <Col md={3} style={{ backgroundColor: "white" }}>
           <Nav className="nav-contact flex-column gap-2" variant="light">
             <Nav.Item className="tab-link  tw-mt-20">
               <Nav.Link
                 eventKey="first"
-                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'first' ? 'gray' : 'transparent' }}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  backgroundColor:
+                    activeTab === "first" ? "gray" : "transparent",
+                }}
               >
-                <div className="d-flex align-item-center justify-content-start">
+                <div className="d-flex align-item-center justify-content-start ">
                   <FontAwesomeIcon
                     icon={faUsers}
                     style={{ fontSize: "22px", marginRight: 12 }}
@@ -110,7 +112,12 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="second"
-                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'second' ? 'gray' : 'transparent' }}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  backgroundColor:
+                    activeTab === "second" ? "gray" : "transparent",
+                }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon
@@ -125,7 +132,12 @@ const Contact = ({ data }) => {
             <Nav.Item className="tab-link">
               <Nav.Link
                 eventKey="third"
-                style={{ textDecoration: "none", color: "black", backgroundColor: activeTab === 'third' ? 'gray' : 'transparent' }}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  backgroundColor:
+                    activeTab === "third" ? "gray" : "transparent",
+                }}
               >
                 <div className=" d-flex align-item-center justify-content-start">
                   <FontAwesomeIcon

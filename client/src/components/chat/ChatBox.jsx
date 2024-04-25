@@ -456,8 +456,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   };
 
   return (
-    <Stack className={`chat-box border-1 ${showInfo ? "w-full" : ""}`}>
-      <div className="chat-header justify-content-between align-items-center">
+    <Stack className={`chat-box border-1 ${showInfo ? "w-full" : ""} `}>
+      <div className="chat-header justify-content-between align-items-center ">
         <div className="d-flex">
           <img
             src={convertPicture()}
@@ -542,17 +542,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           )}
         </div>
       </div>
-      <div></div>
+
       {messages && (
         <Stack
           gap={2}
-          className="messages tw-max-h-60 tw-cursor-pointer items-end"
+          className="messages tw-max-h-60 tw-cursor-pointer items-end tw-overflow-y-auto custom-scrollbar"
         >
           {messages.map((message, index) => (
             <div>
               {message.type.includes("notification") ? (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-ful tw-mt-5">
-                  <div className="tw-w-3/12 tw-bg-gray-200 tw-text-[13px] tw-items-center tw-flex tw-justify-center tw-py-0.5 tw-text-slate-500 tw-rounded-lg tw-shadow-2xl">
+                  <div className="tw-w-3/12 tw-px-1 tw-text-center tw-bg-gray-200 tw-text-[13px] tw-items-center tw-flex tw-justify-center tw-py-0.5 tw-text-slate-500 tw-rounded-lg tw-shadow-2xl">
                     <span>{message.content}</span>
                   </div>
                 </div>

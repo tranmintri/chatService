@@ -132,7 +132,7 @@ html,
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 0px;
   /* Độ rộng của thanh cuộn */
 }
 

@@ -431,7 +431,7 @@ const SideBar = () => {
                 >
                   <FontAwesomeIcon
                     icon={faMessage}
-                    style={{ fontSize: "26px" }}
+                    style={{ fontSize: "30px" }}
                     className={
                       activeTab === "first"
                         ? "tw-text-white"
@@ -458,7 +458,7 @@ const SideBar = () => {
                 >
                   <FontAwesomeIcon
                     icon={faAddressBook}
-                    style={{ fontSize: "26px" }}
+                    style={{ fontSize: "30px" }}
                     className={
                       activeTab === "second"
                         ? "tw-text-white"
@@ -504,7 +504,7 @@ const SideBar = () => {
         </Col>
         <Col style={{ width: "90%" }} className="tw-relative">
           <div
-            className=" col-3 tw-h-20 tw-absolute"
+            className=" col-3 tw-h-20 tw-absolute tw-z-50"
             style={{ backgroundColor: "white" }}
           >
             <div className="tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full">
@@ -555,7 +555,7 @@ const SideBar = () => {
             </div>
           </div>
           {showSearchTable && (
-            <div className="tw-bg-white tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16 tw-border-gray-500 tw-border-t tw-border-l tw-border-r">
+            <div className="tw-bg-slate-100 tw-shadow-2xl tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16  tw-border-t tw-border-l tw-border-r">
               {filteredGroups.map((chat, index) => (
                 <GroupCard chat={chat} />
               ))}

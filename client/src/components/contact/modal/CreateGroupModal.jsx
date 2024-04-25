@@ -121,7 +121,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
               onChange={handleSearchTermChange}
             />
           </Form.Group>
-          <h5>Friend list</h5>
+          <h5>Friend list1</h5>
           <div
             style={{
               maxHeight: "350px",
