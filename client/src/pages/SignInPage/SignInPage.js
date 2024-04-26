@@ -34,12 +34,16 @@ const SignInPage = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="tw-mb-5">
               <div className="tw-mb-1">
-                <label className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold">
+                <label
+                  htmlFor="username"
+                  className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                >
                   Email or Phone Number
                   <span className="tw-text-red-500"> *</span>
                 </label>
               </div>
               <input
+                id="username"
                 className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
                 type="text"
                 {...register("username", {
@@ -55,12 +59,16 @@ const SignInPage = () => {
 
             <div className="tw-mb-5">
               <div className="tw-mb-1">
-                <label className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold">
+                <label
+                  htmlFor="password"
+                  className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                >
                   Password
                   <span className="tw-text-red-500"> *</span>
                 </label>
               </div>
               <input
+                id="password"
                 className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
                 type="password"
                 {...register("password", { required: "Please enter password" })}

@@ -83,7 +83,6 @@ const ModalGroupMembers = ({
     setModalShow(false);
   };
   const removeOutGroup = (member) => {
-    console.log(member, "member");
     toggleModalMembers();
     setShowOptions({});
     const postData = {
@@ -93,7 +92,7 @@ const ModalGroupMembers = ({
       user_Name: member.display_name,
       managerId: currentChat.managerId,
     };
-    console.log(postData, "data Leave");
+
     try {
       socket.current.emit("kick-from-group", postData);
       currentChat.participants = currentChat.participants.filter(
@@ -107,22 +106,7 @@ const ModalGroupMembers = ({
       console.error("Error kick:", error);
     }
   };
-  // const onLeaveGroup = () => {
-  //   const postData = {
-  //     chatId: currentChat.chatId,
-  //     chatParticipants: currentChat.participants,
-  //     userId: userInfo.id,
-  //     user_Name: userInfo.display_name
-  //   }
-  //   console.log(postData, "data Leave")
-  //   try {
-  //     socket.current.emit("leave-group", postData);
-  //     alert("You have left the group");
-  //   }
-  //   catch (error) {
-  //     console.error('Error sending friend request:', error);
-  //   }
-  // };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {

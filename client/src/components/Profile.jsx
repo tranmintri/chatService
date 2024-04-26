@@ -26,12 +26,6 @@ const Profile = () => {
     setIsEditing(false);
   };
 
-  // useEffect(() => {
-  //   getUserInfo();
-  // }, []);
-
-  console.log(user);
-
   return (
     <Container className="mt-5 d-flex align-items-center justify-content-center mx-auto">
       <Col md={6} className="text-center">

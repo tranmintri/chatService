@@ -18,6 +18,7 @@ export const initialState = {
   incomingVideoCall: undefined,
   callPage: false,
   callAccepted: false,
+  search: false,
 };
 
 const reducer = (state, action) => {
@@ -47,6 +48,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         callPage: action.callPage,
+      };
+    case reducerCases.SET_SEARCH:
+      console.log(action.search);
+      return {
+        ...state,
+        search: action.search,
       };
     //start
     case reducerCases.SET_INCOMING_VOICE_CALL:
@@ -93,7 +100,6 @@ const reducer = (state, action) => {
         onlineUsers: action.onlineUsers,
       };
     case reducerCases.ADD_ONLINE_USER:
-      console.log(action.newOnlineUsers);
       return {
         ...state,
         onlineUsers: [...state.onlineUsers, action.newOnlineUsers],

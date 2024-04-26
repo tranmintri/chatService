@@ -35,8 +35,6 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-
     updateMutation.mutate(data);
   };
 

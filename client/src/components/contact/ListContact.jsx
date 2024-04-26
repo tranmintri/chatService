@@ -51,7 +51,7 @@ const ListContact = ({ data }) => {
 
   const confirmDelete = async () => {
     await DeleteFriend(currentFriendId);
-    console.log(currentFriendId);
+
     setModalShow(false);
   };
 
@@ -61,7 +61,7 @@ const ListContact = ({ data }) => {
         GET_ALL_USER + "delete/" + userInfo.id,
         { data: { id } }
       );
-      console.log(response);
+
       fetchData(); // Fetch data again after deleting a friend
     } catch (error) {
       console.log(error);

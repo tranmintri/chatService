@@ -83,7 +83,7 @@ const AudioRecorder = ({ hide }) => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log("Server response:", response.data);
+
       const receiveId =
         currentChat?.participants.length == 2
           ? currentChat?.participants.reduce((acc, participantId) => {
@@ -95,7 +95,7 @@ const AudioRecorder = ({ hide }) => {
           : "";
       const type = "record";
       const messageId = uuidv4();
-      console.log(response.data);
+
       const { data } = await axios.put(
         CHAT_API + currentChat?.chatId + "/messages",
         {
@@ -110,7 +110,7 @@ const AudioRecorder = ({ hide }) => {
           },
         }
       );
-      console.log(data.data);
+
       const content = response.data.url;
       if (currentChat.type == "private") {
         socket.current.emit("send-msg-private", {

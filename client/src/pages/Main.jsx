@@ -93,7 +93,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-private", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -108,8 +107,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-to-voice-call-private", (data) => {
-        console.log(data);
-
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: data,
@@ -123,7 +120,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-get-all-friend-online", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.SET_ALL_ONLINE_USER,
           onlineUsers: data,
@@ -136,9 +132,6 @@ const Main = () => {
   useEffect(() => {
     const fetchData = async (friendId) => {
       try {
-        // const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
-        // const updatedFriends = [...onlineUsers, friendId];
-        // console.log(updatedFriends);
         dispatch({
           type: reducerCases.ADD_ONLINE_USER,
           newOnlineUsers: friendId,
@@ -151,7 +144,6 @@ const Main = () => {
 
     if (socket.current && !socketEvent && userInfo) {
       socket.current.on("response-connect-user", async (data) => {
-        console.log(data);
         await fetchData(data);
       });
       setSocketEvent(true);
@@ -171,7 +163,6 @@ const Main = () => {
 
     if (socket.current && !socketEvent && userInfo) {
       socket.current.on("response-disconnect-user", async (friendId) => {
-        console.log("response-disconnect-user" + friendId); // Kiểm tra friendId đã nhận được chưa
         await fetchData(friendId);
       });
       setSocketEvent(true);
@@ -181,7 +172,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-accpet-call-private", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.SET_CALL_ACCEPTED,
           callAccepted: data,
@@ -197,7 +187,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-cancel-call-private", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: undefined,
@@ -211,7 +200,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-end-call-private", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: undefined,
@@ -225,12 +213,10 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-disband-the-group", async (chatId) => {
-        console.log("aaaaaaa");
         const { data } = await axios.get(
           GET_CHAT_BY_PARTICIPANTS + userInfo?.id
         );
-        console.log(data);
-        console.log(chatId);
+
         if (data) {
           dispatch({
             type: reducerCases.SET_ALL_GROUP,
@@ -244,8 +230,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-create-the-group", async (group) => {
-        console.log("create-group");
-
         if (group) {
           dispatch({
             type: reducerCases.CREATE_GROUP,
@@ -261,8 +245,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("msg-recieve-public", (data) => {
-        console.log("public");
-        console.log(data);
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -276,9 +258,7 @@ const Main = () => {
   useEffect(() => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("friendRequest", (data) => {
-        console.log(data, "data");
         if (data.receiver === userInfo?.id) {
-          console.log("iffff");
           dispatch({
             type: reducerCases.ADD_RECEIVE_INVITATION,
             newReceive: data,
@@ -292,7 +272,6 @@ const Main = () => {
   useEffect(() => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("acceptFriend", (data) => {
-        console.log(data, "data");
         toast.success("You friend request accpeted by " + data.display_name);
       });
       setSocketEvent2(true);
@@ -315,7 +294,7 @@ const Main = () => {
           const { data } = await axios.get(
             `${CHAT_API}${currentChat.chatId}/messages`
           );
-          console.log(data);
+
           dispatch({
             type: reducerCases.SET_MESSAGES,
             messages: data ? data : [],
@@ -332,7 +311,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("leave-group-noti", (data) => {
-        console.log(data, "data");
         alert(data.user_Name + " leave group");
       });
       // console.log("log-out");

@@ -11,7 +11,7 @@ import axios from "axios";
 const socket = io.connect(HOST);
 const CallPrivate = () => {
   const { id } = useParams();
-  console.log(id);
+
   const meeting = (element) => {
     const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appId,
