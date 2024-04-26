@@ -43,7 +43,6 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
   };
 
   const handleCreateGroupChat = async () => {
-    console.log(selectedFriends);
     if (groupName.trim() === "") {
       alert("Please enter group name");
       return;
@@ -121,7 +120,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
               onChange={handleSearchTermChange}
             />
           </Form.Group>
-          <h5>Friend list1</h5>
+          <h5>Friend list</h5>
           <div
             style={{
               maxHeight: "350px",

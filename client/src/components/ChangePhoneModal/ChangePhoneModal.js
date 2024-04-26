@@ -37,7 +37,6 @@ const ChangePhoneModal = ({ open, setOpen, userInfo }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     updateMutation.mutate(data);
   };
 

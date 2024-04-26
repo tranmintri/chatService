@@ -23,9 +23,8 @@ const GroupCard = ({ chat }) => {
     });
 
     try {
-      console.log(chat.chatId);
       const { data } = await axios.get(CHAT_API + chat.chatId);
-      console.log(data);
+
       dispatch({
         type: reducerCases.SET_CURRENT_CHAT,
         chat: data, // hoặc chat.chat nếu cần truy cập vào các thuộc tính khác của chat

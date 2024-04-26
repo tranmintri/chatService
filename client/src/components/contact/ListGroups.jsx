@@ -16,7 +16,7 @@ import GroupCard from "./card/GroupCard";
 const ListGroups = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [groupList, setGroupList] = useState([]);
-  const [{ userInfo, groups }] = useStateProvider()
+  const [{ userInfo, groups }] = useStateProvider();
 
   const [searchResults, setSearchResults] = useState([]);
 
@@ -32,7 +32,7 @@ const ListGroups = ({ data }) => {
     console.log(`Selected filter: ${selectedFilter}`);
   };
   return (
-    <div className="px-3" style={{ backgroundColor: 'white', height: '100vh' }}>
+    <div className="px-3" style={{ backgroundColor: "white", height: "100vh" }}>
       <div className="group-list-header">
         <h2>
           {" "}
@@ -79,12 +79,13 @@ const ListGroups = ({ data }) => {
           </Dropdown.Item>
         </DropdownButton>
       </Form>
-      {Array.isArray(groups) && groups.map((el) => {
-        if (el.type === "public") {
-          return <GroupCard chat={el} key={el.chatId} />;
-        }
-        return null;
-      })}
+      {Array.isArray(groups) &&
+        groups.map((el) => {
+          if (el.type === "public") {
+            return <GroupCard chat={el} key={el.chatId} />;
+          }
+          return null;
+        })}
     </div>
   );
 };

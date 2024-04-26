@@ -107,7 +107,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
         user_Name: userInfo.display_name,
         managerId: currentChat.managerId,
       };
-      console.log(postData, "data Leave");
+
       try {
         socket.current.emit("leave-group", postData);
         alert("You have left the group");
@@ -132,7 +132,6 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
         }
       });
     }
-    console.log(url);
 
     return url.split("|");
   };

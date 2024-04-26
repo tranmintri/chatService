@@ -13,17 +13,10 @@ export const useSignIn = () => {
   const { mutate: signInMutate } = useMutation({
     mutationFn: ({ username, password }) => signIn(username, password),
     onSuccess: (res) => {
-      console.log(res);
-
       const data = res.data;
-
       saveToken(data);
-      console.log("signin");
-      console.log(data.user_info);
       saveUser(data.user_info);
-
       toast.success("Đăng nhập thành công");
-
       dispatch({
         type: reducerCases.SET_USER_INFO,
         userInfo: data.user_info,

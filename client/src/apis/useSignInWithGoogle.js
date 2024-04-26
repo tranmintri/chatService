@@ -16,16 +16,12 @@ export const useSignInWithGoogle = () => {
   const { mutate: signInWithGoogleMutate } = useMutation({
     mutationFn: () => signInWithPopup(auth, googleAuthProvider),
     onSuccess: (result) => {
-      console.log(result);
-
       // const credential = GoogleAuthProvider.credentialFromResult(result);
       const user = result.user;
       const token = user.accessToken;
 
       signInWithGoogle(token)
         .then((res) => {
-          console.log(res);
-
           const data = res.data;
 
           saveToken(data);

@@ -37,7 +37,6 @@ const MyAccountPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(userInfo);
         const res = await axios.put(GET_ALL_USER, userInfo);
         dispatch({
           type: reducerCases.SET_USER_INFO,

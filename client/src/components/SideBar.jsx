@@ -32,7 +32,7 @@ import GroupCard from "./contact/card/GroupCard";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, groups, messages }, dispatch] =
+  const [{ userInfo, contactsPage, groups, messages, search }, dispatch] =
     useStateProvider();
   const [activeKey, setActiveKey] = useState("first");
 
@@ -89,7 +89,7 @@ const SideBar = () => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(GET_ALL_USER);
-        console.log(data);
+
         setUserList(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -177,6 +177,10 @@ const SideBar = () => {
             console.error("Data is undefined");
           }
         }
+        dispatch({
+          type: reducerCases.SET_SEARCH,
+          search: false,
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -263,12 +267,12 @@ const SideBar = () => {
                         alt="User Avatar"
                         className="tw-w-24 tw-h-24 tw-rounded-full tw-border tw-border-gray-500"
                       />
-                      <button className="tw-absolute tw-bottom-0 tw-left-16 tw-w-8 tw-h-8 tw-rounded-full tw-bg-gray-300 tw-text-gray-500 tw-flex tw-items-center tw-justify-center tw-border-2 tw-border-white">
+                      <Button className="tw-absolute tw-bottom-0 tw-left-16 tw-w-8 tw-h-8 tw-rounded-full tw-bg-gray-300 tw-text-gray-500 tw-flex tw-items-center tw-justify-center tw-border-2 tw-border-white">
                         <FontAwesomeIcon
                           icon={faCamera}
                           style={{ fontSize: "20px" }}
                         />
-                      </button>
+                      </Button>
                     </div>
                     <div className="tw-ml-5 mt-2 tw-font-bold tw-text-xl">
                       {userInfo?.display_name}
@@ -503,57 +507,75 @@ const SideBar = () => {
           </Nav>
         </Col>
         <Col style={{ width: "90%" }} className="tw-relative">
-          <div
-            className=" col-3 tw-h-20 tw-absolute tw-z-50"
-            style={{ backgroundColor: "white" }}
-          >
-            <div className="tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full">
-              <div className="tw-flex tw-w-full tw-items-center">
-                <input
-                  onClick={() => setShowSearchTable(true)}
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="tw-text-lg tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-white"
-                  style={{ backgroundColor: "#eaedf0" }}
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-                <div className="tw-w-1/5 tw-flex-1 tw-flex">
-                  {showSearchTable ? (
-                    <button
-                      className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-black hover:tw-bg-gray-300 hover:tw-text-black"
-                      onClick={() => setShowSearchTable(false)}
-                    >
-                      Close
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
-                        onClick={handleShowAddFriend}
-                      >
-                        <FontAwesomeIcon
-                          icon={faUserPlus}
-                          style={{ fontSize: "15px" }}
-                          color="gray"
-                        />
-                      </button>
-                      <button
-                        className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
-                        onClick={handleShowCreateGroup}
-                      >
-                        <FontAwesomeIcon
-                          icon={faUsers}
-                          style={{ fontSize: "15px" }}
-                          color="gray"
-                        />
-                      </button>
-                    </>
-                  )}
+          {search ? (
+            <div
+              className=" col-3 tw-h-32 tw-absolute tw-z-50 "
+              style={{ backgroundColor: "white" }}
+            >
+              <div className="tw-px-4 tw-pt-4 ">
+                <div>
+                  <p className="tw-font-bold">Search result</p>
+                  <p className="tw-text-sm tw-text-gray-700 ">
+                    Input keywords to search in this conversation
+                  </p>
+                  <p className="tw-text-[18px] tw-text-gray-700 ">Messages</p>
+                  {/* <p>Input keywords to search in this conversation</p> */}
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className=" col-3 tw-h-20 tw-absolute tw-z-50"
+              style={{ backgroundColor: "white" }}
+            >
+              <div className="tw-flex tw-justify-center tw-items-center tw-h-20 tw-w-full">
+                <div className="tw-flex tw-w-full tw-items-center">
+                  <input
+                    onClick={() => setShowSearchTable(true)}
+                    type="text"
+                    placeholder="Search"
+                    className="tw-text-lg tw-pl-3 tw-w-4/5 tw-rounded tw-m-4 tw-border tw-border-gray-200 focus:tw-border-blue-500 tw-text-gray-600"
+                    style={{ backgroundColor: "#eaedf0" }}
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                  <div className="tw-w-1/5 tw-flex-1 tw-flex">
+                    {showSearchTable ? (
+                      <button
+                        className="tw-font-bold  tw-rounded tw-flex-1 tw-m-1 tw-text-black hover:tw-bg-gray-300 hover:tw-text-black"
+                        onClick={() => setShowSearchTable(false)}
+                      >
+                        Close
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
+                          onClick={handleShowAddFriend}
+                        >
+                          <FontAwesomeIcon
+                            icon={faUserPlus}
+                            style={{ fontSize: "15px" }}
+                            color="gray"
+                          />
+                        </button>
+                        <button
+                          className="tw-text-white tw-rounded tw-flex-1 tw-m-1 hover:tw-bg-gray-300"
+                          onClick={handleShowCreateGroup}
+                        >
+                          <FontAwesomeIcon
+                            icon={faUsers}
+                            style={{ fontSize: "15px" }}
+                            color="gray"
+                          />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {showSearchTable && (
             <div className="tw-bg-slate-100 tw-shadow-2xl tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16  tw-border-t tw-border-l tw-border-r">
               {filteredGroups.map((chat, index) => (

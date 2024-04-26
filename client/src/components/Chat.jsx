@@ -15,13 +15,14 @@ import { FaPhone } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import axios from "axios";
 import { reducerCases } from "../context/constants";
+import MessageResultCard from "./contact/card/MessageResultCard";
 
 const Chat = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
 
   const [
-    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted },
+    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search },
     dispatch,
   ] = useStateProvider();
   const [chats, setChats] = useState([]);
@@ -33,7 +34,6 @@ const Chat = () => {
           GET_CHAT_BY_PARTICIPANTS + userInfo?.id
         ); // Gọi API để lấy dữ liệu chat
         setChats(response.data);
-        console.log(chats); // Cập nhật dữ liệu chat vào state
       } catch (error) {
         console.error("Error fetching chat data:", error);
       }
@@ -249,13 +249,29 @@ const Chat = () => {
           </div>
         </div>
       )}
-      <div className="col-3 tw-bg-slate-600">
-        <Stack
-          className=" message-box tw-overflow-auto custom-scrollbar tw-max-h-[100vh] tw-z-30"
-          gap={3}
-        >
-          <UserChat chats={chats ? chats : []} />
-        </Stack>
+      <div className="col-3 ">
+        {!search && (
+          <Stack
+            className=" message-box tw-overflow-auto custom-scrollbar tw-max-h-[100vh] tw-z-30"
+            gap={3}
+          >
+            <UserChat chats={chats ? chats : []} />
+          </Stack>
+        )}
+        {search && (
+          <Stack className="tw-overflow-auto custom-scrollbar tw-max-h-[82.5vh] tw-z-30 tw-mt-32">
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+            <MessageResultCard />
+          </Stack>
+        )}
       </div>
       {currentChat ? (
         showInfo ? (

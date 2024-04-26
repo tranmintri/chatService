@@ -46,7 +46,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const [
-    { messages, userInfo, currentChat, groups, socket, onlineUsers },
+    { messages, userInfo, currentChat, groups, socket, onlineUsers, search },
     dispatch,
   ] = useStateProvider();
   const [selectedImages, setSelectedImages] = useState([]);
@@ -213,7 +213,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         selectedImages.length == 0
       ) {
         type = "reply";
-        console.log(replyMessage.messageId);
+
         messageId = replyMessage.messageId;
       }
 
@@ -234,8 +234,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             },
           }
         );
-
-        console.log(data.data.newMessage);
 
         if (currentChat.type == "private") {
           socket.current.emit("send-msg-private", {
@@ -267,7 +265,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             },
           });
         }
-        console.log(data.data.newMessage);
+
         dispatch({
           type: reducerCases.ADD_MESSAGES,
           newMessage: {
@@ -454,6 +452,18 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const closeAudioRecorder = () => {
     setShowAudioRecorder(false);
   };
+  const handleSearch = () => {
+    dispatch({
+      type: reducerCases.SET_SEARCH,
+      search: true,
+    });
+  };
+  const handleCloseSearch = () => {
+    dispatch({
+      type: reducerCases.SET_SEARCH,
+      search: false,
+    });
+  };
 
   return (
     <Stack className={`chat-box border-1 ${showInfo ? "w-full" : ""} `}>
@@ -499,6 +509,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           <IoMdSearch
             className="chat-header-icon px-2 bg-white"
             title="Search"
+            onClick={() => handleSearch()}
           />
           <IoIosCall
             className="chat-header-icon px-2 bg-white"
@@ -542,6 +553,23 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           )}
         </div>
       </div>
+      {search && (
+        <div className="tw-w-full tw-px-3 tw-bg-white tw-min-h-20 tw-shadow-2xl tw-max-h-20 tw-flex tw-justify-center tw-items-center">
+          <IoMdSearch className="tw-bg-[#eaedf0] tw-p-1 tw-text-3xl tw-w-[40px] tw-rounded-l-2xl tw-max-h-7 tw-min-h-7" />
+          <input
+            type="text"
+            placeholder="Search"
+            className="tw-text-sm tw-w-10/12 tw-rounded-r-2xl tw-text-gray-500 tw-max-h-7 tw-min-h-7"
+            style={{ backgroundColor: "#eaedf0" }}
+          />
+          <button
+            className="tw-font-bold  tw-rounded tw-w-1/12 tw-text-black hover:tw-text-black tw-max-h-7 tw-min-h-7"
+            onClick={() => handleCloseSearch()}
+          >
+            Close
+          </button>
+        </div>
+      )}
 
       {messages && (
         <Stack

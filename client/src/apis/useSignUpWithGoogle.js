@@ -16,8 +16,6 @@ export const useSignUpWithGoogle = () => {
   const { mutate: signUpWithGoogleMutation } = useMutation({
     mutationFn: () => signInWithPopup(auth, googleAuthProvider),
     onSuccess: (result) => {
-      console.log(result);
-
       // const credential = GoogleAuthProvider.credentialFromResult(result);
       const user = result.user;
       const displayName = user.displayName;
@@ -30,8 +28,8 @@ export const useSignUpWithGoogle = () => {
               const data = res.data;
 
               saveToken(data);
-              console.log(res);
-              await saveUser(data.user_info);
+
+              saveUser(data.user_info);
 
               toast.success("Đăng kí tài khoản thành công");
               dispatch({

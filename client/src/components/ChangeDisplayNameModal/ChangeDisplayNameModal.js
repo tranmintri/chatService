@@ -32,10 +32,8 @@ const ChangeDisplayNameModal = ({ open, setOpen, userInfo }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-
     updateMutation.mutate({
-      id: "4c6934d3-329c-432d-82a6-cc1ffaf0ed28",
+      id: userInfo?.id,
       ...data,
     });
   };
