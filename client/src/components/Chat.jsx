@@ -22,7 +22,7 @@ const Chat = () => {
   const [showInfo, setShowInfo] = useState(false);
 
   const [
-    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search },
+    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search, searchValue, messages },
     dispatch,
   ] = useStateProvider();
   const [chats, setChats] = useState([]);
@@ -196,6 +196,7 @@ const Chat = () => {
     },
     // Các thành viên khác...
   ];
+
   return (
     <div className="d-flex w-100">
       {incomingVoiceCall && incomingVoiceCall.receiveId == userInfo?.id && (
@@ -252,7 +253,7 @@ const Chat = () => {
       <div className="col-3 ">
         {!search && (
           <Stack
-            className=" message-box tw-overflow-auto custom-scrollbar tw-max-h-[100vh] tw-z-30"
+            className=" message-box tw-overflow-auto custom-scrollbar tw-max-h-[100vh] tw-z-30 tw-overflow-y-auto"
             gap={3}
           >
             <UserChat chats={chats ? chats : []} />
@@ -260,16 +261,7 @@ const Chat = () => {
         )}
         {search && (
           <Stack className="tw-overflow-auto custom-scrollbar tw-max-h-[82.5vh] tw-z-30 tw-mt-32">
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
-            <MessageResultCard />
+            <MessageResultCard searchValue={searchValue} messages={messages} />
           </Stack>
         )}
       </div>

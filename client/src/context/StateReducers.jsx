@@ -19,6 +19,7 @@ export const initialState = {
   callPage: false,
   callAccepted: false,
   search: false,
+  searchValue: ''
 };
 
 const reducer = (state, action) => {
@@ -146,6 +147,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         receivedInvitations: [...state.receivedInvitations, action.newReceive],
+      };
+    case reducerCases.SET_SEARCH_VALUE:
+      return {
+        ...state,
+        searchValue: action.searchValue,
       };
     default:
       return state;

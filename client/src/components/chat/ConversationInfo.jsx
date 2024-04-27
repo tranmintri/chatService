@@ -449,7 +449,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                     </div>
                   </button>
                   {currentChat.managerId === userInfo?.id &&
-                  currentChat.participants.length > 2 ? (
+                    currentChat.participants.length > 2 ? (
                     <button
                       onClick={handleShowChangeRole}
                       className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"

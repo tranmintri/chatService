@@ -95,6 +95,7 @@ html,
   border: 2px solid white;
   padding: 7px;
 }
+
 .user-offline {
   display: inline-block;
   height: 15px;
@@ -129,6 +130,34 @@ html,
   border-radius: 50%;
   align-items: center;
   justify-content: center;
+}
+
+.client-notifications {
+  display: flex;
+  color: white;
+  background: #c31818;
+  height: 20px;
+  width: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.request-notifications {
+  display: flex;
+  color: white;
+  background: #c31818;
+  height: 20px;
+  width: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -192,14 +221,12 @@ html,
   overflow-y: auto;
   padding: 0 2rem;
   background: rgb(207, 207, 207);
-  background: linear-gradient(
-    45deg,
-    #a9b8bbff,
-    #c1c4c7ff,
-    #d4ccc9ff,
-    #d9d9d2ff,
-    #e8e9e4ff
-  );
+  background: linear-gradient(45deg,
+      #a9b8bbff,
+      #c1c4c7ff,
+      #d4ccc9ff,
+      #d9d9d2ff,
+      #e8e9e4ff);
 }
 
 .message {
@@ -230,6 +257,7 @@ html,
   position: relative;
   display: inline-block;
 }
+
 .reply-wrapper {
   position: relative;
   display: inline-block;
@@ -448,6 +476,7 @@ html,
 .message-buttons-container.sender-not-user {
   flex-direction: row;
 }
+
 .container {
   display: grid;
   grid-template-columns: 7fr 3fr;
@@ -456,17 +485,16 @@ html,
 .myId {
   margin-right: 5rem;
   border-radius: 5px;
-  background: #c9d6ff; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #e2e2e2,
-    #c9d6ff
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #e2e2e2,
-    #c9d6ff
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #c9d6ff;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right,
+      #e2e2e2,
+      #c9d6ff);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right,
+      #e2e2e2,
+      #c9d6ff);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
   padding: 2rem;
   display: grid;
@@ -492,6 +520,8 @@ html,
   text-align: center;
   color: #fff;
 }
+
 .blur-bg {
-  background-color: rgba(0, 0, 0, 0.5); /* Điều chỉnh giá trị blur tùy thích */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Điều chỉnh giá trị blur tùy thích */
 }
