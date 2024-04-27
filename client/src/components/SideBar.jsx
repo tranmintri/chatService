@@ -32,7 +32,7 @@ import GroupCard from "./contact/card/GroupCard";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, groups, messages, search }, dispatch] =
+  const [{ userInfo, contactsPage, groups, messages, search, searchValue }, dispatch] =
     useStateProvider();
   const [activeKey, setActiveKey] = useState("first");
 
@@ -427,7 +427,7 @@ const SideBar = () => {
                 }}
               >
                 <div
-                  className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg"
+                  className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg tw-relative"
                   style={{
                     backgroundColor:
                       activeTab === "first" ? "gray" : "transparent",
@@ -442,6 +442,7 @@ const SideBar = () => {
                         : "tw-text-gray-500"
                     }
                   />
+                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">{21}</div> {/* client notification for message*/}
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -454,7 +455,7 @@ const SideBar = () => {
                 }}
               >
                 <div
-                  className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg"
+                  className="d-flex align-item-center justify-content-center tw-p-3 tw-rounded-lg tw-relative"
                   style={{
                     backgroundColor:
                       activeTab === "second" ? "gray" : "transparent",
@@ -469,6 +470,7 @@ const SideBar = () => {
                         : "tw-text-gray-500"
                     }
                   />
+                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">{1}</div> {/* client notification for contact*/}
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -508,21 +510,38 @@ const SideBar = () => {
         </Col>
         <Col style={{ width: "90%" }} className="tw-relative">
           {search ? (
-            <div
+            searchValue ? (
+              <div
+                className=" col-3 tw-h-32 tw-absolute tw-z-50 "
+                style={{ backgroundColor: "white" }}
+              >
+                <div className="tw-px-4 tw-pt-4 ">
+                  <div>
+                    <p className="tw-font-bold">Search result</p>
+                    <p className="tw-text-sm tw-text-gray-700 ">
+                      Showing the search results in this conversation
+                    </p>
+                    <p className="tw-text-[16px] tw-text-gray-700 tw-font-bold">Messages</p>
+                    {/* <p>Input keywords to search in this conversation</p> */}
+                  </div>
+                </div>
+              </div>
+            ) : (<div
               className=" col-3 tw-h-32 tw-absolute tw-z-50 "
               style={{ backgroundColor: "white" }}
             >
               <div className="tw-px-4 tw-pt-4 ">
                 <div>
                   <p className="tw-font-bold">Search result</p>
-                  <p className="tw-text-sm tw-text-gray-700 ">
+                  <p className="tw-text-sm tw-text-gray-700">
                     Input keywords to search in this conversation
                   </p>
-                  <p className="tw-text-[18px] tw-text-gray-700 ">Messages</p>
+                  {/* <p className="tw-text-[16px] tw-text-gray-700 ">Messages</p> */}
                   {/* <p>Input keywords to search in this conversation</p> */}
                 </div>
               </div>
-            </div>
+            </div>)
+
           ) : (
             <div
               className=" col-3 tw-h-20 tw-absolute tw-z-50"

@@ -101,9 +101,9 @@ const UserChat = () => {
                   </div>
                   {/* <div className="this-user-notifications">{1}</div> */}
                   {chat.type === "private" &&
-                  onlineUsers.includes(
-                    chat.participants.filter((p) => p !== userInfo?.id)[0]
-                  ) ? (
+                    onlineUsers.includes(
+                      chat.participants.filter((p) => p !== userInfo?.id)[0]
+                    ) ? (
                     <span className="user-online mt-1"></span>
                   ) : (
                     chat.type === "private" && (

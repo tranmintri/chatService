@@ -139,13 +139,14 @@ const Contact = ({ data }) => {
                     activeTab === "third" ? "gray" : "transparent",
                 }}
               >
-                <div className=" d-flex align-item-center justify-content-start">
+                <div className=" d-flex align-item-center justify-content-start tw-relative">
                   <FontAwesomeIcon
                     icon={faUserPlus}
                     style={{ fontSize: "22px", marginRight: 12 }}
                     color="black"
                   />
                   <span>Friend requests</span>
+                  <div className="request-notifications tw-absolute tw-right-0 tw-top-1">{1}</div>
                 </div>
               </Nav.Link>
             </Nav.Item>
