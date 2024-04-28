@@ -188,7 +188,7 @@ io.on("connection", (socket) => {
             const user = await getUserData('Users', 'id', disconnectedUserId);
             if (user) {
                 const currentOnline = [];
-                user.friends.forEach((friend) => {
+                user.friends?.forEach((friend) => {
                     const friendSocket = onlineUsers.get(friend.id);
                     if (friendSocket) {
                             socket.to(friendSocket).emit("response-disconnect-user", user.id);
