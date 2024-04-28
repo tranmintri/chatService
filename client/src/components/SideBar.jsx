@@ -604,7 +604,7 @@ const SideBar = () => {
           )}
 
           {showFormUser && (
-            <div className="tooltip-content col-2 tw-w-2/5 absolute" ref={ref}>
+            <div className="tooltip-content col-2 tw-w-2/5 absolute" ref={ref} style={{ zIndex: 999 }}>
               <div className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-border-b tw-font-bold">
                 {userInfo?.display_name}
               </div>

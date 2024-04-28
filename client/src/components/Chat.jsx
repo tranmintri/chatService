@@ -22,7 +22,7 @@ const Chat = () => {
   const [showInfo, setShowInfo] = useState(false);
 
   const [
-    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search, searchValue, messages },
+    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search, searchValue, messages, searchStartDate, searchEndDate, filterName },
     dispatch,
   ] = useStateProvider();
   const [chats, setChats] = useState([]);
@@ -261,7 +261,7 @@ const Chat = () => {
         )}
         {search && (
           <Stack className="tw-overflow-auto custom-scrollbar tw-max-h-[82.5vh] tw-z-30 tw-mt-32">
-            <MessageResultCard searchValue={searchValue} messages={messages} />
+            <MessageResultCard searchValue={searchValue} messages={messages} searchStartDate={searchStartDate} searchEndDate={searchEndDate} filterName={filterName} />
           </Stack>
         )}
       </div>
