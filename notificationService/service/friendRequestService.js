@@ -62,37 +62,36 @@ const checkSendRequest = async (senderId, receiverId) => {
     }
 }
 //gui YC
-const requestAddFriend = async (data) => {
-    console.log(data)
+const requestAddFriend = async (isAccepted, receiver, sender, profilePicture, senderName, receiverName, requestId) => {
     try {
-        const userRef = db.collection('Users').doc(data.sender);
+        const userRef = db.collection('Users').doc(sender);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("ng dung k ton tai");
         }
         const userData = userDoc.data();
-        if (data.sender == data.receiver) {
+        if (sender == receiver) {
             throw new Error("bn k the gui loi moi kb cho chinh minh");
         }
-        if (userData.friends && userData.friends.includes(data.receiver)) {
+        if (userData.friends && userData.friends.includes(receiver)) {
             throw new Error("add fen roi");
         }
         const friendRequestSnapshot = await db.collection('FriendRequests')
-            .where('sender', '==', data.sender)
-            .where('receiver', '==', data.receiver)
+            .where('sender', '==', sender)
+            .where('receiver', '==', receiver)
             .get();
 
         if (!friendRequestSnapshot.empty) {
             return { message: "Yêu cầu kết bạn đã được gửi" };
         }
         const newFriendRequest = {
-            senderName: data.senderName,
-            receiverName: data.receiverName,
+            senderName: senderName,
+            receiverName: receiverName,
             requestId: uuidv4(),
             isAccepted: false,
-            sender: data.sender,
-            receiver: data.receiver,
-            profilePicture: data.profilePicture
+            sender: sender,
+            receiver: receiver,
+            profilePicture: profilePicture
         };
         await db.collection('FriendRequests').doc(newFriendRequest.requestId).set(newFriendRequest);
         // return { message: "Yêu cầu kết bạn đã được gửi" };
@@ -102,16 +101,16 @@ const requestAddFriend = async (data) => {
     }
 };
 // huy YC KB
-const cancelSendedFriend = async (data) => {
+const cancelSendedFriend = async (userId, requestId) => {
     try {
-        const userRef = db.collection('Users').doc(data.userId);
+        const userRef = db.collection('Users').doc(userId);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
         const requestsSnapshot = await db.collection('FriendRequests')
-            .where('sender', '==', data.userId)
-            .where('receiver', '==', data.requestId)
+            .where('sender', '==', userId)
+            .where('receiver', '==', requestId)
             .get();
         if (requestsSnapshot.empty) {
             throw new Error("Yêu cầu đã bị hủy hoặc chưa được gửi");
@@ -129,15 +128,16 @@ const cancelSendedFriend = async (data) => {
 };
 // chap nhan YC KB
 const acceptFriend = async (data) => {
+    console.log(data)
     try {
-        const userRef = db.collection('Users').doc(data.userId);
+        const userRef = db.collection('Users').doc(data.receiver.id);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
         const user = userDoc.data();
 
-        const senderRef = db.collection('Users').doc(data.requestId);
+        const senderRef = db.collection('Users').doc(data.senderId);
         const senderDoc = await senderRef.get();
         if (!senderDoc.exists) {
             throw new Error("Người gửi không tồn tại");
@@ -145,20 +145,29 @@ const acceptFriend = async (data) => {
         const sender = senderDoc.data();
 
         // Check if the sender is already a friend
-        if (user.friends && user.friends.includes(data.requestId)) {
+        if (user.friends && user.friends.includes(data.senderId)) {
             throw new Error("đã có trong danh sách bạn bè của bạn");
         }
         if (!Array.isArray(sender.friends)) {
             sender.friends = [];
         }
-        sender.friends = [...sender.friends, data.userId];
+        const senderFriend = {
+            id: data.receiver.id,
+            displayName: data.receiver.display_name,
+            profilePicture: data.receiver.avatar
+        }
+        sender.friends = [...sender.friends, senderFriend];
         await senderRef.update(sender);
-
 
         if (!Array.isArray(user.friends)) {
             user.friends = [];
         }
-        user.friends = [...user.friends, data.requestId];
+        const receiverFriend = {
+            id: data.senderId,
+            displayName: data.senderName,
+            profilePicture: data.profilePicture
+        }
+        user.friends = [...user.friends, receiverFriend];
         await userRef.update(user);
 
         // Create chat
@@ -173,7 +182,7 @@ const acceptFriend = async (data) => {
 
         // Delete friend request
         const friendRequestsRef = db.collection('FriendRequests');
-        const snapshot = await friendRequestsRef.where('sender', '==', data.requestId).where('receiver', '==', data.userId).get();
+        const snapshot = await friendRequestsRef.where('sender', '==', data.senderId).where('receiver', '==', data.receiver.id).get();
         
         if (snapshot.empty) {
           console.log('No matching documents.');
@@ -191,16 +200,15 @@ const acceptFriend = async (data) => {
     }
 };
 // tu choi YC KB
-const declineFriend = async (data) => {
+const declineFriend = async (userId, requestId) => {
     try {
-        console.log(data, "data")
-        const userRef = db.collection('Users').doc(data.userId);
+        const userRef = db.collection('Users').doc(userId);
         const userDoc = await userRef.get();
         if (!userDoc.exists) {
             throw new Error("Người dùng chưa đăng nhập!!!");
         }
         const friendRequestsRef = db.collection('FriendRequests');
-        const snapshot = await friendRequestsRef.where('sender', '==', data.requestId).where('receiver', '==', data.userId).get();
+        const snapshot = await friendRequestsRef.where('sender', '==', requestId).where('receiver', '==', userId).get();
         if (snapshot.empty) {
             console.log('No matching documents.');
           return;

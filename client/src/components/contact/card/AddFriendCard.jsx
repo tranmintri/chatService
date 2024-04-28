@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { reducerCases } from "../../../context/constants";
 import { toast } from "react-toastify";
-
+import { NOTI_API } from "../../../router/ApiRoutes";
 const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFriendDataToModal, selectedCountryCode }) => {
     const [{ userInfo, groups, socket, socket2, sentInvitations, receivedInvitations }, dispatch] = useStateProvider()
     const [friends, setFriends] = useState([]);
@@ -41,22 +41,27 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
             requestId: null,
         };
         try {
-            socket2.current.emit("sendFriendRequest", postData);   
-            toast.success('Friend added successfully!');
-            handleCloseModal();
-            if (postData.sender === userInfo?.id) {
-                dispatch({
-                    type: reducerCases.ADD_INVITATION,
-                    newSend: postData,
-                });
+            // socket2.current.emit("sendFriendRequest", postData);   
+            // toast.success('Friend added successfully!');
+            // handleCloseModal();
+            // if (postData.sender === userInfo?.id) {
+            //     dispatch({
+            //         type: reducerCases.ADD_INVITATION,
+            //         newSend: postData,
+            //     });
+            // }
+            // else{
+            // dispatch({
+            //     type: reducerCases.ADD_RECEIVE_INVITATION,
+            //     newReceive: postData,
+            // });
+            const response = await axios.post(NOTI_API + "add", postData);
+            if (response) {
+                toast.success('Friend added successfully!');
+                handleCloseModal();
             }
-            else{
-            dispatch({
-                type: reducerCases.ADD_RECEIVE_INVITATION,
-                newReceive: postData,
-            });
         }
-        } catch (error) {
+        catch (error) {
             console.error('Error sending friend request:', error);
         }
     };

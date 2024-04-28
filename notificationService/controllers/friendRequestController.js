@@ -37,8 +37,8 @@ const checkSendRequestController = async (req, res) => {
 
 const requestAddFriendController = async (req, res) => {
     try {
-        const { userId, id_UserWantAdd,  } = req.body;
-        const result = await requestAddFriend(userId, id_UserWantAdd);
+        const { isAccepted, receiver, sender, profilePicture, senderName, receiverName, requestId   } = req.body;
+        const result = await requestAddFriend(isAccepted, receiver, sender, profilePicture, senderName, receiverName, requestId);
         res.status(200).json(result);
     } catch (error) {
         console.error('Error:', error);
@@ -59,8 +59,8 @@ const cancelSendedFriendController = async (req, res) => {
 
 const acceptFriendController = async (req, res) => {
     try {
-        const { userId, requestId } = req.body;
-        const result = await acceptFriend(userId, requestId);
+        const data = req.body
+        const result = await acceptFriend(data);
         res.status(200).json(result);
     } catch (error) {
         console.error('Error:', error);

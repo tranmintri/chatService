@@ -72,64 +72,63 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
 
     global.notifSocket = socket;
-    socket.on("add-user", (userId) => {
-        onlineUsers.set(userId, socket.id)
-    })
+    // socket.on("add-user", (userId) => {
+    //     onlineUsers.set(userId, socket.id)
+    // })
     
-    socket.on("sendFriendRequest", (data) => {
-        friendRequestService.requestAddFriend(data)
-        const postData = {
-            isAccepted: data.isAccepted,
-            receiver: data.receiver,
-            sender: data.sender,
-            profilePicture: data.profilePicture,
-            senderName: data.senderName,
-            receiverName: data.receiverName
-        };
-        socket.to(onlineUsers.get(data.receiver)).emit("friendRequest", postData);
-    });
+    // socket.on("sendFriendRequest", (data) => {
+    //     friendRequestService.requestAddFriend(data)
+    //     const postData = {
+    //         isAccepted: data.isAccepted,
+    //         receiver: data.receiver,
+    //         sender: data.sender,
+    //         profilePicture: data.profilePicture,
+    //         senderName: data.senderName,
+    //         receiverName: data.receiverName
+    //     };
+    //     socket.to(onlineUsers.get(data.receiver)).emit("friendRequest", postData);
+    // });
 
-    socket.on("acceptFriendRequest", (data) => {
+    // socket.on("acceptFriendRequest", (data) => {
         
-        console.log(data, "acceptFriendRequest")
-        // friendRequestService.acceptFriend(data)
-        // const postData = {
-        //     userId: data?.userId,
-        //     requestId: data?.requestId
-        // };
-        console.log(data, "acceptFriendRequest")
-        const postData = {
-            id: data.receiver,
-            display_name: data.receiverName,
-            profilePicture: data.profilePicture,
-            user: data.user
-        };
+    //     console.log(data, "acceptFriendRequest")
+    //     // friendRequestService.acceptFriend(data)
+    //     // const postData = {
+    //     //     userId: data?.userId,
+    //     //     requestId: data?.requestId
+    //     // };
+    //     console.log(data, "acceptFriendRequest")
+    //     const postData = {
+    //         id: data.receiver,
+    //         display_name: data.receiverName,
+    //         profilePicture: data.profilePicture,
+    //         user: data.user
+    //     };
 
-        console.log(postData, "postData")
-        console.log(data.id, "data.userId")
-        socket.to(onlineUsers.get(data.sender)).emit("acceptFriend", postData);
-    });
+    //     console.log(postData, "postData")
+    //     console.log(data.id, "data.userId")
+    //     socket.to(onlineUsers.get(data.sender)).emit("acceptFriend", postData);
+    // });
 
 
-    socket.on("rejectFriendRequest", (data) => {
-        console.log(data, "rejectFriendRequest")
-        friendRequestService.declineFriend(data)
-        const postData = {
-            userId: data?.userId,
-            requestId: data?.requestId
-        };
-        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriend", postData);
-        console.log("Friend request rejected:", data);
-    });
+    // socket.on("rejectFriendRequest", (data) => {
+    //     console.log(data, "rejectFriendRequest")
+    //     friendRequestService.declineFriend(data)
+    //     const postData = {
+    //         userId: data?.userId,
+    //         requestId: data?.requestId
+    //     };
+    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("rejectFriend", postData);
+    //     console.log("Friend request rejected:", data);
+    // });
 
-    socket.on("cancelFriendRequest", (data) => {
-        friendRequestService.cancelSendedFriend(data)
-        const postData = {
-            userId: data?.userId,
-            requestId: data?.requestId
-        };
-        socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriend", postData);
-        console.log("Friend request cancelled:", data);
-    })
-
+    // socket.on("cancelFriendRequest", (data) => {
+    //     friendRequestService.cancelSendedFriend(data)
+    //     const postData = {
+    //         userId: data?.userId,
+    //         requestId: data?.requestId
+    //     };
+    //     socket.to(onlineUsers.get(data.id_UserWantAdd)).emit("cancelFriend", postData);
+    //     console.log("Friend request cancelled:", data);
+    // })
 })
