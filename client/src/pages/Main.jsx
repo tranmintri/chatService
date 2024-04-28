@@ -74,7 +74,7 @@ const Main = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo.id);
+        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
 
         socket.current.emit("request-get-all-friend-online", data.data);
         socket.current.emit("request-connect-user", data.data);
