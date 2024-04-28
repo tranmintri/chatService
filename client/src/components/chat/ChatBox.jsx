@@ -5,6 +5,7 @@ import {
   LinkOutlined,
   SendOutlined,
   AudioOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import ReactPlayer from "react-player";
 import { IoIosSend } from "react-icons/io";
@@ -13,7 +14,7 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import React, { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
-import { CHAT_API, CLIENT_HOST } from "../../router/ApiRoutes";
+import { CHAT_API, CLIENT_HOST, GET_ALL_USER } from "../../router/ApiRoutes";
 import { reducerCases } from "../../context/constants";
 import axios from "axios";
 import { calculateTime } from "./../../utils/CalculateTime";
@@ -40,13 +41,16 @@ import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 import RecordCard from "../contact/card/RecordCard";
 import { BsPersonAdd } from "react-icons/bs";
 import ModalAddMember from "./modal/ModalAddMember";
+import { DatePicker, Space, Dropdown, Menu, Button, Select, List } from "antd";
+import { Option } from "antd/es/mentions";
+import moment from 'moment';
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
 
   const [
-    { messages, userInfo, currentChat, groups, socket, onlineUsers, search, searchValue },
+    { messages, userInfo, currentChat, groups, socket, onlineUsers, search, searchValue, searchStartDate, searchEndDate },
     dispatch
   ] = useStateProvider();
   const [selectedImages, setSelectedImages] = useState([]);
@@ -64,6 +68,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [showFormRemoveMessage, setShowFormRemoveMessage] = useState(false);
   const [showModalAddMember, setShowModalAddMember] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [dropdownNameVisible, setDropdownNameVisible] = useState(false);
+  const [dropdownDateVisible, setDropdownDateVisible] = useState(false);
+  const [datePickerDisabled, setDatePickerDisabled] = useState(false);
+  const [searchByName, setSearchByName] = useState('');
+  const [allUsers, setAllUsers] = useState([]);
+  const [chatParticipants, setChatParticipants] = useState([]);
 
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
   const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
@@ -460,9 +472,18 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     });
   };
   const handleCloseSearch = () => {
+    console.log(currentChat.participants)
     dispatch({
       type: reducerCases.SET_SEARCH,
       search: false,
+    });
+    dispatch({
+      type: reducerCases.SET_START_DATE,
+      searchStartDate: null,
+    });
+    dispatch({
+      type: reducerCases.SET_END_DATE,
+      searchEndDate: null,
     });
   };
   const handleInputChange = (event) => {
@@ -470,10 +491,192 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     setInputValue(inputValue);
 
     dispatch({
-      type: reducerCases.UPDATE_SEARCH_VALUE,
+      type: reducerCases.SET_SEARCH_VALUE,
       searchValue: inputValue,
     });
   };
+  const handleDropdownNameVisibleChange = visible => {
+    setDropdownNameVisible(visible);
+  };
+  const handleDropdownDateVisibleChange = visible => {
+    setDropdownDateVisible(visible);
+  };
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleSearchMessages = () => {
+    if (!startDate && !endDate) {
+      dispatch({
+        type: reducerCases.SET_START_DATE,
+        searchStartDate: null, // Xóa ngày bắt đầu khỏi Redux state khi ngày bị xóa
+      });
+      dispatch({
+        type: reducerCases.SET_END_DATE,
+        searchEndDate: null, // Xóa ngày kết thúc khỏi Redux state khi ngày bị xóa
+      });
+      return; // Ngừng xử lý nếu ngày bị xóa
+    }
+    const startTimestamp = startDate.valueOf();
+    const endTimestamp = endDate.valueOf();
+    dispatch({
+      type: reducerCases.SET_START_DATE,
+      searchStartDate: startTimestamp,
+    });
+    dispatch({
+      type: reducerCases.SET_END_DATE,
+      searchEndDate: endTimestamp,
+    });
+  };
+  const handleChangeTimeOption = (value) => {
+    // Nếu giá trị là 'timehint', cho phép chọn mốc thời gian trong DatePicker
+    if (value === 'timehint') {
+      setDatePickerDisabled(false);
+    } else {
+      // Nếu giá trị khác 'timehint', vô hiệu hóa chọn mốc thời gian trong DatePicker
+      setDatePickerDisabled(true);
+    }
+
+    // Thực hiện cập nhật giá trị state tương ứng với giá trị mới
+    const currentTimestamp = Date.now();
+    let newStartDate = null;
+    let newEndDate = null;
+
+    switch (value) {
+      case '3days':
+        newStartDate = moment(currentTimestamp - (3 * 24 * 60 * 60 * 1000));
+        newEndDate = moment(currentTimestamp);
+        break;
+      case '7days':
+        newStartDate = moment(currentTimestamp - (7 * 24 * 60 * 60 * 1000));
+        newEndDate = moment(currentTimestamp);
+        break;
+      case '30days':
+        newStartDate = moment(currentTimestamp - (30 * 24 * 60 * 60 * 1000));
+        newEndDate = moment(currentTimestamp);
+        break;
+      default:
+        break;
+    }
+
+    // Cập nhật giá trị state startDate và endDate
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
+  };
+
+  const menuDate = (
+    <div className="tw-bg-white ">
+      <Menu className="tw-block">
+        <label className="tw-text-[13px] tw-mx-4">Choose time hint: </label>
+        <Menu.Item key="0" >
+          <Select defaultValue="timehint" style={{ width: 220 }} onChange={handleChangeTimeOption}>
+            <Option value="timehint">Time hint</Option>
+            <Option value="3days">3 days ago</Option>
+            <Option value="7days">7 days ago</Option>
+            <Option value="30days">30 days ago</Option>
+          </Select>
+        </Menu.Item>
+        <label className="tw-text-[13px] tw-mx-4">Choose date: </label>
+        <div className="tw-flex">
+          <Menu.Item key="1" >
+            <DatePicker
+              value={startDate}
+              onChange={handleStartDateChange}
+              placeholder="Start Date"
+              style={{ flex: 1 }}
+              onClick={e => e.stopPropagation()}
+              disabled={datePickerDisabled}
+            />
+          </Menu.Item>
+          <Menu.Item key="2" >
+            <DatePicker
+              value={endDate}
+              onChange={handleEndDateChange}
+              placeholder="End Date"
+              style={{ flex: 1 }}
+              onClick={e => e.stopPropagation()}
+              disabled={datePickerDisabled}
+            />
+          </Menu.Item>
+        </div>
+        <Button className="d-flex tw-justify-center tw-mx-auto tw-my-2 tw-w-36 " onClick={handleSearchMessages} type="primary">Search</Button>
+      </Menu>
+    </div>
+  );
+  const handleSearchByName = (event) => {
+    setSearchByName(event.target.value.toLowerCase()); // Lưu trữ nội dung nhập vào input (chuyển về chữ thường để so sánh không phân biệt hoa thường)
+  };
+
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        const response = await axios.get(GET_ALL_USER);
+        setAllUsers(response.data.data); // Lưu tất cả người dùng vào state allUsers
+        console.log(response.data.data)
+      } catch (error) {
+        console.error('Error fetching all users:', error);
+      }
+    };
+
+    fetchAllUsers();
+  }, []);
+
+  useEffect(() => {
+    // Kiểm tra nếu đã có dữ liệu của cả hai
+    if (allUsers.length > 0 && currentChat.participants.length > 0) {
+      // Lọc ra danh sách người dùng trong cuộc trò chuyện hiện tại
+      const participants = allUsers.filter(user => currentChat.participants.includes(user.id));
+      setChatParticipants(participants);
+    }
+  }, [allUsers, currentChat.participants]);
+
+  const handleFilterByName = (chatParticipants) => {
+    dispatch({
+      type: reducerCases.SET_FILTER_NAME,
+      filterName: chatParticipants,
+    });
+  }
+  const menuName = (
+    <div className="tw-bg-white ">
+      <Menu className="tw-block">
+        <div className="tw-w-full tw-flex">
+          <input
+            type="text"
+            placeholder="Search name"
+            className="tw-text-sm tw-pl-2 tw-rounded-full tw-text-gray-500 tw-max-h-7 tw-min-h-7 tw-my-2"
+            style={{ backgroundColor: "#eaedf0" }}
+            onChange={handleSearchByName}
+          ></input>
+
+        </div>
+        <List
+          size="small"
+          bordered
+          dataSource={chatParticipants}
+          renderItem={(chatparticipants, index) => (
+            <List.Item
+              className="tw-cursor-pointer"
+              key={index}
+              onClick={() => handleFilterByName(chatparticipants)}
+              onMouseEnter={(e) => { e.target.style.backgroundColor = "#e5efff"; }}
+              onMouseLeave={(e) => { e.target.style.backgroundColor = "#ffffff"; }}
+            >
+              <div className="tw-flex ">
+                <img className="tw-mr-2 tw-rounded-full" src={chatparticipants.profilePicture} width={18} height={18} />
+                {chatparticipants.display_name} {/* Hiển thị tên của người dùng */}
+              </div>
+            </List.Item>
+          )}
+        />
+
+      </Menu>
+    </div>
+  )
+
 
   return (
     <Stack className={`chat-box border-1 ${showInfo ? "w-full" : ""} `}>
@@ -564,21 +767,48 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         </div>
       </div>
       {search && (
-        <div className="tw-w-full tw-px-3 tw-bg-white tw-min-h-20 tw-shadow-2xl tw-max-h-20 tw-flex tw-justify-center tw-items-center">
-          <IoMdSearch className="tw-bg-[#eaedf0] tw-p-1 tw-text-3xl tw-w-[40px] tw-rounded-l-2xl tw-max-h-7 tw-min-h-7" />
-          <input
-            type="text"
-            placeholder="Search"
-            className="tw-text-sm tw-w-10/12 tw-rounded-r-2xl tw-text-gray-500 tw-max-h-7 tw-min-h-7"
-            style={{ backgroundColor: "#eaedf0" }}
-            onChange={handleInputChange}
-          />
-          <button
-            className="tw-font-bold  tw-rounded tw-w-1/12 tw-text-black hover:tw-text-black tw-max-h-7 tw-min-h-7"
-            onClick={() => handleCloseSearch()}
-          >
-            Close
-          </button>
+        <div>
+          <div className="tw-w-full tw-px-3 tw-bg-white tw-min-h-12 tw-shadow-2xl tw-max-h-12 tw-flex tw-justify-center tw-items-center">
+            <IoMdSearch className="tw-bg-[#eaedf0] tw-p-1 tw-text-3xl tw-w-[40px] tw-rounded-l-2xl tw-max-h-7 tw-min-h-7" />
+            <input
+              type="text"
+              placeholder="Search"
+              className="tw-text-sm tw-w-10/12 tw-rounded-r-2xl tw-text-gray-500 tw-max-h-7 tw-min-h-7"
+              style={{ backgroundColor: "#eaedf0" }}
+              onChange={handleInputChange}
+            />
+            <button
+              className="tw-font-bold  tw-rounded tw-w-1/12 tw-text-black hover:tw-text-black tw-max-h-7 tw-min-h-7"
+              onClick={() => handleCloseSearch()}
+            >
+              Close
+            </button>
+          </div>
+          <div className="tw-w-full tw-px-2 tw-bg-white tw-h-12 tw-shadow-2xl tw-flex tw-items-center">
+            <label className="tw-font-bold tw-text-[13px] tw-mx-2">Filter:</label>
+            <Dropdown className="tw-rounded-full tw-bg-gray-300 tw-mx-2"
+              overlay={<div>{menuName}</div>}
+              trigger={['click']}
+              visible={dropdownNameVisible}
+              onVisibleChange={handleDropdownNameVisibleChange}
+            >
+              <Button className="tw-flex tw-items-center">
+                Filter by Name
+                <DownOutlined />
+              </Button>
+            </Dropdown>
+            <Dropdown className="tw-rounded-full tw-bg-gray-300 tw-mx-2"
+              overlay={<div>{menuDate}</div>}
+              trigger={['click']}
+              visible={dropdownDateVisible}
+              onVisibleChange={handleDropdownDateVisibleChange}
+            >
+              <Button className="tw-flex tw-items-center">
+                Filter by Dates
+                <DownOutlined />
+              </Button>
+            </Dropdown>
+          </div>
         </div>
       )}
 
