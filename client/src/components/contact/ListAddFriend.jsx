@@ -109,7 +109,11 @@ const ListAddFriend = () => {
 
     // const response = await axios.post(GET_ALL_USER + userInfo?.id, postData);
     try {
-      const response2 = await axios.post(NOTI_API + "accept", postData);
+      // const response2 = await axios.post(NOTI_API + "accept", postData);
+      const response2 = await axios.post(GET_ALL_USER + userInfo?.id, postData);
+      const response3 = await axios.post(NOTI_API + "delete", invitation);
+
+
       console.log(response2)
       alert("Accept successfully!");
       fetchReceiverData();
