@@ -27,6 +27,12 @@ import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
+import smile from "../../assets/smile.png";
+import sad from "../../assets/sad.png";
+import supprise from "../../assets/supprise.png";
+import heart from "../../assets/heart.png";
+import like from "../../assets/like.png";
+import angry from "../../assets/angry.png";
 import EmojiPicker from "emoji-picker-react";
 import { SlReload } from "react-icons/sl";
 import { IoIosRedo } from "react-icons/io";
@@ -44,6 +50,8 @@ import ModalAddMember from "./modal/ModalAddMember";
 import { DatePicker, Space, Dropdown, Menu, Button, Select, List } from "antd";
 import { Option } from "antd/es/mentions";
 import moment from "moment";
+import ModalGroupInfo from "./modal/ModalGroupInfo";
+import ModalReactionInfo from "./modal/ModalReactionInfo";
 
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
@@ -84,9 +92,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [dropdownNameVisible, setDropdownNameVisible] = useState(false);
   const [dropdownDateVisible, setDropdownDateVisible] = useState(false);
   const [datePickerDisabled, setDatePickerDisabled] = useState(false);
+  const [openReactionMenu, setOpenReactionMenu] = useState(false);
   const [searchByName, setSearchByName] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const [chatParticipants, setChatParticipants] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [openReactionInfoModal, setOpenReactionInfoModal] = useState(false);
 
   const handleShowFormShareMessage = () => setShowFormShareMessage(true);
   const handleShowFormRemoveMessage = () => setShowFormRemoveMessage(true);
@@ -451,6 +462,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   };
 
   const handleMouseLeave = () => {
+    setActiveIndex(null);
+    setOpenReactionMenu(false);
     setHoveredIndex(null);
   };
 
@@ -690,6 +703,58 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       filterName: chatParticipants,
     });
   };
+
+  // Trường state để lưu index của phần tử được chọn
+  const handleReaction = (message, index) => {
+    // Nếu index chưa được chọn, mở menu và set index mới
+    if (activeIndex == index) {
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      return;
+    }
+    setOpenReactionMenu(true);
+    setActiveIndex(index);
+  };
+  const handleReactionDetail = (message, type) => {
+    if (type == "like") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+    if (type == "supprise") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+    if (type == "angry") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+    if (type == "heart") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+    if (type == "sad") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+    if (type == "smile") {
+      alert(type);
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+    }
+  };
+
+  const openReactionInfo = () => {
+    setOpenReactionInfoModal(true);
+  };
+  const handleCloseModalReactionInfo = () => {
+    setOpenReactionInfoModal(false);
+  };
+
   const menuName = (
     <div className="tw-bg-white ">
       <Menu className="tw-block">
@@ -1476,18 +1541,139 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                                             {calculateTime(message.timestamp)}
                                           </span>
+                                          <ModalReactionInfo
+                                            showModalInfo={
+                                              openReactionInfoModal
+                                            }
+                                            handleCloseModal={
+                                              handleCloseModalReactionInfo
+                                            }
+                                          />
+                                          <div className="tw-w-full  -tw-mb-6 -tw-z-120 tw-py-3 tw-ml-3">
+                                            <div className="tw-max-w-[40vh]  tw-flex tw-justify-end">
+                                              <div
+                                                className="tw-bg-gray-400 tw-text-white tw-shadow-lg tw-justify-center tw-items-center tw-max-w-[40vh] tw-rounded-lg tw-px-2 py-1 tw-flex"
+                                                onClick={() =>
+                                                  openReactionInfo()
+                                                }
+                                              >
+                                                <img
+                                                  src={smile}
+                                                  width={14}
+                                                  height={14}
+                                                  className="tw-mr-[2px]"
+                                                />
+                                                <img
+                                                  src={heart}
+                                                  width={14}
+                                                  height={14}
+                                                  className="tw-mr-[2px]"
+                                                />
+                                                <img
+                                                  src={angry}
+                                                  width={14}
+                                                  height={14}
+                                                  className="tw-mr-[2px]"
+                                                />
+
+                                                <span className="tw-text-[11px] tw-font-thin">
+                                                  6
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
+                                      {openReactionMenu &&
+                                        hoveredIndex === index &&
+                                        activeIndex !== null &&
+                                        activeIndex == index && (
+                                          <div
+                                            className={`tw-bg-slate-100 tw-py-1 tw-px-2 tw-rounded-lg tw-flex tw-shadow-lg ${
+                                              message.senderId != userInfo?.id
+                                                ? "tw-order-3 tw-mb-16 tw-z-100 -tw-ml-20 tw-relative"
+                                                : "-tw-mr-20 tw-mb-16 tw-z-50"
+                                            }`}
+                                          >
+                                            <img
+                                              src={heart}
+                                              className="tw-mr-2"
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "heart"
+                                                )
+                                              }
+                                            />
+                                            <img
+                                              src={smile}
+                                              className="tw-mr-2"
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "smile"
+                                                )
+                                              }
+                                            />
+                                            <img
+                                              src={supprise}
+                                              className="tw-mr-2"
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "supprise"
+                                                )
+                                              }
+                                            />
+                                            <img
+                                              src={sad}
+                                              className="tw-mr-2"
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "sad"
+                                                )
+                                              }
+                                            />
+                                            <img
+                                              src={angry}
+                                              className="tw-mr-2"
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "angry"
+                                                )
+                                              }
+                                            />
+                                            <img
+                                              src={like}
+                                              onClick={() =>
+                                                handleReactionDetail(
+                                                  message,
+                                                  "like"
+                                                )
+                                              }
+                                            />
+                                          </div>
+                                        )}
                                       {hoveredIndex === index &&
                                         message.status != "removed" &&
                                         userInfo?.id === message.senderId && (
                                           <div
                                             className={`tw-mt-2 tw-flex ${
                                               message.senderId == userInfo?.id
-                                                ? "tw-order-1"
-                                                : " tw-order-2"
-                                            } tw-items-center tw-justify-center`}
+                                                ? "tw-order-1 tw-mr-3"
+                                                : " tw-order-2 tw-ml-3"
+                                            } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
                                           >
+                                            <SmileOutlined
+                                              className="tw-mx-1 hover:tw-text-blue-700"
+                                              title="icon"
+                                              onClick={() =>
+                                                handleReaction(message, index)
+                                              }
+                                              size={18}
+                                            />
                                             <BiSolidQuoteRight
                                               className="tw-mx-1 hover:tw-text-blue-700"
                                               title="Reply"
@@ -1534,9 +1720,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           <div
                                             className={`tw-mt-2 tw-h-full  tw-flex ${
                                               message.senderId == userInfo?.id
-                                                ? " tw-order-1"
-                                                : "tw-order-2"
-                                            } tw-items-center tw-justify-center`}
+                                                ? " tw-order-1 tw-mr-3"
+                                                : "tw-order-2 tw-ml-3"
+                                            } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
                                           >
                                             <BiSolidQuoteRight
                                               className="tw-mx-1 hover:tw-text-blue-700"
@@ -1568,6 +1754,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               }
                                               removeMessage={message}
                                               backdrop="static"
+                                            />
+                                            <SmileOutlined
+                                              className="tw-mx-1 hover:tw-text-blue-700"
+                                              title="icon"
+                                              onClick={() =>
+                                                handleReaction(message, index)
+                                              }
+                                              size={18}
                                             />
                                           </div>
                                         )}
