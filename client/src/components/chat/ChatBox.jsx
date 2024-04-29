@@ -372,11 +372,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   //     });
   //   }
   // };
-  const handleClickOpenTab = (receiverId, roomId) => {
-    if (onlineUsers.includes(receiverId)) {
-      // Tạo URL cho tab mới
+  const handleClickOpenTab = () => {
+    let receiverId = undefined;
+    let receiverName = undefined;
+    if (currentChat.type == "public") {
+      receiverId = "I do not know";
+      receiverName = currentChat.name;
       sendVoiceCallRequest(receiverId, userInfo?.id);
-      const newTabUrl = `${CLIENT_HOST}/chat/${roomId}`;
+      const newTabUrl = `${CLIENT_HOST}/chat/${currentChat.chatId}`;
       // Mở tab mới
       const newTab = window.open(newTabUrl, "_blank");
       // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
@@ -384,23 +387,40 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         newTab.focus();
       }
     } else {
-      const incomingVoiceCall = {
-        receiveId: receiverId,
-        senderId: userInfo?.id,
-        senderPicture: userInfo?.avatar,
-        senderName: userInfo?.display_name,
-        receiveName: convertName(),
-        receivePicture: convertPicture(),
-        chatId: currentChat.chatId,
-      };
-      dispatch({
-        type: reducerCases.SET_INCOMING_VOICE_CALL,
-        incomingVoiceCall: incomingVoiceCall,
-      });
-      dispatch({
-        type: reducerCases.SET_CALL_PAGE,
-        callPage: true,
-      });
+      receiverId =
+        currentChat.participants[0] == userInfo?.id
+          ? currentChat.participants[1]
+          : currentChat.participants[0];
+      receiverName = convertName();
+      if (onlineUsers.includes(receiverId)) {
+        // Tạo URL cho tab mới
+        sendVoiceCallRequest(receiverId, userInfo?.id);
+        const newTabUrl = `${CLIENT_HOST}/chat/${currentChat.chatId}`;
+        // Mở tab mới
+        const newTab = window.open(newTabUrl, "_blank");
+        // Kiểm tra nếu tab được tạo thành công và có thể focus, thì focus vào tab đó
+        if (newTab && newTab.focus) {
+          newTab.focus();
+        }
+      } else {
+        const incomingVoiceCall = {
+          receiveId: receiverId,
+          senderId: userInfo?.id,
+          senderPicture: userInfo?.avatar,
+          senderName: userInfo?.display_name,
+          receiveName: receiverName,
+          receivePicture: convertPicture(),
+          chatId: currentChat.chatId,
+        };
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: incomingVoiceCall,
+        });
+        dispatch({
+          type: reducerCases.SET_CALL_PAGE,
+          callPage: true,
+        });
+      }
     }
   };
   const sendVoiceCallRequest = (receiverId, senderId) => {
@@ -417,7 +437,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       type: reducerCases.SET_INCOMING_VOICE_CALL,
       incomingVoiceCall: incomingVoiceCall,
     });
-    socket.current.emit("request-to-voice-call-private", incomingVoiceCall);
+    if (currentChat.type == "private")
+      socket.current.emit("request-to-voice-call-private", incomingVoiceCall);
+    if (currentChat.type == "public")
+      console.log("request-to-voice-call-public");
+    socket.current.emit("request-to-voice-call-public", {
+      currentChat: currentChat,
+      incomingVoiceCall: incomingVoiceCall,
+    });
   };
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
@@ -758,16 +785,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             className="chat-header-icon px-2 bg-white"
             color="black"
             title="Call"
-            onClick={() =>
-              handleClickOpenTab(
-                chat.type == "private"
-                  ? chat.participants[0] == userInfo?.id
-                    ? chat.participants[1]
-                    : chat.participants[0]
-                  : chat.chatId,
-                currentChat.chatId
-              )
-            }
+            onClick={() => handleClickOpenTab()}
             // onClick={() =>
             //   sendVoiceCallRequest(
             //     chat.type == "private"

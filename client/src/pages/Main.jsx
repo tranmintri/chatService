@@ -116,6 +116,19 @@ const Main = () => {
       setSocketEvent(true);
     }
   }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-to-voice-call-public", (data) => {
+        console.log(data);
+        dispatch({
+          type: reducerCases.SET_INCOMING_VOICE_CALL,
+          incomingVoiceCall: data,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
 
   useEffect(() => {
     if (socket.current && !socketEvent) {

@@ -125,7 +125,7 @@ const ListContact = ({ data }) => {
           </Dropdown.Item>
         </DropdownButton>
       </Form>
-      <ListGroup className="mt-5">
+      <ListGroup className="mt-5  tw-max-h-[80vh] tw-overflow-auto custom-scrollbar">
         {searchResults?.map((friend, index) => (
           <div
             key={index}

@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
         console.log("leave room call")
         console.log(data)
     })
-
+    //--------------start - socket.io - call private---------------------------//
     socket.on("request-to-voice-call-private", (data) => {
         io.to(onlineUsers.get(data.receiveId)).emit("response-to-voice-call-private", data)
     })
@@ -77,6 +77,27 @@ io.on("connection", (socket) => {
     socket.on("request-end-voice-call", (data) => {
         io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private", data)
     })
+    //--------------end - socket.io - call private---------------------------//
+
+    //--------------start - socket.io - call public---------------------------//
+    socket.on("request-to-voice-call-public", (data) => {
+        const userIdArray = data.currentChat.participants.filter(p => p!= data.incomingVoiceCall.senderId)
+        userIdArray.forEach(userId => {
+            const userIdSocket = onlineUsers.get(userId)
+            if(userIdSocket)
+            {
+                data.incomingVoiceCall.receiveId = userId
+                io.to(userIdSocket).emit("response-to-voice-call-public", data.incomingVoiceCall)
+            }
+
+        })
+    })
+    // socket.on("request-end-voice-call", (data) => {
+    //     io.to(onlineUsers.get(data.receiveId)).emit("response-end-call-private", data)
+    // })
+    //--------------end - socket.io - call public---------------------------//
+
+
     socket.on("request-disband-the-group", (data) => {
         const {currentChat, userInfo} = data;
         const receivers = currentChat.participants.filter(p => p !== userInfo.id);
