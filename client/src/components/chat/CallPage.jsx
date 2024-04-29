@@ -96,6 +96,14 @@ const CallPage = () => {
           ? incomingVoiceCall.receiveId
           : incomingVoiceCall.senderId,
     });
+    dispatch({
+      type: reducerCases.SET_CALL_PAGE,
+      callPage: false,
+    });
+    dispatch({
+      type: reducerCases.SET_INCOMING_VOICE_CALL,
+      incomingVoiceCall: undefined,
+    });
   };
 
   return (

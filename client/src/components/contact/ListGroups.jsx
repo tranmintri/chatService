@@ -32,8 +32,11 @@ const ListGroups = ({ data }) => {
     console.log(`Selected filter: ${selectedFilter}`);
   };
   return (
-    <div className="px-3" style={{ backgroundColor: "white", height: "100vh" }}>
-      <div className="group-list-header">
+    <div
+      className="px-3 tw-h-full"
+      style={{ backgroundColor: "white", height: "100vh" }}
+    >
+      <div className="group-list-header ">
         <h2>
           {" "}
           <FontAwesomeIcon
@@ -79,13 +82,15 @@ const ListGroups = ({ data }) => {
           </Dropdown.Item>
         </DropdownButton>
       </Form>
-      {Array.isArray(groups) &&
-        groups.map((el) => {
-          if (el.type === "public") {
-            return <GroupCard chat={el} key={el.chatId} />;
-          }
-          return null;
-        })}
+      <div className="tw-max-h-[82vh] tw-overflow-auto custom-scrollbar">
+        {Array.isArray(groups) &&
+          groups.map((el) => {
+            if (el.type === "public") {
+              return <GroupCard chat={el} key={el.chatId} />;
+            }
+            return null;
+          })}
+      </div>
     </div>
   );
 };
