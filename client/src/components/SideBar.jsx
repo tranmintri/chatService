@@ -32,8 +32,10 @@ import GroupCard from "./contact/card/GroupCard";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, groups, messages, search, searchValue }, dispatch] =
-    useStateProvider();
+  const [
+    { userInfo, contactsPage, groups, messages, search, searchValue },
+    dispatch,
+  ] = useStateProvider();
   const [activeKey, setActiveKey] = useState("first");
 
   const [showFormUser, setShowFormUser] = useState(false);
@@ -442,7 +444,10 @@ const SideBar = () => {
                         : "tw-text-gray-500"
                     }
                   />
-                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">{21}</div> {/* client notification for message*/}
+                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">
+                    {21}
+                  </div>{" "}
+                  {/* client notification for message*/}
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -470,7 +475,10 @@ const SideBar = () => {
                         : "tw-text-gray-500"
                     }
                   />
-                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">{1}</div> {/* client notification for contact*/}
+                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">
+                    {1}
+                  </div>{" "}
+                  {/* client notification for contact*/}
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -521,27 +529,30 @@ const SideBar = () => {
                     <p className="tw-text-sm tw-text-gray-700 ">
                       Showing the search results in this conversation
                     </p>
-                    <p className="tw-text-[16px] tw-text-gray-700 tw-font-bold">Messages</p>
+                    <p className="tw-text-[16px] tw-text-gray-700 tw-font-bold">
+                      Messages
+                    </p>
                     {/* <p>Input keywords to search in this conversation</p> */}
                   </div>
                 </div>
               </div>
-            ) : (<div
-              className=" col-3 tw-h-32 tw-absolute tw-z-50 "
-              style={{ backgroundColor: "white" }}
-            >
-              <div className="tw-px-4 tw-pt-4 ">
-                <div>
-                  <p className="tw-font-bold">Search result</p>
-                  <p className="tw-text-sm tw-text-gray-700">
-                    Input keywords to search in this conversation
-                  </p>
-                  {/* <p className="tw-text-[16px] tw-text-gray-700 ">Messages</p> */}
-                  {/* <p>Input keywords to search in this conversation</p> */}
+            ) : (
+              <div
+                className=" col-3 tw-h-32 tw-absolute tw-z-50 "
+                style={{ backgroundColor: "white" }}
+              >
+                <div className="tw-px-4 tw-pt-4 ">
+                  <div>
+                    <p className="tw-font-bold">Search result</p>
+                    <p className="tw-text-sm tw-text-gray-700">
+                      Input keywords to search in this conversation
+                    </p>
+                    {/* <p className="tw-text-[16px] tw-text-gray-700 ">Messages</p> */}
+                    {/* <p>Input keywords to search in this conversation</p> */}
+                  </div>
                 </div>
               </div>
-            </div>)
-
+            )
           ) : (
             <div
               className=" col-3 tw-h-20 tw-absolute tw-z-50"
@@ -604,7 +615,11 @@ const SideBar = () => {
           )}
 
           {showFormUser && (
-            <div className="tooltip-content col-2 tw-w-2/5 absolute" ref={ref} style={{ zIndex: 999 }}>
+            <div
+              className="tooltip-content col-2 tw-w-2/5 absolute"
+              ref={ref}
+              style={{ zIndex: 999 }}
+            >
               <div className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-border-b tw-font-bold">
                 {userInfo?.display_name}
               </div>

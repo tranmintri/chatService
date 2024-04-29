@@ -19,10 +19,10 @@ export const initialState = {
   callPage: false,
   callAccepted: false,
   search: false,
-  searchValue: '',
+  searchValue: "",
   searchStartDate: null,
   searchEndDate: null,
-  filterName: '',
+  filterName: "",
 };
 
 const reducer = (state, action) => {
