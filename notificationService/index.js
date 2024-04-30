@@ -140,4 +140,5 @@ io.on("connection", (socket) => {
         socket.to(onlineUsers.get(data.receiver)).emit("friendDeleted", postData);
         console.log("Friend deleted:", data);
     })
+    //asdhs
 })
