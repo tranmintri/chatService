@@ -286,6 +286,59 @@ const Main = () => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("acceptFriend", (data) => {
         toast.success("You friend request accpeted by " + data.display_name);
+        dispatch({
+          type: reducerCases.REMOVE_SENT_INVITATION,
+          receiverId: data.id,
+        });
+        const newFr = {
+          id: data.id,
+          displayName: data.display_name,
+          profilePicture: data.profilePicture,
+        };        
+        dispatch({
+          type: reducerCases.ADD_FRIEND,
+          newFriend: newFr,
+        });
+      });
+      setSocketEvent2(true);
+    }
+  }, [socket2.current]);
+
+  useEffect(() => {
+    if (socket2.current && !socketEvent2) {
+      socket2.current.on("friendDeleted", (data) => {
+        console.log(data, "friendDeleted");
+        if (data.receiver === userInfo?.id) {
+          dispatch({
+            type: reducerCases.REMOVE_FRIEND,
+            friend: data.sender
+          });
+        }
+        console.log("leu leu bi huy kb");
+      });
+      setSocketEvent2(true);
+    }
+  }, [socket2.current]);
+
+  useEffect(() => {
+    if (socket2.current && !socketEvent2) {
+      socket2.current.on("rejectFriend", (data) => {
+        dispatch({
+          type: reducerCases.REMOVE_SENT_INVITATION,
+          receiverId: data.receiver,
+        });
+      });
+      setSocketEvent2(true);
+    }
+  }, [socket2.current]);
+
+  useEffect(() => {
+    if (socket2.current && !socketEvent2) {
+      socket2.current.on("cancelFriend", (data) => {
+        dispatch({
+          type: reducerCases.REMOVE_RECEIVE_INVITATION,
+          senderId: data.sender,
+        });
       });
       setSocketEvent2(true);
     }

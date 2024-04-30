@@ -20,7 +20,7 @@ import axios from "axios";
 const Contact = ({ data }) => {
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
-  const [{ userInfo }, dispatch] = useStateProvider();
+  const [{ userInfo, receivedInvitations }, dispatch] = useStateProvider();
   const handleAddFriend = () => {
     setShowAddFriendModal(true);
   };
@@ -146,7 +146,9 @@ const Contact = ({ data }) => {
                     color="black"
                   />
                   <span>Friend requests</span>
-                  <div className="request-notifications tw-absolute tw-right-0 tw-top-1">{1}</div>
+                  {receivedInvitations.length > 0 && (
+                    <div className="request-notifications tw-absolute tw-right-0 tw-top-1">{receivedInvitations.length}</div>
+                  )}
                 </div>
               </Nav.Link>
             </Nav.Item>

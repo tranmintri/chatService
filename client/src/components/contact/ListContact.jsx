@@ -13,36 +13,69 @@ import axios from "axios";
 import { useStateProvider } from "../../context/StateContext";
 import { MdDelete } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
+import { reducerCases } from "../../context/constants";
+import { toast } from "react-toastify";
 
 const ListContact = ({ data }) => {
   const [searchResults, setSearchResults] = useState([]);
-  const [{ userInfo }] = useStateProvider();
   const [friends, setFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [currentFriendId, setCurrentFriendId] = useState(null);
+  const [{userInfo, socket2, friendList },dispatch,] = useStateProvider();
 
-  const fetchData = useCallback(async () => {
-    try {
-      const { data } = await axios.get(GET_ALL_USER);
-      const userData = data.data.find((user) => user.id === userInfo.id);
-      setFriends(userData?.friends);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, [userInfo.id]);
-
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     const { data } = await axios.get(GET_ALL_USER);
+  //     // const {data} =  []
+  //     const userData = data.data.find((user) => user.id === userInfo.id);
+  //     // Dispatch an action to set the friends list in your global state
+  //     const newFriends = userData.friends ? userData.friends : [];
+  //     dispatch({
+  //       type: reducerCases.SET_FRIENDS,
+  //       friends: newFriends,
+  //     });
+  //     // setFriends(newFriends);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // }, [userInfo.id]);
+  
+  // useEffect(() => {
+  //   fetchData();
+  // }, [friendList]);
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(GET_ALL_USER);
+        const userData = data.data.find((user) => user.id === userInfo.id);
+        const newFriends = userData.friends ? userData.friends : [];
+        dispatch({
+          type: reducerCases.SET_FRIENDS,
+          friends: newFriends,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+  }, [userInfo?.id]);
+
+  // useEffect(() => {
+  //   // Filter friends based on search term
+  //   const results = friends?.filter((friend) =>
+  //     friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  //   setSearchResults(results);
+  // }, [searchTerm, friends]);
 
   useEffect(() => {
     // Filter friends based on search term
-    const results = friends?.filter((friend) =>
-      friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+    const results = friendList?.filter((friend) =>
+      friend.displayName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(results);
-  }, [searchTerm, friends]);
+  }, [searchTerm, friendList]);
 
   const handleDelete = (id) => {
     setCurrentFriendId(id);
@@ -55,14 +88,38 @@ const ListContact = ({ data }) => {
     setModalShow(false);
   };
 
+  // const DeleteFriend = async (id) => {
+  //   try {
+  //     const response = await axios.post(
+  //       GET_ALL_USER + "delete/" + userInfo.id,
+  //       { data: { id } }
+  //     );
+
+  //     fetchData(); // Fetch data again after deleting a friend
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const DeleteFriend = async (id) => {
     try {
       const response = await axios.post(
         GET_ALL_USER + "delete/" + userInfo.id,
         { data: { id } }
       );
+      toast.success("Friend deleted successfully!");
+      const postData = {
+        sender: userInfo.id,
+        receiver: id,
+      };
+      console.log(postData, "postDataDeL;")
+      socket2.current.emit("deleteFriend", postData);   
 
-      fetchData(); // Fetch data again after deleting a friend
+      // Dispatch an action to remove the friend from your global state
+      dispatch({
+        type: reducerCases.REMOVE_FRIEND,
+        friend: id
+      });
+      // fetchData(); 
     } catch (error) {
       console.log(error);
     }
@@ -125,7 +182,7 @@ const ListContact = ({ data }) => {
           </Dropdown.Item>
         </DropdownButton>
       </Form>
-      <ListGroup className="mt-5  tw-max-h-[80vh] tw-overflow-auto custom-scrollbar">
+      <ListGroup className="mt-5">
         {searchResults?.map((friend, index) => (
           <div
             key={index}

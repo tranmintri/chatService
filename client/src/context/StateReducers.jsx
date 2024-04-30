@@ -8,8 +8,6 @@ export const initialState = {
   messages: [],
   groups: [],
   onlineUsers: [],
-  receivedInvitations: [],
-  sentInvitations: [],
   socket: undefined,
   socket2: undefined,
   videoCall: undefined,
@@ -23,10 +21,60 @@ export const initialState = {
   searchStartDate: null,
   searchEndDate: null,
   filterName: "",
+  receivedInvitations: [],
+  sentInvitations: [],
+  friendList: [],
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case reducerCases.SET_FRIENDS:
+      return {
+        ...state,
+        friendList: action.friends,
+      };
+    case reducerCases.ADD_FRIEND:
+      return {
+        ...state,
+        friendList: [...state.friendList, action.newFriend],
+      };
+    case reducerCases.REMOVE_FRIEND:
+      return {
+        ...state,
+        friendList: state.friendList?.filter(friend => friend.id !== action.friend)
+      };
+
+    case reducerCases.SET_SENT_INVITATION:
+      return {
+        ...state,
+        sentInvitations: action.send,
+      };
+    case reducerCases.ADD_INVITATION:
+      return {
+        ...state,
+        sentInvitations: [...state.sentInvitations, action.newSend],
+      };
+    case reducerCases.REMOVE_SENT_INVITATION:
+      return {
+        ...state,
+        sentInvitations: state.sentInvitations.filter(invitation => invitation.receiver !== action.receiverId),
+      };
+    case reducerCases.SET_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: action.receive,
+      };
+    case reducerCases.ADD_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: [...state.receivedInvitations, action.newReceive],
+      };
+    case reducerCases.REMOVE_RECEIVE_INVITATION:
+      return {
+        ...state,
+        receivedInvitations: state.receivedInvitations.filter(invitation => invitation.sender !== action.senderId),
+      };
+
     case reducerCases.SET_USER_INFO:
       return {
         ...state,
@@ -130,26 +178,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         messages: [...state.messages, action.newMessage],
-      };
-    case reducerCases.SET_SENT_INVITATION:
-      return {
-        ...state,
-        sentInvitations: action.send,
-      };
-    case reducerCases.ADD_INVITATION:
-      return {
-        ...state,
-        sentInvitations: [...state.sentInvitations, action.newSend],
-      };
-    case reducerCases.SET_RECEIVE_INVITATION:
-      return {
-        ...state,
-        receivedInvitations: action.receive,
-      };
-    case reducerCases.ADD_RECEIVE_INVITATION:
-      return {
-        ...state,
-        receivedInvitations: [...state.receivedInvitations, action.newReceive],
       };
     case reducerCases.SET_SEARCH_VALUE:
       return {

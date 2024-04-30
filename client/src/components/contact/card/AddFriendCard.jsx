@@ -11,8 +11,6 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
     const [{ userInfo, groups, socket, socket2, sentInvitations, receivedInvitations }, dispatch] = useStateProvider()
     const [friends, setFriends] = useState([]);
 
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -29,6 +27,41 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
     }, [userInfo?.id]);
 
 
+    // const handleAddFriend = async () => {
+    //     if (!searchResults) return;
+    //     const postData = {
+    //         isAccepted: false,
+    //         receiver: searchResults.id,
+    //         sender: userInfo?.id,
+    //         profilePicture: userInfo?.avatar,
+    //         senderName: userInfo?.display_name,
+    //         receiverName: searchResults.display_name,
+    //         requestId: null,
+    //     }
+    //     try {
+    //         socket2.current.emit("sendFriendRequest", postData);
+    //         if (postData.sender === userInfo?.id) {
+    //             const response = await axios.post(NOTI_API + "add", postData);
+    //             if (response) {
+    //                 toast.success('Friend added successfully!');
+    //                 handleCloseModal();
+    //             }
+    //             dispatch({
+    //                 type: reducerCases.ADD_INVITATION,
+    //                 newSend: postData,
+    //             });
+    //         }
+    //         else {
+    //             dispatch({
+    //                 type: reducerCases.ADD_RECEIVE_INVITATION,
+    //                 newReceive: postData,
+    //             });
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error('Error sending friend request:', error);
+    //     }
+    // };
     const handleAddFriend = async () => {
         if (!searchResults) return;
         const postData = {
@@ -41,30 +74,28 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
             requestId: null,
         };
         try {
-            // socket2.current.emit("sendFriendRequest", postData);   
-            // toast.success('Friend added successfully!');
-            // handleCloseModal();
-            // if (postData.sender === userInfo?.id) {
-            //     dispatch({
-            //         type: reducerCases.ADD_INVITATION,
-            //         newSend: postData,
-            //     });
-            // }
-            // else{
-            // dispatch({
-            //     type: reducerCases.ADD_RECEIVE_INVITATION,
-            //     newReceive: postData,
-            // });
             const response = await axios.post(NOTI_API + "add", postData);
             if (response) {
                 toast.success('Friend added successfully!');
                 handleCloseModal();
             }
+            socket2.current.emit("sendFriendRequest", postData);   
+            if (postData.sender === userInfo?.id) {
+                dispatch({
+                    type: reducerCases.ADD_INVITATION,
+                    newSend: postData,
+                });
+            }
+            else{
+            dispatch({
+                type: reducerCases.ADD_RECEIVE_INVITATION,
+                newReceive: postData,
+            });
         }
-        catch (error) {
+        } catch (error) {
             console.error('Error sending friend request:', error);
         }
-    };
+    }
 
     const isFriendInArray = (friendList, searchResults) => {
         if (!friendList || !Array.isArray(friendList) || friendList.length === 0) {
@@ -101,5 +132,6 @@ const AddFriendCard = ({ searchResults, handleCloseModal, setFriendList, sendFri
         </>
     )
 }
+
 
 export default AddFriendCard;

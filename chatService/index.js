@@ -174,7 +174,7 @@ io.on("connection", (socket) => {
     socket.on("request-get-all-friend-online", (data) => {
         const onlineFriends = [];
         // Kiểm tra xem trường "friends" có tồn tại và không phải là mảng trống
-        if (data.friends && data.friends.length > 0) {
+        if (data.friends && data.friends?.length > 0) {
             // Lặp qua danh sách bạn bè của người dùng
             data.friends.forEach((friend) => {
                 if (onlineUsers.get(friend.id) && onlineUsers.has(friend.id)) {
