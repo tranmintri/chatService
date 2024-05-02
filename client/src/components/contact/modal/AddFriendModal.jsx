@@ -31,6 +31,14 @@ const AddFriendModal = ({
     }
   };
 
+  const handleEnterPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+      e.preventDefault();
+    }
+
+  }
+
   const handleModalClose = () => {
     setPhoneNumber("");
     setSelectedCountryCode("+84");
@@ -93,6 +101,7 @@ const AddFriendModal = ({
                 placeholder="Enter phone number"
                 value={phoneNumber}
                 onChange={handlePhoneNumberChange}
+                onKeyPress={handleEnterPress}
               />
             </div>
           </Form.Group>
