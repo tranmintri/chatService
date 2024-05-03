@@ -179,7 +179,10 @@ const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
         </Button>
         <Button
           variant="primary"
-          disabled={selectedFriends.length <= 0}
+          disabled={
+            selectedFriends.length <= 0 ||
+            selectedFriends.length + currentChat.participants.length > 20
+          }
           onClick={handleAddMember}
         >
           Add

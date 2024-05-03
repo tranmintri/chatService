@@ -12,3 +12,4 @@ export const GET_CHAT_BY_PARTICIPANTS = `${HOST}/api/chats/participants/`;
 export const CHAT_API = `${HOST}/api/chats/`;
 
 export const NOTI_API = `${HOST2}/api/requests/`;
+export const REACTION_API = `${HOST}/api/reactions/`;

@@ -121,6 +121,11 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
             />
           </Form.Group>
           <h5>Friend list</h5>
+          <span>
+            <p className="tw-text-[12px]">
+              Note: A maximum group can create 20 members
+            </p>
+          </span>
           <div
             style={{
               maxHeight: "350px",
@@ -165,7 +170,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
         <Button
           variant="primary"
           onClick={handleCreateGroupChat}
-          disabled={selectedFriends.length <= 0}
+          disabled={selectedFriends.length <= 0 || selectedFriends.length > 20}
         >
           Create
         </Button>

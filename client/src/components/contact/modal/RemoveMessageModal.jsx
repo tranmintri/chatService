@@ -54,7 +54,7 @@ const RemoveMessageModal = ({ showModal, handleCloseModal, removeMessage }) => {
       }
       return;
     }
-    alert("Please select an option before removing.");
+    toast("Please select an option before removing.");
   };
   const isTimestampWithinOneMinute = (timestamp) => {
     const now = Date.now();

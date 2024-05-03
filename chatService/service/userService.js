@@ -177,7 +177,8 @@ const findById = async (id) => {
 };
 
 const addFriend = async (data) => {
-    console.log(data, 'datazzzz')
+    console.log("addFriend")
+    console.log(data)
     // add receive requset
     await db.collection('Users')
         .doc(data.senderId)

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { CiEdit } from "react-icons/ci";
+import { toast } from "react-toastify";
 
 const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
   const [newImage, setNewImage] = useState(null);
@@ -18,7 +19,7 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
   };
 
   const handleConfirm = () => {
-    window.alert("dooir teen thanhf coong!");
+    toast("dooir teen thanhf coong!");
   };
   return (
     <Modal

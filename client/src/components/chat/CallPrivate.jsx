@@ -31,9 +31,6 @@ const CallPrivate = () => {
       showScreenSharingButton: false,
       showRoomTimer: true,
       onLeaveRoom: () => {
-        // console.log("leaveRoom");
-        // socket.emit("leave room call", "eeeeeeeeeeeeeee");
-
         const currentTab = window.open(`${CLIENT_HOST}/chat/${id}`, "_self");
         // Nếu tab hiện tại tồn tại và có thể đóng, thì đóng tab đó
         if (currentTab && currentTab.close) {

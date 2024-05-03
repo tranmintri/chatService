@@ -32,8 +32,18 @@ import GroupCard from "./contact/card/GroupCard";
 import AddFriendModal from "./contact/modal/AddFriendModal";
 import CreateGroupModal from "./contact/modal/CreateGroupModal";
 const SideBar = () => {
-  const [{ userInfo, contactsPage, groups, messages, search, searchValue, receivedInvitations }, dispatch] =
-    useStateProvider();
+  const [
+    {
+      userInfo,
+      contactsPage,
+      groups,
+      messages,
+      search,
+      searchValue,
+      receivedInvitations,
+    },
+    dispatch,
+  ] = useStateProvider();
   const [activeKey, setActiveKey] = useState("first");
 
   const [showFormUser, setShowFormUser] = useState(false);
@@ -442,10 +452,6 @@ const SideBar = () => {
                         : "tw-text-gray-500"
                     }
                   />
-                  <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">
-                    {21}
-                  </div>{" "}
-                  {/* client notification for message*/}
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -474,7 +480,9 @@ const SideBar = () => {
                     }
                   />
                   {receivedInvitations.length > 0 && (
-                    <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">{receivedInvitations.length}</div>
+                    <div className="client-notifications tw-absolute tw-right-2 tw-bottom-2">
+                      {receivedInvitations.length}
+                    </div>
                   )}
                   {/* client notification for contact*/}
                 </div>
