@@ -103,7 +103,7 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
               <Dialog.Panel className="tw-w-[29rem] tw-bg-dark-1 tw-relative tw-transform tw-overflow-hidden tw-rounded-lg tw-text-left tw-shadow-xl tw-transition-all sm:tw-my-8">
                 <div className="">
                   <p className="tw-px-4 tw-pt-3 pb-0 tw-font-semibold tw-text-lg tw-text-dark-1">
-                    Cập nhật Hình đại diện
+                    Update profile picture
                   </p>
 
                   <div className="tw-px-4 tw-pb-5 tw-grid tw-grid-cols-9 tw-gap-x-5 tw-gap-y-2 tw-justify-center">
@@ -182,7 +182,7 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
                         className="tw-px-4 tw-py-1.5 tw-bg-dark-5 tw-text-dark-1 tw-rounded-sm tw-text-sm tw-mr-2 tw-font-semibold"
                         htmlFor="input-choose-avatar"
                       >
-                        Chọn File...
+                        Choose File...
                       </label>
                     </div>
                     <div className="tw-text-right">
@@ -190,13 +190,13 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
                         className="tw-px-4 tw-py-1.5 tw-bg-dark-5 tw-text-dark-1 tw-rounded-sm tw-text-sm tw-mr-2 tw-font-semibold"
                         onClick={() => setOpen(false)}
                       >
-                        Hủy
+                        Cancel
                       </button>
                       <button
                         className="tw-px-4 tw-py-1.5 tw-bg-blue-1 tw-text-dark-1 tw-rounded-sm tw-text-sm tw-font-semibold"
                         onClick={handleBtnSaveClick}
                       >
-                        Cập nhật
+                        Update
                       </button>
                     </div>
                   </div>

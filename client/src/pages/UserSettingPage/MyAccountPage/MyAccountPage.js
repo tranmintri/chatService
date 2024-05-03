@@ -82,7 +82,7 @@ const MyAccountPage = () => {
     <>
       <div className="tw-px-10 tw-py-10">
         <div className="tw-mb-10">
-          <p className="tw-font-bold tw-text-xl tw-mb-5">Tài Khoản Của Tôi</p>
+          <p className="tw-font-bold tw-text-xl tw-mb-5">My Account</p>
 
           <div
             className="tw-rounded-lg tw-pb-0.5"
@@ -143,7 +143,7 @@ const MyAccountPage = () => {
               </div>
               <div className="text-end">
                 <button className="tw-bg-blue-1 tw-px-4 tw-py-1.5 tw-rounded-sm tw-text-sm tw-font-semibold">
-                  Chỉnh Sửa Hồ Sơ Người Dùng
+                  Edit User Profile
                 </button>
               </div>
             </div>
@@ -153,7 +153,7 @@ const MyAccountPage = () => {
             >
               <div>
                 <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs">
-                  Tên hiển thị
+                  Display Name
                 </label>
                 <p>{userInfo?.display_name || "Loading..."}</p>
               </div>
@@ -162,13 +162,13 @@ const MyAccountPage = () => {
                   className="tw-px-4 tw-py-1.5 tw-rounded-sm tw-bg-dark-5 tw-text-sm tw-font-semibold"
                   onClick={handelBtnChangeDisplayNameClick}
                 >
-                  Chỉnh sửa
+                  Edit
                 </button>
               </div>
 
               <div>
                 <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs">
-                  Tên đăng nhập
+                  Username
                 </label>
                 <p>
                   {userInfo?.username ? `@${userInfo.username}` : "Loading..."}
@@ -179,7 +179,7 @@ const MyAccountPage = () => {
                   className="tw-px-4 tw-py-1.5 tw-rounded-sm tw-bg-dark-5 tw-text-sm tw-font-semibold"
                   onClick={handleBtnChangeUsernameClick}
                 >
-                  Chỉnh sửa
+                  Edit
                 </button>
               </div>
 
@@ -194,13 +194,13 @@ const MyAccountPage = () => {
                   className="tw-px-4 tw-py-1.5 tw-rounded-sm tw-bg-dark-5 tw-text-sm tw-font-semibold"
                   onClick={handleBtnChangeEmailClick}
                 >
-                  Chỉnh sửa
+                  Edit
                 </button>
               </div>
 
               <div>
                 <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs">
-                  Điện thoại
+                  Phone Number
                 </label>
                 <p>{userInfo?.phone || "Bạn chưa thêm số điện thoại nào cả"}</p>
               </div>
@@ -209,7 +209,7 @@ const MyAccountPage = () => {
                   className="tw-px-4 tw-py-1.5 tw-rounded-sm tw-bg-dark-5 tw-text-sm tw-font-semibold"
                   onClick={handleBtnChangePhoneClick}
                 >
-                  Chỉnh sửa
+                  Edit
                 </button>
               </div>
             </div>
@@ -220,14 +220,14 @@ const MyAccountPage = () => {
 
         <div className="tw-mb-10">
           <p className="tw-font-bold tw-text-xl tw-mb-5">
-            Mật Khẩu và Xác thực
+            Password and Authentication
           </p>
 
           <button
             className="tw-bg-blue-1 tw-px-4 tw-py-1.5 tw-text-sm tw-font-semibold tw-rounded-sm"
             onClick={handleBtnChangePasswordClick}
           >
-            Đổi Mật Khẩu
+            Change Password
           </button>
 
           <hr className="tw-my-5" />
@@ -235,24 +235,24 @@ const MyAccountPage = () => {
 
         <div className="tw-mb-10">
           <p className="tw-text-dark-1 tw-font-semibold tw-uppercase tw-text-xs tw-mb-0">
-            Ngừng sử dụng tài khoản
+            Stop using your account
           </p>
           <small className="tw-text-dark-2">
-            Nếu khóa tài khoản, bạn có thể khôi phục lại tài khoản của mình bất
-            cứ lúc nào
+            If your account is locked, you can restore your account at any time
+            any time
           </small>
           <br />
           <button
             className="tw-bg-red-500 tw-border-red-500 tw-border tw-mr-5 tw-px-4 tw-py-1.5 tw-text-sm tw-font-semibold tw-rounded-sm tw-mt-5"
             onClick={handleBtnBlockAccountClick}
           >
-            Vô Hiệu Hóa Tài Khoản
+            Deactivate Account
           </button>
           <button
             className="tw-border-red-500 tw-border tw-px-4 tw-py-1.5 tw-text-sm tw-font-semibold tw-rounded-sm tw-mt-5"
             onClick={handleBtnDeleteAccountClick}
           >
-            Xóa Tài Khoản
+            Delete the account
           </button>
         </div>
 

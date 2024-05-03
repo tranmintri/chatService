@@ -6,47 +6,47 @@ const UserSettingNavbar = () => {
   const menuList = [
     {
       groupId: "MG1",
-      groupName: "CÀI ĐẶT NGƯỜI DÙNG",
+      groupName: "USER SETTINGS",
       items: [
         {
           id: "MG1_MN1",
-          name: "Tài khoản của Tôi",
+          name: "My account",
           linkTo: "",
         },
         {
           id: "MG1_MN2",
-          name: "Thiết bị",
+          name: "Device",
           linkTo: "",
         },
       ],
     },
     {
       groupId: "MG2",
-      groupName: "CÀI ĐẶT ỨNG DỤNG",
+      groupName: "INSTALL APPS",
       items: [
         {
           id: "MG2_MN1",
-          name: "Hiển thị",
+          name: "Display",
           linkTo: "",
         },
         {
           id: "MG2_MN2",
-          name: "Trợ năng",
+          name: "Accessibility",
           linkTo: "",
         },
         {
           id: "MG2_MN3",
-          name: "Trò chhuyện",
+          name: "Chat",
           linkTo: "",
         },
         {
           id: "MG2_MN4",
-          name: "Thông báo",
+          name: "Notification",
           linkTo: "",
         },
         {
           id: "MG2_MN5",
-          name: "Nâng cao",
+          name: "Advanced",
           linkTo: "",
         },
       ],
@@ -56,7 +56,7 @@ const UserSettingNavbar = () => {
       items: [
         {
           id: "MG3_MN2",
-          name: "Đăng xuất",
+          name: "Logout",
           linkTo: "",
         },
       ],
