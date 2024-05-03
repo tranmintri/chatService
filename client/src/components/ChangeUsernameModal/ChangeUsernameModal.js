@@ -84,16 +84,16 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="tw-px-5 tw-py-4">
                     <p className="tw-text-center tw-text-dark-1 tw-font-bold tw-text-2xl tw-mb-2 tw-mt-3 tw-transition-all tw-ease-in-out tw-duration-300">
-                      Đổi tên đăng nhập
+                      Change username
                     </p>
                     <p className="tw-text-center tw-text-dark-2 tw-text-sm">
-                      Nhập tên đăng nhập mới và mật khẩu
+                      Enter new username and password
                     </p>
 
                     <div className="tw-mb-2.5">
                       <div className="tw-mb-1.5">
                         <label className="tw-text-dark-2 tw-font-semibold tw-text-xs tw-uppercase">
-                          Tên đăng nhập
+                          Username
                         </label>
                       </div>
                       <div>
@@ -120,7 +120,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                     <div className="tw-mb-2.5">
                       <div className="tw-mb-1.5">
                         <label className="tw-text-dark-2 tw-font-semibold tw-text-xs tw-uppercase">
-                          Mật khẩu
+                          Password
                         </label>
                       </div>
                       <div>
@@ -147,7 +147,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                       className="tw-px-6 tw-py-2.5 tw-text-sm tw-text-dark-1 tw-bg-blue-1 tw-rounded-sm"
                       // onClick={() => setOpen(false)}
                     >
-                      Xác nhận
+                      Confirm
                     </button>
                     <button
                       type="button"
@@ -155,7 +155,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                       onClick={() => setOpen(false)}
                       ref={cancelButtonRef}
                     >
-                      Hủy bỏ
+                      Cancel
                     </button>
                   </div>
                 </form>

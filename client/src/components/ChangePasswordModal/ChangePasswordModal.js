@@ -83,16 +83,16 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="tw-px-5 tw-py-4">
                     <p className="tw-text-center tw-text-dark-1 tw-font-bold tw-text-2xl tw-mb-2 tw-mt-3">
-                      Đổi mật khẩu
+                      Change password
                     </p>
                     <p className="tw-text-center tw-text-dark-2 tw-text-sm">
-                      Nhập mật khẩu hiện tại và mật khẩu mới
+                      Enter current password and new password
                     </p>
 
                     <div className="tw-mb-2.5">
                       <div className="tw-mb-1.5">
                         <label className="tw-text-dark-2 tw-font-semibold tw-text-xs tw-uppercase">
-                          Mật khẩu hiện tại
+                          Current password
                         </label>
                       </div>
                       <div>
@@ -115,7 +115,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                     <div className="tw-mb-2.5">
                       <div className="tw-mb-1.5">
                         <label className="tw-text-dark-2 tw-font-semibold tw-text-xs tw-uppercase">
-                          Mật khẩu mới
+                          New password
                         </label>
                       </div>
                       <div>
@@ -144,7 +144,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                               ) : (
                                 <i className="fa-regular fa-circle-xmark tw-mr-2"></i>
                               )}
-                              Tối thiểu 6 ký tự
+                              Minimum 6 characters
                             </p>
                             <p
                               className={`tw-my-0.5 ${
@@ -158,7 +158,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                               ) : (
                                 <i className="fa-regular fa-circle-xmark tw-mr-2"></i>
                               )}
-                              Ít nhất một ký tự chữ cái
+                              At least one alphabetic character
                             </p>
                             <p
                               className={`tw-my-0.5 ${
@@ -172,7 +172,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                               ) : (
                                 <i className="fa-regular fa-circle-xmark tw-mr-2"></i>
                               )}
-                              Ít nhất một ký tự số
+                              At least one numeric character
                             </p>
                             <p
                               className={`tw-my-0.5 ${
@@ -186,7 +186,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                               ) : (
                                 <i className="fa-regular fa-circle-xmark tw-mr-2"></i>
                               )}
-                              Ít nhất một ký tự đặc biệt [!@#$%^&*?]
+                              At least one special character [!@#$%^&*?]
                             </p>
                           </div>
                         )}
@@ -195,7 +195,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                     <div className="tw-mb-2.5">
                       <div className="tw-mb-1.5">
                         <label className="tw-text-dark-2 tw-font-semibold tw-text-xs tw-uppercase">
-                          Xác nhận mật khẩu mới
+                          Confirm new password
                         </label>
                       </div>
                       <div>
@@ -203,10 +203,10 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                           type="password"
                           className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
                           {...register("reEnterNewPassword", {
-                            required: "Vui lòng xác nhận mật khẩu mới",
+                            required: "Please confirm new password",
                             validate: (value) =>
                               value === newPassword ||
-                              "Xác nhận mật khẩu mới không chính xác",
+                              "Confirm new password is incorrect",
                           })}
                         />
                       </div>
