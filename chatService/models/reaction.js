@@ -1,5 +1,6 @@
 class Reaction {
-    constructor(chatId, messageId,senderId,type, timestamp ) {
+    constructor(reactionId,chatId, messageId,senderId,type, timestamp ) {
+        this.reactionId = reactionId;
         this.chatId = chatId;
         this.messageId = messageId;
         this.senderId = senderId;

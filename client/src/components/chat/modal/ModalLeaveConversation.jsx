@@ -3,6 +3,7 @@ import { useStateProvider } from "../../../context/StateContext";
 import { CHAT_API, GET_CHAT_BY_PARTICIPANTS } from "../../../router/ApiRoutes";
 import { reducerCases } from "../../../context/constants";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ModalLeaveConversation = ({
   showFormLeaveConversation,
@@ -43,7 +44,7 @@ const ModalLeaveConversation = ({
 
       try {
         socket.current.emit("leave-group", postData);
-        alert("You have left the group");
+        toast("You have left the group");
         const { data } = await axios.get(
           GET_CHAT_BY_PARTICIPANTS + userInfo?.id
         );

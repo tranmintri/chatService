@@ -24,6 +24,7 @@ export const initialState = {
   receivedInvitations: [],
   sentInvitations: [],
   friendList: [],
+  reactionList: [],
 };
 
 const reducer = (state, action) => {
@@ -41,7 +42,27 @@ const reducer = (state, action) => {
     case reducerCases.REMOVE_FRIEND:
       return {
         ...state,
-        friendList: state.friendList?.filter(friend => friend.id !== action.friend)
+        friendList: state.friendList?.filter(
+          (friend) => friend.id !== action.friend
+        ),
+      };
+
+    case reducerCases.SET_REACTIONS:
+      return {
+        ...state,
+        reactionList: action.reactionList,
+      };
+    case reducerCases.ADD_REACTION:
+      return {
+        ...state,
+        reactionList: [...state.reactionList, action.newReaction],
+      };
+    case reducerCases.REMOVE_REACTIONS:
+      return {
+        ...state,
+        reactionList: state.reactionList?.filter(
+          (reaction) => reaction.reactionId !== action.reactionId
+        ),
       };
 
     case reducerCases.SET_SENT_INVITATION:
@@ -57,7 +78,9 @@ const reducer = (state, action) => {
     case reducerCases.REMOVE_SENT_INVITATION:
       return {
         ...state,
-        sentInvitations: state.sentInvitations.filter(invitation => invitation.receiver !== action.receiverId),
+        sentInvitations: state.sentInvitations.filter(
+          (invitation) => invitation.receiver !== action.receiverId
+        ),
       };
     case reducerCases.SET_RECEIVE_INVITATION:
       return {
@@ -72,7 +95,9 @@ const reducer = (state, action) => {
     case reducerCases.REMOVE_RECEIVE_INVITATION:
       return {
         ...state,
-        receivedInvitations: state.receivedInvitations.filter(invitation => invitation.sender !== action.senderId),
+        receivedInvitations: state.receivedInvitations.filter(
+          (invitation) => invitation.sender !== action.senderId
+        ),
       };
 
     case reducerCases.SET_USER_INFO:
@@ -102,7 +127,6 @@ const reducer = (state, action) => {
         callPage: action.callPage,
       };
     case reducerCases.SET_SEARCH:
-      console.log(action.search);
       return {
         ...state,
         search: action.search,

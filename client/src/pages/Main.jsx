@@ -119,7 +119,6 @@ const Main = () => {
   useEffect(() => {
     if (socket.current && !socketEvent) {
       socket.current.on("response-to-voice-call-public", (data) => {
-        console.log(data);
         dispatch({
           type: reducerCases.SET_INCOMING_VOICE_CALL,
           incomingVoiceCall: data,
@@ -294,7 +293,7 @@ const Main = () => {
           id: data.id,
           displayName: data.display_name,
           profilePicture: data.profilePicture,
-        };        
+        };
         dispatch({
           type: reducerCases.ADD_FRIEND,
           newFriend: newFr,
@@ -307,14 +306,12 @@ const Main = () => {
   useEffect(() => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("friendDeleted", (data) => {
-        console.log(data, "friendDeleted");
         if (data.receiver === userInfo?.id) {
           dispatch({
             type: reducerCases.REMOVE_FRIEND,
-            friend: data.sender
+            friend: data.sender,
           });
         }
-        console.log("leu leu bi huy kb");
       });
       setSocketEvent2(true);
     }
@@ -379,15 +376,49 @@ const Main = () => {
       socket.current.on("leave-group-noti", (data) => {
         alert(data.user_Name + " leave group");
       });
-      // console.log("log-out");
-      // dispatch({
-      //   type: reducerCases.SET_ALL_GROUP,
-      //   groups: groups.filter((g) => g.chatId != data.chatId),
-      // });
-      // dispatch({
-      //   type: reducerCases.SET_CURRENT_CHAT,
-      //   chat: undefined,
-      // });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-add-reaction-private", (data) => {
+        dispatch({
+          type: reducerCases.ADD_REACTION,
+          newReaction: data,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-update-reaction-private", (data) => {
+        dispatch({
+          type: reducerCases.REMOVE_REACTIONS,
+          reactionId: data.reactionId,
+        });
+        dispatch({
+          type: reducerCases.ADD_REACTION,
+          newReaction: data,
+        });
+      });
+
+      setSocketEvent(true);
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (socket.current && !socketEvent) {
+      socket.current.on("response-remove-reaction-private", (data) => {
+        dispatch({
+          type: reducerCases.REMOVE_REACTIONS,
+          reactionId: data,
+        });
+      });
+
       setSocketEvent(true);
     }
   }, [socket.current]);

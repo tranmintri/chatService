@@ -5,11 +5,15 @@ import { useStateProvider } from "../../context/StateContext";
 import { calculateTime } from "../../utils/CalculateTime";
 import { reducerCases } from "../../context/constants";
 import { useEffect } from "react";
+import axios from "axios";
+import { REACTION_API } from "../../router/ApiRoutes";
 
 const UserChat = () => {
   const [groupList, setGroupList] = useState([]);
-  const [{ userInfo, groups, socket, onlineUsers, messages }, dispatch] =
-    useStateProvider();
+  const [
+    { userInfo, groups, socket, onlineUsers, messages, currentChat },
+    dispatch,
+  ] = useStateProvider();
 
   const handleSelectChat = (chat) => {
     socket.current.emit("joinRoom", chat.chatId);
@@ -18,6 +22,25 @@ const UserChat = () => {
       chat: chat, // hoặc chat.chat nếu cần truy cập vào các thuộc tính khác của chat
     });
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (currentChat) {
+          const data = await axios.get(
+            REACTION_API + "chat/" + currentChat.chatId
+          );
+          dispatch({
+            type: reducerCases.SET_REACTIONS,
+            reactionList: data.data.data,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [currentChat]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,9 +124,9 @@ const UserChat = () => {
                   </div>
                   {/* <div className="this-user-notifications">{1}</div> */}
                   {chat.type === "private" &&
-                    onlineUsers.includes(
-                      chat.participants.filter((p) => p !== userInfo?.id)[0]
-                    ) ? (
+                  onlineUsers.includes(
+                    chat.participants.filter((p) => p !== userInfo?.id)[0]
+                  ) ? (
                     <span className="user-online mt-1"></span>
                   ) : (
                     chat.type === "private" && (

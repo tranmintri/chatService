@@ -28,7 +28,7 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
         : [...prevSelectedGroups, groupId];
     });
   };
-  console.log(shareMessage);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

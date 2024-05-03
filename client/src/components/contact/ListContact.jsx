@@ -22,7 +22,7 @@ const ListContact = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [currentFriendId, setCurrentFriendId] = useState(null);
-  const [{userInfo, socket2, friendList },dispatch,] = useStateProvider();
+  const [{ userInfo, socket2, friendList }, dispatch] = useStateProvider();
 
   // const fetchData = useCallback(async () => {
   //   try {
@@ -40,7 +40,7 @@ const ListContact = ({ data }) => {
   //     console.error("Error fetching data:", error);
   //   }
   // }, [userInfo.id]);
-  
+
   // useEffect(() => {
   //   fetchData();
   // }, [friendList]);
@@ -88,18 +88,6 @@ const ListContact = ({ data }) => {
     setModalShow(false);
   };
 
-  // const DeleteFriend = async (id) => {
-  //   try {
-  //     const response = await axios.post(
-  //       GET_ALL_USER + "delete/" + userInfo.id,
-  //       { data: { id } }
-  //     );
-
-  //     fetchData(); // Fetch data again after deleting a friend
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   const DeleteFriend = async (id) => {
     try {
       const response = await axios.post(
@@ -111,15 +99,15 @@ const ListContact = ({ data }) => {
         sender: userInfo.id,
         receiver: id,
       };
-      console.log(postData, "postDataDeL;")
-      socket2.current.emit("deleteFriend", postData);   
+
+      socket2.current.emit("deleteFriend", postData);
 
       // Dispatch an action to remove the friend from your global state
       dispatch({
         type: reducerCases.REMOVE_FRIEND,
-        friend: id
+        friend: id,
       });
-      // fetchData(); 
+      // fetchData();
     } catch (error) {
       console.log(error);
     }

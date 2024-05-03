@@ -14,7 +14,13 @@ import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import React, { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
 import TextArea from "antd/es/input/TextArea";
-import { CHAT_API, CLIENT_HOST, GET_ALL_USER } from "../../router/ApiRoutes";
+import { toast } from "react-toastify";
+import {
+  CHAT_API,
+  CLIENT_HOST,
+  GET_ALL_USER,
+  REACTION_API,
+} from "../../router/ApiRoutes";
 import { reducerCases } from "../../context/constants";
 import axios from "axios";
 import { calculateTime } from "./../../utils/CalculateTime";
@@ -56,7 +62,8 @@ import ModalReactionInfo from "./modal/ModalReactionInfo";
 const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const [sendMessages, setSendMessages] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
-
+  const [isClickReaction, setIsClickReaction] = useState(0);
+  const [reactionInfo, setReactionInfo] = useState([]);
   const [
     {
       messages,
@@ -69,6 +76,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       searchValue,
       searchStartDate,
       searchEndDate,
+      reactionList,
     },
     dispatch,
   ] = useStateProvider();
@@ -183,12 +191,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         showReplyTooltip &&
         (selectedImages.length > 0 || selectedFiles.length > 0)
       ) {
-        alert("Can't reply message and send photos or files at the same time");
+        toast("Can't reply message and send photos or files at the same time");
         return;
       }
 
       if (selectedImages.length > 0 && selectedFiles.length > 0) {
-        alert("Can't send photos and files at the same time");
+        toast("Can't send photos and files at the same time");
         return;
       }
       // Nếu có hình ảnh được chọn, gửi hình ảnh trước
@@ -253,74 +261,77 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       }
 
       try {
-        content += sendMessages;
-
-        const { data } = await axios.put(
-          CHAT_API + currentChat?.chatId + "/messages",
-          {
-            newMessage: {
-              messageId: messageId,
-              senderId: userInfo?.id,
-              senderName: userInfo?.display_name,
-              senderPicture: userInfo?.avatar,
-              type: type,
-              content: content,
-              timestamp: Date.now(),
-            },
+        if (sendMessages.trim() && !sendMessages.trim().includes(" ")) {
+          content += sendMessages;
+          console.log(content);
+          const { data } = await axios.put(
+            CHAT_API + currentChat?.chatId + "/messages",
+            {
+              newMessage: {
+                messageId: messageId,
+                senderId: userInfo?.id,
+                senderName: userInfo?.display_name,
+                senderPicture: userInfo?.avatar,
+                type: type,
+                content: content,
+                timestamp: Date.now(),
+              },
+            }
+          );
+          if (currentChat.type == "private") {
+            socket.current.emit("send-msg-private", {
+              receiveId: receiveId,
+              newMessage: {
+                messageId: messageId,
+                senderId: userInfo?.id,
+                senderName: userInfo?.display_name,
+                senderPicture: userInfo?.avatar,
+                type: type,
+                content: content,
+                timestamp: Date.now(),
+              },
+            });
           }
-        );
+          if (currentChat.type == "public") {
+            socket.current.emit("send-msg-public", currentChat.chatId, {
+              receiveId: currentChat.participants.filter(
+                (p) => p !== userInfo?.id
+              ),
+              newMessage: {
+                messageId: messageId,
+                senderId: userInfo?.id,
+                senderName: userInfo?.display_name,
+                senderPicture: userInfo?.avatar,
+                type: type,
+                content: content,
+                timestamp: Date.now(),
+              },
+            });
+          }
 
-        if (currentChat.type == "private") {
-          socket.current.emit("send-msg-private", {
-            receiveId: receiveId,
+          dispatch({
+            type: reducerCases.ADD_MESSAGES,
             newMessage: {
-              messageId: messageId,
-              senderId: userInfo?.id,
-              senderName: userInfo?.display_name,
-              senderPicture: userInfo?.avatar,
-              type: type,
-              content: content,
-              timestamp: Date.now(),
+              ...data.data.newMessage,
             },
+            fromSelf: true,
           });
-        }
-        if (currentChat.type == "public") {
-          socket.current.emit("send-msg-public", currentChat.chatId, {
-            receiveId: currentChat.participants.filter(
-              (p) => p !== userInfo?.id
-            ),
-            newMessage: {
-              messageId: messageId,
-              senderId: userInfo?.id,
-              senderName: userInfo?.display_name,
-              senderPicture: userInfo?.avatar,
-              type: type,
-              content: content,
-              timestamp: Date.now(),
-            },
+          let group = [
+            ...groups.filter((chat) => chat.chatId === currentChat.chatId),
+            ...groups.filter((chat) => chat.chatId !== currentChat.chatId),
+          ];
+          dispatch({
+            type: reducerCases.SET_ALL_GROUP,
+            groups: group,
           });
+          setReplyMessage({}); // Xóa nội dung tin nhắn reply
+          setShowReplyTooltip(false); // Ẩn tooltip
+          setSelectedFiles([]);
+          setSelectedImages([]);
+          setSendMessages("");
+        } else {
+          setSendMessages("");
         }
-
-        dispatch({
-          type: reducerCases.ADD_MESSAGES,
-          newMessage: {
-            ...data.data.newMessage,
-          },
-          fromSelf: true,
-        });
-        let group = [
-          ...groups.filter((chat) => chat.chatId === currentChat.chatId),
-          ...groups.filter((chat) => chat.chatId !== currentChat.chatId),
-        ];
-        dispatch({
-          type: reducerCases.SET_ALL_GROUP,
-          groups: group,
-        });
-        setReplyMessage({}); // Xóa nội dung tin nhắn reply
-        setShowReplyTooltip(false); // Ẩn tooltip
-        setSelectedFiles([]);
-        setSelectedImages([]);
-        setSendMessages("");
       } catch (error) {
         console.log(error);
       }
@@ -451,11 +462,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     if (currentChat.type == "private")
       socket.current.emit("request-to-voice-call-private", incomingVoiceCall);
     if (currentChat.type == "public")
-      console.log("request-to-voice-call-public");
-    socket.current.emit("request-to-voice-call-public", {
-      currentChat: currentChat,
-      incomingVoiceCall: incomingVoiceCall,
-    });
+      socket.current.emit("request-to-voice-call-public", {
+        currentChat: currentChat,
+        incomingVoiceCall: incomingVoiceCall,
+      });
   };
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
@@ -479,7 +489,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     setScrollToMessageId(messageId); // Set messageId cần cuộn đế
   };
   const handleRemove = (messageId) => {
-    // window.alert(messageId)
     handleShowFormRemoveMessage();
   };
 
@@ -523,7 +532,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     });
   };
   const handleCloseSearch = () => {
-    console.log(currentChat.participants);
     dispatch({
       type: reducerCases.SET_SEARCH,
       search: false,
@@ -677,7 +685,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       try {
         const response = await axios.get(GET_ALL_USER);
         setAllUsers(response.data.data); // Lưu tất cả người dùng vào state allUsers
-        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching all users:", error);
       }
@@ -712,47 +719,213 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       setActiveIndex(null);
       return;
     }
+    const reactionOfMessage = reactionList.find(
+      (reaction) =>
+        reaction.chatId === currentChat.chatId &&
+        reaction.messageId === message.messageId &&
+        reaction.senderId === userInfo?.id
+    );
+    let reactionNumber = 0;
+    if (reactionOfMessage) {
+      switch (reactionOfMessage.type) {
+        case "heart":
+          reactionNumber = 1;
+          break;
+        case "smile":
+          reactionNumber = 2;
+          break;
+        case "supprise":
+          reactionNumber = 3;
+          break;
+        case "sad":
+          reactionNumber = 4;
+          break;
+        case "angry":
+          reactionNumber = 5;
+          break;
+        case "like":
+          reactionNumber = 6;
+          break;
+        default:
+          reactionNumber = 0;
+      }
+    }
+    console.log(reactionNumber);
+    setIsClickReaction(reactionNumber);
     setOpenReactionMenu(true);
     setActiveIndex(index);
   };
-  const handleReactionDetail = (message, type) => {
-    if (type == "like") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
+
+  const handleReactionDetail_function = async (message, number, type) => {
+    if (isClickReaction == 0) {
+      console.log("isClickReaction : " + isClickReaction);
+      const reactionId = uuidv4();
+      const reactionData = {
+        chatId: currentChat.chatId,
+        messageId: message.messageId,
+        senderId: userInfo?.id,
+        reactionId: reactionId,
+        type: type,
+        timestamp: Date.now(),
+      };
+      const result = await axios.post(REACTION_API, reactionData);
+      dispatch({
+        type: reducerCases.ADD_REACTION,
+        newReaction: reactionData,
+      });
+      socket.current.emit("request-add-reaction-private", {
+        receiveId: currentChat.participants.filter((p) => p != userInfo?.id)[0],
+        reactionData: reactionData,
+      });
     }
-    if (type == "supprise") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
+    if (isClickReaction != number) {
+      console.log("isClickReaction != : " + number);
+      console.log(type);
+      const reactionUpdate = reactionList.find(
+        (reaction) =>
+          reaction.chatId === currentChat.chatId &&
+          reaction.messageId === message.messageId &&
+          reaction.senderId === userInfo?.id
+      );
+      if (reactionUpdate) {
+        // Nếu có, tạo đối tượng reactionData từ thông tin của phản ứng này
+        const reactionData = {
+          chatId: currentChat.chatId,
+          messageId: message.messageId,
+          senderId: userInfo?.id,
+          reactionId: reactionUpdate.reactionId, // Sử dụng reactionId từ phản ứng được lọc
+          type: type,
+          timestamp: Date.now(),
+        };
+        const result = await axios.put(REACTION_API, reactionData);
+        dispatch({
+          type: reducerCases.REMOVE_REACTIONS,
+          reactionId: reactionUpdate.reactionId,
+        });
+        dispatch({
+          type: reducerCases.ADD_REACTION,
+          newReaction: reactionData,
+        });
+        socket.current.emit("request-update-reaction-private", {
+          receiveId: currentChat.participants.filter(
+            (p) => p != userInfo?.id
+          )[0],
+          reactionData: reactionData,
+        });
+        // Sử dụng reactionData trong các xử lý tiếp theo
+      }
     }
-    if (type == "angry") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
-    }
-    if (type == "heart") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
-    }
-    if (type == "sad") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
-    }
-    if (type == "smile") {
-      alert(type);
-      setOpenReactionMenu(false);
-      setActiveIndex(null);
+    if (isClickReaction == number) {
+      console.log("isClickReaction : " + number);
+      console.log(type);
+      const reactionUpdate = reactionList.find(
+        (reaction) =>
+          reaction.chatId === currentChat.chatId &&
+          reaction.messageId === message.messageId &&
+          reaction.senderId === userInfo?.id
+      );
+      console.log(reactionUpdate);
+      if (reactionUpdate) {
+        const result = await axios.delete(
+          REACTION_API + reactionUpdate.reactionId
+        );
+        dispatch({
+          type: reducerCases.REMOVE_REACTIONS,
+          reactionId: reactionUpdate.reactionId,
+        });
+        socket.current.emit("request-remove-reaction-private", {
+          receiveId: currentChat.participants.filter(
+            (p) => p != userInfo?.id
+          )[0],
+          reactionId: reactionUpdate.reactionId,
+        });
+        setIsClickReaction(0);
+        // Sử dụng reactionData trong các xử lý tiếp theo
+      }
     }
   };
 
-  const openReactionInfo = () => {
+  const handleReactionDetail = async (message, type) => {
+    if (type == "like") {
+      handleReactionDetail_function(message, 6, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(6);
+    }
+    if (type == "supprise") {
+      handleReactionDetail_function(message, 3, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(3);
+    }
+    if (type == "angry") {
+      handleReactionDetail_function(message, 5, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(5);
+    }
+    if (type == "heart") {
+      handleReactionDetail_function(message, 1, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(1);
+    }
+    if (type == "sad") {
+      handleReactionDetail_function(message, 4, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(4);
+    }
+    if (type == "smile") {
+      handleReactionDetail_function(message, 2, type);
+
+      setOpenReactionMenu(false);
+      setActiveIndex(null);
+      setIsClickReaction(2);
+    }
+  };
+
+  const openReactionInfo = (reactionByMesageId) => {
     setOpenReactionInfoModal(true);
+    setReactionInfo(reactionByMesageId);
   };
   const handleCloseModalReactionInfo = () => {
     setOpenReactionInfoModal(false);
+  };
+
+  const handleCountReactionOfMessage = (messageId) => {
+    if (reactionList.length > 0) {
+      const reactionOfMessage = reactionList.filter(
+        (reaction) => reaction.messageId == messageId
+      );
+      return reactionOfMessage.length > 0 ? reactionOfMessage : [];
+    }
+    return [];
+  };
+  const convertType = (type) => {
+    if (type == "like") {
+      return like;
+    }
+    if (type == "heart") {
+      return heart;
+    }
+    if (type == "smile") {
+      return smile;
+    }
+    if (type == "sad") {
+      return sad;
+    }
+    if (type == "supprise") {
+      return supprise;
+    }
+    if (type == "angry") {
+      return angry;
+    }
   };
 
   const menuName = (
@@ -1014,7 +1187,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                   ref={(element) =>
                                     updateMessageRefs(element, index)
                                   }
-                                  onClick={() => scrollToMessage(index)}
                                 >
                                   {message.status == "removed" &&
                                   message.senderId == userInfo?.id ? (
@@ -1024,6 +1196,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           ? "tw-bg-[#e5efff] align-self-end"
                                           : "tw-bg-black tw-text-white align-self-start tw-text-"
                                       }`}
+                                      onClick={() => scrollToMessage(index)}
                                     >
                                       <span className=" tw-text-sm ">
                                         message has been recovered
@@ -1077,7 +1250,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               {message.content}
                                             </span>
                                           ) : message.type.includes("files") ? (
-                                            <div>
+                                            <div className="">
                                               {message.content &&
                                                 message.content
                                                   .split("|")
@@ -1118,8 +1291,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                         {content.startsWith(
                                                           "https://"
                                                         ) ? (
-                                                          <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
-                                                            <div className="tw-mr-3 ">
+                                                          <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-200 tw-w-full tw-p-3 tw-rounded-lg">
+                                                            <div className=" tw-w-2/12">
                                                               {extension ===
                                                                 ".doc" && (
                                                                 <img
@@ -1226,7 +1399,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                 />
                                                               )}
                                                             </div>
-                                                            <span>
+                                                            <span className="tw-flex tw-justify-start tw-items-center  tw-w-10/12  tw-pr-2">
                                                               <a
                                                                 href={content}
                                                                 download={
@@ -1541,47 +1714,92 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
                                             {calculateTime(message.timestamp)}
                                           </span>
-                                          <ModalReactionInfo
-                                            showModalInfo={
-                                              openReactionInfoModal
-                                            }
-                                            handleCloseModal={
-                                              handleCloseModalReactionInfo
-                                            }
-                                          />
-                                          <div className="tw-w-full  -tw-mb-6 -tw-z-120 tw-py-3 tw-ml-3">
-                                            <div className="tw-max-w-[40vh]  tw-flex tw-justify-end">
-                                              <div
-                                                className="tw-bg-gray-400 tw-text-white tw-shadow-lg tw-justify-center tw-items-center tw-max-w-[40vh] tw-rounded-lg tw-px-2 py-1 tw-flex"
-                                                onClick={() =>
-                                                  openReactionInfo()
-                                                }
-                                              >
-                                                <img
-                                                  src={smile}
-                                                  width={14}
-                                                  height={14}
-                                                  className="tw-mr-[2px]"
-                                                />
-                                                <img
-                                                  src={heart}
-                                                  width={14}
-                                                  height={14}
-                                                  className="tw-mr-[2px]"
-                                                />
-                                                <img
-                                                  src={angry}
-                                                  width={14}
-                                                  height={14}
-                                                  className="tw-mr-[2px]"
-                                                />
 
-                                                <span className="tw-text-[11px] tw-font-thin">
-                                                  6
-                                                </span>
+                                          {reactionList.length > 0 &&
+                                            reactionList.filter(
+                                              (reaction) =>
+                                                reaction.messageId ==
+                                                message.messageId
+                                            ).length > 0 && (
+                                              <div className="tw-w-full  -tw-mb-6 -tw-z-120 tw-py-3 tw-ml-3">
+                                                <div className="tw-max-w-[40vh]  tw-flex tw-justify-end">
+                                                  <div
+                                                    className="tw-bg-gray-400 tw-text-white tw-shadow-lg tw-justify-center tw-items-center tw-max-w-[40vh] tw-rounded-lg tw-px-2 py-1 tw-flex"
+                                                    onClick={() =>
+                                                      openReactionInfo(
+                                                        reactionList.filter(
+                                                          (reaction) =>
+                                                            reaction.messageId ==
+                                                            message.messageId
+                                                        )
+                                                      )
+                                                    }
+                                                  >
+                                                    {reactionList.filter(
+                                                      (reaction) =>
+                                                        reaction.messageId ==
+                                                        message.messageId
+                                                    ).length > 3
+                                                      ? reactionList
+                                                          .filter(
+                                                            (reaction) =>
+                                                              reaction.messageId ==
+                                                              message.messageId
+                                                          )
+                                                          .slice(0, 3)
+                                                          .map(
+                                                            (
+                                                              reaction,
+                                                              index
+                                                            ) => (
+                                                              <div>
+                                                                <img
+                                                                  src={convertType(
+                                                                    reaction.type
+                                                                  )}
+                                                                  width={14}
+                                                                  height={14}
+                                                                  className="tw-mr-[2px] "
+                                                                />
+                                                              </div>
+                                                            )
+                                                          )
+                                                      : reactionList
+                                                          .filter(
+                                                            (reaction) =>
+                                                              reaction.messageId ==
+                                                              message.messageId
+                                                          )
+                                                          .map(
+                                                            (
+                                                              reaction,
+                                                              index
+                                                            ) => (
+                                                              <div>
+                                                                <img
+                                                                  src={convertType(
+                                                                    reaction.type
+                                                                  )}
+                                                                  width={14}
+                                                                  height={14}
+                                                                  className="tw-mr-[2px] "
+                                                                />
+                                                              </div>
+                                                            )
+                                                          )}
+                                                    <span className="tw-text-[11px] tw-font-thin">
+                                                      {handleCountReactionOfMessage(
+                                                        message.messageId
+                                                      ).length > 0
+                                                        ? handleCountReactionOfMessage(
+                                                            message.messageId
+                                                          ).length
+                                                        : ""}
+                                                    </span>
+                                                  </div>
+                                                </div>
                                               </div>
-                                            </div>
-                                          </div>
+                                            )}
                                         </div>
                                       </div>
                                       {openReactionMenu &&
@@ -1589,7 +1807,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                         activeIndex !== null &&
                                         activeIndex == index && (
                                           <div
-                                            className={`tw-bg-slate-100 tw-py-1 tw-px-2 tw-rounded-lg tw-flex tw-shadow-lg ${
+                                            className={`tw-bg-slate-100 tw-py-1 tw-px-2 tw-rounded-lg tw-flex tw-shadow-lg  ${
                                               message.senderId != userInfo?.id
                                                 ? "tw-order-3 tw-mb-16 tw-z-100 -tw-ml-20 tw-relative"
                                                 : "-tw-mr-20 tw-mb-16 tw-z-50"
@@ -1597,55 +1815,85 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           >
                                             <img
                                               src={heart}
-                                              className="tw-mr-2"
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 1
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
                                                   "heart"
                                                 )
                                               }
+                                              width={28}
                                             />
                                             <img
                                               src={smile}
-                                              className="tw-mr-2"
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 2
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
                                                   "smile"
                                                 )
                                               }
+                                              width={28}
                                             />
                                             <img
                                               src={supprise}
-                                              className="tw-mr-2"
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 3
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
                                                   "supprise"
                                                 )
                                               }
+                                              width={28}
                                             />
                                             <img
                                               src={sad}
-                                              className="tw-mr-2"
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 4
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
                                                   "sad"
                                                 )
                                               }
+                                              width={28}
                                             />
                                             <img
                                               src={angry}
-                                              className="tw-mr-2"
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 5
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
                                                   "angry"
                                                 )
                                               }
+                                              width={28}
                                             />
                                             <img
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
+                                                isClickReaction == 6
+                                                  ? "tw-bg-slate-400"
+                                                  : ""
+                                              }`}
                                               src={like}
                                               onClick={() =>
                                                 handleReactionDetail(
@@ -1653,6 +1901,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   "like"
                                                 )
                                               }
+                                              width={28}
                                             />
                                           </div>
                                         )}
@@ -1937,6 +2186,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
               style={{ backgroundColor: "white", color: "#fffffff" }}
             />
           </div>
+        )}
+        {openReactionInfoModal && (
+          <ModalReactionInfo
+            showModalInfo={openReactionInfoModal}
+            handleCloseModal={handleCloseModalReactionInfo}
+            reactionInfo={reactionInfo}
+          />
         )}
         {showAudioRecorder && <CaptureAudio hide={setShowAudioRecorder} />}
       </div>

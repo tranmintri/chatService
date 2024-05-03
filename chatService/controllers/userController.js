@@ -133,6 +133,5 @@ const leaveGroupChat = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
-module.exports = {removeFriendFromList, /* other exports */};
 
 module.exports = {addUser,getUserByEmail,getAllUser,addFriendToList,getUserById,updateUserCon, removeFriendFromList,leaveGroupChat}

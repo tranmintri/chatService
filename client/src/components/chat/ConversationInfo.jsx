@@ -30,7 +30,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [showModalInfo, setShowModalInfo] = useState(false);
   const [menberCount, setMemberCount] = useState(0);
-  const [modalShow, setModalShow] = useState(false);
+
   const [showModalAddMember, setShowModalAddMember] = useState(false);
   const [showFormChangeRole, setShowFormChangeRole] = useState(false);
   const [showFormLeaveConversation, setShowLeaveConversation] = useState(false);
@@ -90,34 +90,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const onDeleteHistory = () => {
     window.alert("xoas ruif nef");
   };
-  const handleLeaveGroup = () => {
-    setModalShow(true);
-  };
 
-  const confirmLeaveGroup = () => {
-    onLeaveGroup();
-    setModalShow(false);
-  };
-  const onLeaveGroup = () => {
-    if (currentChat.managerId !== userInfo?.id) {
-      const postData = {
-        chatId: currentChat.chatId,
-        chatParticipants: currentChat.participants,
-        userId: userInfo.id,
-        user_Name: userInfo.display_name,
-        managerId: currentChat.managerId,
-      };
-
-      try {
-        socket.current.emit("leave-group", postData);
-        alert("You have left the group");
-      } catch (error) {
-        console.error("Error sending friend request:", error);
-      }
-    } else {
-      alert("you are owner");
-    }
-  };
   const [showMemberList, setShowMemberList] = useState(false);
 
   const toggleMemberList = () => {
@@ -449,7 +422,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                     </div>
                   </button>
                   {currentChat.managerId === userInfo?.id &&
-                    currentChat.participants.length > 2 ? (
+                  currentChat.participants.length > 2 ? (
                     <button
                       onClick={handleShowChangeRole}
                       className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"

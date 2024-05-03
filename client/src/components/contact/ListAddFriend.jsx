@@ -16,93 +16,46 @@ const ListAddFriend = () => {
     { userInfo, receivedInvitations, socket2, sentInvitations, friendList },
     dispatch,
   ] = useStateProvider();
-  // const [receivedList, setReceivedList] = useState([]);
-  // const [sentList, setSentList] = useState([]);
-  // console.log(sentInvitations, "sentInvitations");
-  // console.log(receivedInvitations, "receivedInvitations");
-  //chuan
-  // NHAN
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-  //       if (listReceiverRequest.data && listReceiverRequest.data.length > 0) {
-  //         console.log(listReceiverRequest.data, "nhan lai")
-  //         dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receive: listReceiverRequest.data })
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [userInfo?.id]);
-
-  // const fetchReceiverData = async () => {
-  //   try {
-  //     const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
-  //     if (listReceiverRequest.data) {
-  //       dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receive: listReceiverRequest.data ? listReceiverRequest.data : [] })
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
   const fetchReceiverData = async () => {
     try {
-      const listReceiverRequest = await axios.get(NOTI_API + "getListReceiverRequest/" + userInfo?.id);
+      const listReceiverRequest = await axios.get(
+        NOTI_API + "getListReceiverRequest/" + userInfo?.id
+      );
       if (listReceiverRequest.data) {
-        dispatch({ type: reducerCases.SET_RECEIVE_INVITATION, receive: listReceiverRequest.data ? listReceiverRequest.data : [] })
+        dispatch({
+          type: reducerCases.SET_RECEIVE_INVITATION,
+          receive: listReceiverRequest.data ? listReceiverRequest.data : [],
+        });
       }
     } catch (error) {
       console.error("Error fetching dataa:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchReceiverData();
   }, [userInfo?.id]);
-  //CHO
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
 
-  //       if (listSenderRequest.data && listSenderRequest.data.length > 0) {
-  //         console.log(listSenderRequest.data, "cho di")
-  //         dispatch({ type: reducerCases.SET_SENT_INVITATION, send: listSenderRequest.data })
-  //       }
-  //       setDataLoaded(true);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [userInfo?.id]);
-  // const fetchSenderData = async () => {
-  //   try {
-  //     const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
-  //     if (listSenderRequest.data) {
-  //       dispatch({ type: reducerCases.SET_SENT_INVITATION, send: listSenderRequest.data ? listSenderRequest.data : [] })
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
   const fetchSenderData = async () => {
     try {
-      const listSenderRequest = await axios.get(NOTI_API + "getListSenderRequest/" + userInfo?.id);
+      const listSenderRequest = await axios.get(
+        NOTI_API + "getListSenderRequest/" + userInfo?.id
+      );
       if (listSenderRequest.data) {
-        dispatch({ type: reducerCases.SET_SENT_INVITATION, send: listSenderRequest.data ? listSenderRequest.data : [] })
+        dispatch({
+          type: reducerCases.SET_SENT_INVITATION,
+          send: listSenderRequest.data ? listSenderRequest.data : [],
+        });
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchSenderData().then(() => setDataLoaded(true));
   }, [userInfo?.id]);
-  
+
   const handleAcceptInvite = async (invitation) => {
     const postData = {
       senderId: invitation.sender,
@@ -113,7 +66,7 @@ const ListAddFriend = () => {
     try {
       const response2 = await axios.post(GET_ALL_USER + userInfo?.id, postData);
       const response3 = await axios.post(NOTI_API + "delete", invitation);
-      if(response2 && response3) {
+      if (response2 && response3) {
         fetchReceiverData();
       }
       const newFr = {
@@ -135,7 +88,7 @@ const ListAddFriend = () => {
       const updatedReceivedInvitations = receivedInvitations?.filter(
         (invitation) => invitation.id !== invitation.sender
       );
-      console.log(updatedReceivedInvitations, "updatedReceivedInvitations")
+
       dispatch({
         type: reducerCases.SET_RECEIVE_INVITATION,
         receive: updatedReceivedInvitations ? updatedReceivedInvitations : [],
@@ -153,9 +106,9 @@ const ListAddFriend = () => {
     toast.success("Cancel successfully!");
     try {
       const response = await axios.post(NOTI_API + "cancel", postData);
-      console.log(response)
-      if(response) {
-      fetchSenderData();
+
+      if (response) {
+        fetchSenderData();
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -168,18 +121,16 @@ const ListAddFriend = () => {
     };
     try {
       const response = await axios.post(NOTI_API + "decline", postData);
-      console.log(response)
-      if(response){
-      fetchReceiverData();
-    }
+
+      if (response) {
+        fetchReceiverData();
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
     socket2.current.emit("rejectFriendRequest", invitation);
     toast.success("Reject successfully!");
-
   };
-
 
   return (
     <div className="px-3" style={{ backgroundColor: "white", height: "100vh" }}>

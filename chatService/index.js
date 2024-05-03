@@ -7,6 +7,7 @@ const messageRoutes = require('./routes/message-routes')
 const userRoutes = require('./routes/user-routes')
 const puppeteer = require('puppeteer');
 const userService = require('./service/userService')
+const reactionRoutes = require('./routes/reaction-router')
 const app = express();
 const http = require("http");
 const {Server} = require("socket.io");
@@ -38,6 +39,7 @@ app.use(bodyParser.json());
 app.use('/api', chatRoutes.routes);
 app.use('/api/chats', messageRoutes.routes);
 app.use('/api', userRoutes.routes);
+app.use('/api', reactionRoutes.routes);
 
 const server = app.listen(PORT, () => {
     console.log(`App is listening on ${PORT}`)
@@ -218,6 +220,25 @@ io.on("connection", (socket) => {
             }
         }
     });
+
+    socket.on("request-add-reaction-private",(data) =>{
+        const receiverSocket = onlineUsers.get(data.receiveId)
+        if(receiverSocket){
+            socket.to(receiverSocket).emit("response-add-reaction-private",data.reactionData)
+        }
+    })
+    socket.on("request-update-reaction-private",(data) =>{
+        const receiverSocket = onlineUsers.get(data.receiveId)
+        if(receiverSocket){
+            socket.to(receiverSocket).emit("response-update-reaction-private",data.reactionData)
+        }
+    })
+    socket.on("request-remove-reaction-private",(data) =>{
+        const receiverSocket = onlineUsers.get(data.receiveId)
+        if(receiverSocket){
+            socket.to(receiverSocket).emit("response-remove-reaction-private",data.reactionId)
+        }
+    })
 
     socket.on('join-to-chat-public', (roomId) => {
         socket.join(roomId);
