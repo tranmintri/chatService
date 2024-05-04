@@ -297,7 +297,7 @@ const Chat = () => {
         )
       ) : (
         <div className="col-9 tw-z-0">
-          <div className="">
+          <div className="tw-overflow-hidden">
             <EmptyChatScreen />
           </div>
         </div>

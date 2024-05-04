@@ -26,8 +26,10 @@
   border: none;
   /* Loại bỏ border */
 }
+
 .custom-modal1 {
-  background-color: rgba(0, 0, 0, 0.5); /* Chọn màu nền bạn muốn */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Chọn màu nền bạn muốn */
 }
 
 body {
@@ -224,14 +226,12 @@ html,
   overflow-y: auto;
   padding: 0 2rem;
   background: rgb(207, 207, 207);
-  background: linear-gradient(
-    45deg,
-    #a9b8bbff,
-    #c1c4c7ff,
-    #d4ccc9ff,
-    #d9d9d2ff,
-    #e8e9e4ff
-  );
+  background: linear-gradient(45deg,
+      #a9b8bbff,
+      #c1c4c7ff,
+      #d4ccc9ff,
+      #d9d9d2ff,
+      #e8e9e4ff);
 }
 
 .message {
