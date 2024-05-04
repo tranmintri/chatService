@@ -510,6 +510,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   };
 
   useEffect(() => {
+    setSendMessages("");
+  }, [currentChat]);
+
+  useEffect(() => {
     if (scrollToMessageId) {
       // Tìm index của message có messageId bằng với scrollToMessageId
       const index = findMessageIndexById(scrollToMessageId);

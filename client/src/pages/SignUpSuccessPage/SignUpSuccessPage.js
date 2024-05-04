@@ -29,10 +29,10 @@ const SignUpSuccessPage = () => {
                 to={Page.SIGN_IN_PAGE.path}
                 style={{ textDecoration: "none" }}
               >
-                TRỞ VỀ TRANG ĐĂNG NHẬP
+                RETURN TO LOGIN PAGE
               </Link>
             </button>
-            RETURN TO LOGIN PAGE
+
             <button
               className="tw-px-4 tw-py-2 tw-font-semibold tw-text-white tw-rounded-md tw-mt-5 tw-bg-gray-500"
               onClick={handleBtnResendVerifyEmailClick}
