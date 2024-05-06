@@ -89,7 +89,7 @@ const UserChat = () => {
               return chat.picture;
             };
             return (
-              <Stack
+              <div
                 key={index}
                 onClick={() => handleSelectChat(chat)}
                 direction="horizontal"
@@ -134,7 +134,7 @@ const UserChat = () => {
                     )
                   )}
                 </div>
-              </Stack>
+              </div>
             );
           }
         }

@@ -146,19 +146,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       handleSendMessage();
     }
   };
-  // useEffect(() => {
-  //   const handleOutSideClick = (event) => {
-  //     if (event.target.id !== "emoji-open") {
-  //       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-  //         // setShowEmojiPicker(false)
-  //       }
-  //     }
-  //   }
-  //   document.addEventListener("click", handleOutSideClick)
-  //   return () => {
-  //     document.removeEventListener("click", handleOutSideClick)
-  //   }
-  // }, [])
 
   const handleImageInputChange = (e) => {
     const files = Array.from(e.target.files);
@@ -692,6 +679,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
     fetchAllUsers();
   }, []);
+
+  useEffect(() => {
+    setSendMessages("");
+  }, [currentChat]);
 
   useEffect(() => {
     // Kiểm tra nếu đã có dữ liệu của cả hai

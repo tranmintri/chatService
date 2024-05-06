@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Modal, Button, Form, Dropdown, DropdownButton } from "react-bootstrap";
 import AddFriendCard from "../card/AddFriendCard";
 import { useStateProvider } from "../../../context/StateContext";
+import { GET_ALL_USER } from "../../../router/ApiRoutes";
+import axios from "axios";
 
 const AddFriendModal = ({
   showModal,
@@ -19,25 +21,29 @@ const AddFriendModal = ({
     setPhoneNumber(event.target.value);
   };
 
-  const handleSearch = () => {
-    const results = userList.filter(
-      (user) => user.phone === phoneNumber && user.id !== userInfo?.id
-    );
+  const handleSearch = async () => {
+    try {
+      const { data } = await axios.get(GET_ALL_USER);
+      const results = data.data.filter(
+        (user) => user.phone === phoneNumber && user.id !== userInfo?.id
+      );
 
-    if (results.length > 0) {
-      setSearchResults(results[0]);
-    } else {
-      setSearchResults(null);
+      if (results.length > 0) {
+        setSearchResults(results[0]);
+      } else {
+        setSearchResults(null);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
   const handleEnterPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
       e.preventDefault();
     }
-
-  }
+  };
 
   const handleModalClose = () => {
     setPhoneNumber("");

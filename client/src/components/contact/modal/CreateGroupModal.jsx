@@ -8,11 +8,11 @@ import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const CreateGroupModal = ({ showModal, handleCloseModal }) => {
-  const [{ userInfo, socket, groups }, dispatch] = useStateProvider();
+  const [{ userInfo, socket, groups, friendList }, dispatch] =
+    useStateProvider();
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [friendList, setFriendList] = useState([]);
   const filteredFriendList = friendList?.filter((friend) =>
     friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -24,19 +24,6 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
         : [...prevSelectedFriends, friendId];
     });
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(GET_ALL_USER + userInfo?.id);
-
-        setFriendList(data.data?.friends);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
