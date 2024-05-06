@@ -92,8 +92,8 @@ html,
   border-radius: 50%;
   background: rgb(0, 219, 0);
   position: absolute;
-  bottom: 19px;
-  left: 62px;
+  bottom: 35px;
+  left: 60px;
   z-index: 2;
   border: 2px solid white;
   padding: 7px;
@@ -106,8 +106,8 @@ html,
   border-radius: 50%;
   background: rgb(219, 0, 0);
   position: absolute;
-  bottom: 19px;
-  left: 62px;
+  bottom: 35px;
+  left: 60px;
   z-index: 2;
   border: 2px solid white;
   padding: 7px;
