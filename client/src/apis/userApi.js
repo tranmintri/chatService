@@ -2,7 +2,7 @@ import axios from "./axiosConfig";
 
 export const getUserInfo = async (uid) => {
   try {
-    return await axios.get(`/auth/users/${uid}`);
+    return await axios.get(`/users/${uid}`);
   } catch (error) {
     throw error;
   }
@@ -17,7 +17,7 @@ export const updateUserInfo = async ({
   password,
 }) => {
   try {
-    return await axios.put(`/auth/users`, {
+    return await axios.put(`/users`, {
       uid: id,
       display_name: displayName,
       username: username,
@@ -36,7 +36,7 @@ export const updateAvatar = async ({ id, avatar }) => {
     formData.append("uid", id);
     formData.append("avatar", avatar);
 
-    return await axios.putForm(`/auth/users/avatar`, formData);
+    return await axios.putForm(`/users/avatar`, formData);
   } catch (error) {
     throw error;
   }

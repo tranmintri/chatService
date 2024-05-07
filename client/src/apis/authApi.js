@@ -3,7 +3,7 @@ import axios from "./axiosConfig";
 
 export const checkUserExists = async (emailOrPhone) => {
   try {
-    return await axios.get("/auth/exists", {
+    return await axios.get("/exists", {
       params: {
         email_or_phone: emailOrPhone,
       },
@@ -15,7 +15,7 @@ export const checkUserExists = async (emailOrPhone) => {
 
 export const signUpWithGoogle = async (token, displayName) => {
   try {
-    return await axios.post("/auth/signup/google", {
+    return await axios.post("/signup/google", {
       token: token,
       display_name: displayName,
     });
@@ -26,7 +26,7 @@ export const signUpWithGoogle = async (token, displayName) => {
 
 export const signInWithGoogle = async (token) => {
   try {
-    return await axios.post("/auth/signin/google", {
+    return await axios.post("/signin/google", {
       token: token,
     });
   } catch (error) {
@@ -36,7 +36,7 @@ export const signInWithGoogle = async (token) => {
 
 export const signUp = async (displayName, email, username, password) => {
   try {
-    return await axios.post("/auth/signup", {
+    return await axios.post("/signup", {
       display_name: displayName,
       email: email,
       username: username,
@@ -49,7 +49,7 @@ export const signUp = async (displayName, email, username, password) => {
 
 export const signIn = async (username, password) => {
   try {
-    return await axios.post("/auth/signin", {
+    return await axios.post("/signin", {
       username: username,
       password: password,
     });
@@ -60,7 +60,7 @@ export const signIn = async (username, password) => {
 
 export const logout = async (tokenId) => {
   try {
-    return await axios.post("/auth/logout", {
+    return await axios.post("/logout", {
       token_id: tokenId,
     });
   } catch (error) {
@@ -68,10 +68,9 @@ export const logout = async (tokenId) => {
   }
 };
 
-
 export const sendVerifyEmail = async (email) => {
   try {
-    return await axios.post("/auth/verify/email/send", {
+    return await axios.post("/verify/email/send", {
       email: email,
     });
   } catch (error) {
@@ -81,7 +80,7 @@ export const sendVerifyEmail = async (email) => {
 
 export const changePassword = async ({ uid, currentPassword, newPassword }) => {
   try {
-    return await axios.put(`/auth/change-password`, {
+    return await axios.put(`/change-password`, {
       uid: uid,
       current_password: currentPassword,
       new_password: newPassword,
