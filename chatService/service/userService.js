@@ -8,7 +8,7 @@ const {save: saveInChat} = require("./chatService")
 
 const kafka = new Kafka({
     clientId: 'user-consumer',
-    brokers: ['localhost:9092'],
+    brokers: ['kafka.ntt1102.xyz:9092'],
 });
 
 const consumer = kafka.consumer({groupId: 'user-group'});
