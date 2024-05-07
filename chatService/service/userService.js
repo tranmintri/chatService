@@ -109,7 +109,7 @@ const getUserData = async (collectionName, fieldName, value) => {
     }
 }
 const save = async (data) => {
-
+    console.log("save")
     // Kiểm tra xem data có dữ liệu không
 
     if (!data) {
@@ -140,7 +140,9 @@ const updateUser = async (data) => {
     if (!data) {
         throw new Error('User data is empty.');
     }
-
+    const oldUser = await db.collection('Users').doc(data.id).get();
+    const oldPicture = oldUser.data().profilePicture
+    const oldName = oldUser.data().display_name
     // Cập nhật thông tin người dùng trong Firestore
     await db.collection('Users').doc(data.id).update({
         email: data.email,
@@ -149,14 +151,76 @@ const updateUser = async (data) => {
         profilePicture: data.avatar,
         username: data.username,
         phone: data.phone,
-
-
         // Bạn có thể cập nhật các trường khác tương tự như username, friends, ...
     });
 
-    return 'User updated successfully';
-};
+    const userADoc = await db.collection('Users').doc(data.id).get();
+    const friendsList = userADoc.data().friends;
 
+    // Lặp qua danh sách friends và cập nhật profilePicture cho user A trong danh sách friends của mỗi user
+    for (const friend of friendsList) {
+        const friendDocRef = db.collection('Users').doc(friend.id);
+        const friendDoc = await friendDocRef.get();
+        const friendFriendsList = friendDoc.data().friends;
+
+        // Tìm user A trong danh sách friends của user B
+        const userAIndex = friendFriendsList.findIndex(f => f.id === data.id);
+        if (userAIndex !== -1) {
+            const updatedFriend = { ...friendFriendsList[userAIndex] };
+            updatedFriend.profilePicture = data.avatar;
+            updatedFriend.displayName = data.display_name;
+
+            // Cập nhật user A trong danh sách friends của user B
+            friendFriendsList[userAIndex] = updatedFriend;
+            await friendDocRef.update({ friends: friendFriendsList });
+        }
+    }
+
+
+    try {
+        // Tìm các cuộc trò chuyện mà người dùng tham gia
+        const snapshot = await db.collection('Chats')
+            .where('participants', 'array-contains', data.id)
+            .get();
+
+        const batch = db.batch(); // Khởi tạo batch write để cập nhật nhiều tài liệu cùng một lúc
+
+        snapshot.forEach(async (doc) => {
+            // Lấy dữ liệu của cuộc trò chuyện và thêm vào mảng chats
+            const chatData = doc.data();
+
+            if (chatData.type === "private") {
+                const pictures = chatData.picture.split("|");
+                const pictureURL = pictures[0] === oldPicture ? `${data.avatar}|${pictures[1]}` : `${pictures[0]}|${data.avatar}`;
+
+                const display_name = chatData.name.split("/");
+                const newName = display_name[0] === oldName ? `${data.display_name}/${display_name[1]}` : `${display_name[0]}/${data.display_name}`;
+
+                // Cập nhật các thông tin cần thiết cho cuộc trò chuyện
+                chatData.picture = pictureURL;
+                chatData.name = newName;
+            }
+            chatData.messages.forEach(message => {
+                if (message.senderId === data.id) {
+                    message.senderName = data.display_name;
+                    message.senderPicture = data.avatar;
+                }
+            });
+            // Thêm tài liệu cần cập nhật vào batch write
+            const chatRef = db.collection('Chats').doc(doc.id);
+            batch.update(chatRef, chatData);
+        });
+
+        // Thực hiện batch write để cập nhật tất cả các tài liệu cùng một lúc
+        await batch.commit();
+
+    } catch (error) {
+        throw new Error('Error updating private chats:', error);
+    }
+
+
+    return 'Profile picture updated successfully';
+};
 
 const findByEmail = async (email) => {
     const userData = await getUserData('Users', 'email', email);
