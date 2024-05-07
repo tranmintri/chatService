@@ -680,9 +680,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     fetchAllUsers();
   }, []);
 
-  useEffect(() => {
-    setSendMessages("");
-  }, [currentChat]);
+  // useEffect(() => {
+  //   setSendMessages("");
+  // }, [currentChat]);
 
   useEffect(() => {
     // Kiểm tra nếu đã có dữ liệu của cả hai
