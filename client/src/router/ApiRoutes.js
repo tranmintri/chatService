@@ -1,6 +1,6 @@
-export const HOST = "http://localhost:8082";
-export const HOST2 = "http://localhost:8081";
-export const CLIENT_HOST = "http://localhost:3000";
+export const HOST = "https://chat.ntt1102.xyz";
+export const HOST2 = "https://notification.ntt1102.xyz";
+export const CLIENT_HOST = "https://drafi-web.vercel.app";
 // export const HOST = "https://drafichatweb.onrender.com";
 
 export const CHECK_USER_ROUTE = `${HOST}/api/users/email`;
