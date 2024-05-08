@@ -215,7 +215,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               <span className="tw-font-bold tw-text-[18px]">
                 Photos / Videos{" "}
               </span>
-              <div className="tw-flex tw-flex-wrap tw-pr-7 tw-min-h-[30vh] tw-max-h-[30vh] tw-overflow-auto custom-scrollbar">
+              <div className="tw-flex tw-flex-wrap tw-pr-7 tw-min-h-[25vh] tw-max-h-[25vh] tw-overflow-auto custom-scrollbar">
                 {splitImage().map((image, index) => (
                   <div
                     key={index}
