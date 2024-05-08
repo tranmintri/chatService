@@ -10,7 +10,7 @@ import {
   CLIENT_HOST,
   GET_CHAT_BY_PARTICIPANTS,
 } from "../router/ApiRoutes";
-import { MdCancel } from "react-icons/md";
+
 import { FaPhone } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import axios from "axios";
@@ -22,7 +22,19 @@ const Chat = () => {
   const [showInfo, setShowInfo] = useState(false);
 
   const [
-    { userInfo, currentChat, socket, incomingVoiceCall, callAccepted, search, searchValue, messages, searchStartDate, searchEndDate, filterName },
+    {
+      userInfo,
+      currentChat,
+      socket,
+      incomingVoiceCall,
+      callAccepted,
+      search,
+      searchValue,
+      messages,
+      searchStartDate,
+      searchEndDate,
+      filterName,
+    },
     dispatch,
   ] = useStateProvider();
   const [chats, setChats] = useState([]);
@@ -261,7 +273,13 @@ const Chat = () => {
         )}
         {search && (
           <Stack className="tw-overflow-auto custom-scrollbar tw-max-h-[82.5vh] tw-z-30 tw-mt-32">
-            <MessageResultCard searchValue={searchValue} messages={messages} searchStartDate={searchStartDate} searchEndDate={searchEndDate} filterName={filterName} />
+            <MessageResultCard
+              searchValue={searchValue}
+              messages={messages}
+              searchStartDate={searchStartDate}
+              searchEndDate={searchEndDate}
+              filterName={filterName}
+            />
           </Stack>
         )}
       </div>

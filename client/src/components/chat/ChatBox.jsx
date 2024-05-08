@@ -7,7 +7,7 @@ import {
   AudioOutlined,
   DownOutlined,
 } from "@ant-design/icons";
-import ReactPlayer from "react-player";
+
 import { IoIosSend } from "react-icons/io";
 import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
