@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { AudioPlayer } from "react-audio-play";
-import ReactPlayer from "react-player";
 
 const RecordCard = ({ message }) => {
   return (
