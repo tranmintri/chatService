@@ -127,8 +127,9 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
         }
       });
     }
+    const urlSplit = url.split("|").filter((url) => url.startsWith("https://"));
 
-    return url.split("|");
+    return urlSplit;
   };
   // tw-max-h-[32.5vh]
 
@@ -214,7 +215,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
               <span className="tw-font-bold tw-text-[18px]">
                 Photos / Videos{" "}
               </span>
-              <div className="tw-flex tw-flex-wrap tw-mx-auto">
+              <div className="tw-flex tw-flex-wrap tw-pr-7 tw-min-h-[30vh] tw-max-h-[30vh] tw-overflow-auto custom-scrollbar">
                 {splitImage().map((image, index) => (
                   <div
                     key={index}
@@ -229,19 +230,10 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                   </div>
                 ))}
               </div>
-              {images.length > 6 && (
-                <button
-                  onClick={toggleShowAllImage}
-                  className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                  style={{ backgroundColor: "#eaedf0" }}
-                >
-                  {showAllImage ? "Collapse" : "Show all"}
-                </button>
-              )}
             </div>
-            <div className="mb-2 tw-border-b tw-ml-2">
-              <span className="tw-font-bold tw-text-[18px]">Files</span>
-              <ul className="tw-block tw-p-0 tw-overflow-auto tw-max-h-60 custom-scrollbar">
+            <div className="mb-2 tw-border-b">
+              <span className="tw-font-bold tw-text-[18px] tw-ml-2">Files</span>
+              <ul className="tw-block tw-min-h-[30vh] tw-max-h-[30vh] tw-overflow-auto custom-scrollbar tw-pr-7">
                 {splitFile().map((content, index) => {
                   const lastSlashIndex = content.split("?");
                   const filenameWithExtension = lastSlashIndex[0];
@@ -353,58 +345,18 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                   );
                 })}
               </ul>
-              {files.length > 3 && (
-                <button
-                  onClick={toggleShowAllFile}
-                  className="tw-font-bold tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                  style={{ backgroundColor: "#eaedf0" }}
-                >
-                  {showAllFile ? "Collapse" : "Show all"}
-                </button>
-              )}
             </div>
-            <div className="mb-2 tw-border-b tw-ml-2">
-              <span className="tw-font-bold tw-text-[18px]">Links</span>
-              <ul className="tw-p-0 tw-overflow-auto tw-max-h-32 custom-scrollbar">
-                {limitedLinks.map((link, index) => (
-                  <li key={index} className="tw-my-3 hover:tw-bg-gray-200">
-                    <p className="tw-font-bold tw-text-[13px] tw-mb-0">
-                      {link.title}
-                    </p>
-                    <a
-                      href={link.url}
-                      className="text-blue-500"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none" }}
-                    >
-                      {link.url}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              {links.length > 3 && (
-                <button
-                  onClick={toggleShowAllLink}
-                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 tw-text-black underline tw-px-32 tw-py-2"
-                  style={{ backgroundColor: "#eaedf0" }}
-                >
-                  {showAllLink ? "Collapse" : "Show all"}
-                </button>
-              )}
-            </div>
+
             <div className="mb-2 tw-ml-2 ">
-              <span className="tw-font-bold tw-text-[18px]">
-                Privacy Setting
-              </span>
               {currentChat.type == "private" && (
                 <button
                   onClick={onDeleteHistory}
                   className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                  style={{ height: "40px", color: "red" }}
+                  style={{ height: "40px", color: "#b2b2b2" }}
+                  disabled={true}
                 >
                   <div className="tw-flex  align-items-center">
-                    <FaRegTrashCan size={20} color="red" />
+                    <FaRegTrashCan size={20} color="#b2b2b2" />
                     <span className="tw-pl-5">Delete History</span>
                   </div>
                 </button>
@@ -414,10 +366,11 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                   <button
                     onClick={onDeleteHistory}
                     className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                    style={{ height: "40px", color: "red" }}
+                    style={{ height: "40px", color: "#b2b2b2" }}
+                    disabled={true}
                   >
                     <div className="tw-flex align-items-center">
-                      <FaRegTrashCan size={20} color="red" />
+                      <FaRegTrashCan size={20} color="#b2b2b2" />
                       <span className="tw-pl-5">Delete History</span>
                     </div>
                   </button>
@@ -426,7 +379,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                     <button
                       onClick={handleShowChangeRole}
                       className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                      style={{ height: "40px", color: "red" }}
+                      style={{ height: "40px", color: "#b2b2b2" }}
                     >
                       <div className="tw-flex align-items-center">
                         <MdLogout size={20} color="red" />

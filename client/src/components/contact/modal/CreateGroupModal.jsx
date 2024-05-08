@@ -157,7 +157,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
         <Button
           variant="primary"
           onClick={handleCreateGroupChat}
-          disabled={selectedFriends.length <= 0 || selectedFriends.length > 20}
+          disabled={selectedFriends.length <= 0 || selectedFriends.length > 19}
         >
           Create
         </Button>

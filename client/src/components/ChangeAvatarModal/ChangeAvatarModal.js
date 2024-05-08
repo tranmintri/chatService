@@ -19,8 +19,8 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
     mutationFn: (data) => updateAvatar(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.GET_USER_INFO] });
-      toast.info("Cập nhật hình đại điện thành công");
       setOpen(false);
+      toast.info("Cập nhật hình đại điện thành công");
     },
     onError: (error) => {
       console.error(error);

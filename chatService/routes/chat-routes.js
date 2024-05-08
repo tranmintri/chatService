@@ -1,6 +1,6 @@
 const express = require('express');
 const {addChats,getAllChats,getChatById,addUserInChat,
-    deleteChatById,getChatsByParticipantId,findChatsByParticipants,UpdateRole
+    deleteChatById,getChatsByParticipantId,findChatsByParticipants,UpdateRole,updateChatInfo
 
       } = require('../controllers/chatController');
 
@@ -16,6 +16,7 @@ router.get('/chats/participants/:participantId', getChatsByParticipantId);
 router.post('/chats/participants/', findChatsByParticipants);
 // //update chat
 router.put('/chats/:chatId', addUserInChat);
+router.put('/chats/:chatId/update-chat-info', updateChatInfo);
 // //delete chat
 router.delete('/chats/:chatId', deleteChatById);
 router.put('/chats/:chatId/update-role/:userId', UpdateRole);

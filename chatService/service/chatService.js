@@ -104,6 +104,14 @@ const updateRoleInChat = async (chatId,userId) => {
             managerId: userId
         });
 };
+const updateChat_Info = async (chatId,name,url) => {
+    await db.collection('Chats')
+        .doc(chatId)
+        .update({
+            name: name,
+            picture:url
+        });
+};
 
 
 const getChatsByOneParticipantID = async (participantId) => {
@@ -152,4 +160,4 @@ const getChatsByParticipants = async (participants) => {
         throw new Error('Error getting chats by participants:', error);
     }
 };
-module.exports = {save,findAll,findById,addParticipant,deleteById,getChatData,getChatsByOneParticipantID,getChatsByParticipants,updateRoleInChat}
+module.exports = {save,findAll,updateChat_Info,findById,addParticipant,deleteById,getChatData,getChatsByOneParticipantID,getChatsByParticipants,updateRoleInChat}

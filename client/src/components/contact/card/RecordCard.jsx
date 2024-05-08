@@ -1,12 +1,17 @@
 import React, { useEffect, useRef } from "react";
+import { AudioPlayer } from "react-audio-play";
+import ReactPlayer from "react-player";
 
 const RecordCard = ({ message }) => {
   return (
-    <div>
-      <audio controls volume={3.0}>
-        <source src={message.content} type="audio/mp3" />
-        Your browser does not support the audio element.
-      </audio>
+    <div className="tw-mt-2">
+      <AudioPlayer
+        src={message.content}
+        color="#cfcfcf"
+        sliderColor="#47484b"
+        backgroundColor="#757575"
+        style={{ borderRadius: "15px", padding: "30px" }}
+      />
     </div>
   );
 };
