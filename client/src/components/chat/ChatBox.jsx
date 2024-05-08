@@ -1194,7 +1194,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                   {message.status == "removed" &&
                                   message.senderId == userInfo?.id ? (
                                     <div
-                                      className={`tw-rounded-lg tw-italic  tw-p-3 ${
+                                      className={`tw-rounded-lg tw-italic  tw-px-3 ${
                                         message.senderId == userInfo?.id
                                           ? "tw-bg-[#e5efff] align-self-end"
                                           : "tw-bg-black tw-text-white align-self-start tw-text-"
@@ -1215,16 +1215,30 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                     </div>
                                   ) : (
                                     <div className="tw-flex tw-justify-center tw-items-center ">
+                                      {message.senderId != userInfo?.id && (
+                                        <img
+                                          src={message.senderPicture}
+                                          alt="avt"
+                                          title={message.senderName}
+                                          className="tw-rounded-full tw-mr-2 tw-justify-start"
+                                          width={35}
+                                          height={35}
+                                        />
+                                      )}
                                       <div
                                         className={`tw-flex ${
                                           message.senderId == userInfo?.id
                                             ? " tw-justify-end tw-bg-blue-100 tw-order-2"
-                                            : "tw-justify-start tw-bg-black tw-text-white tw-order-1"
-                                        } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg`}
+                                            : "tw-justify-start tw-bg-white tw-text-black  tw-order-1"
+                                        } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg tw-py-2`}
                                       >
                                         <div className="tw-break-words tw-max-w-[40vh]">
                                           <div
-                                            className="tw-right-1 tw-text-start tw-italic"
+                                            className={`tw-right-1 tw-font-bold tw-text-gray-500 ${
+                                              message.senderId == userInfo?.id
+                                                ? "tw-text-end"
+                                                : "tw-text-start"
+                                            }`}
                                             style={{ fontSize: "13px" }}
                                           >
                                             {message.type.includes("share") ? (
@@ -1243,6 +1257,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                 </div>
                                                 <div></div>
                                               </div>
+                                            ) : message.senderId ==
+                                              userInfo?.id ? (
+                                              ""
                                             ) : (
                                               message.senderName
                                             )}
