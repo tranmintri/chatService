@@ -140,10 +140,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && e.shiftKey) {
       // Nếu nhấn Shift + Enter, thêm ký tự xuống dòng vào tin nhắn
-      setSendMessages(sendMessages);
+      setSendMessages(sendMessages + "\n");
     } else if (e.key === "Enter") {
       // Nếu chỉ nhấn Enter, gửi tin nhắn và reset tin nhắn
-      handleSendMessage();
+      e.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+      const trimmedValue = sendMessages.replace(/\n/g, ""); // Xóa ký tự xuống dòng
+      handleSendMessage(trimmedValue);
+      setSendMessages("");
     }
   };
 
@@ -243,12 +246,20 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         selectedImages.length == 0
       ) {
         type = "reply";
-
         messageId = replyMessage.messageId;
       }
-
+      console.log(sendMessages.length);
       try {
-        if (sendMessages.trim() && !sendMessages.trim().includes(" ")) {
+        console.log(type);
+        if (
+          (sendMessages.length > 0 &&
+            sendMessages.trim().length > 0 &&
+            type == "text") ||
+          type == "files" ||
+          type == "reply" ||
+          type == "image"
+        ) {
+          console.log(type);
           content += sendMessages;
           console.log(content);
           const { data } = await axios.put(
@@ -315,9 +326,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           setShowReplyTooltip(false); // Ẩn tooltip
           setSelectedFiles([]);
           setSelectedImages([]);
-          setSendMessages("");
+          setSendMessages([]);
         } else {
-          setSendMessages("");
+          console.log("else");
+          setSendMessages([]);
         }
       } catch (error) {
         console.log(error);
@@ -680,9 +692,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     fetchAllUsers();
   }, []);
 
-  // useEffect(() => {
-  //   setSendMessages("");
-  // }, [currentChat]);
+  useEffect(() => {
+    setSendMessages([]);
+  }, [currentChat]);
 
   useEffect(() => {
     // Kiểm tra nếu đã có dữ liệu của cả hai
@@ -1383,9 +1395,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                   }`}
                                                                   style={{
                                                                     width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
+                                                                      "200px",
                                                                   }}
                                                                 />
                                                               )}
@@ -2044,9 +2054,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       <div className="chat-input">
         <div className="w-100 items-center">
           <SmileOutlined
-            className="chat-input-icon px-2 tw-text-2xl"
+            className="chat-input-icon tw-px-2 "
             title="Send Emoji"
-            size="2em"
             id="emoji-open"
             onClick={handleEmojiModal}
           />
@@ -2069,7 +2078,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <label htmlFor="image-input">
             <FileImageOutlined
-              className="chat-input-icon px-2 tw-text-2xl"
+              className="chat-input-icon tw-px-2 tw-text-2xl"
               title="Send Image"
             />
           </label>
@@ -2083,13 +2092,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           />
           <label htmlFor="file-input">
             <LinkOutlined
-              className="chat-input-icon px-2 tw-text-2xl"
+              className="chat-input-icon tw-px-2 tw-text-2xl"
               title="Attach File"
             />
           </label>
           <label>
             <AudioOutlined
-              className="chat-input-icon px-2 tw-text-2xl"
+              className="chat-input-icon tw-px-2 tw-text-2xl"
               title="Attach File"
               onClick={() => setShowAudioRecorder(true)}
             />

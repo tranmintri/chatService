@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BsThreeDots } from "react-icons/bs";
-import { CHAT_API, GET_ALL_USER } from "../../../router/ApiRoutes";
+import { CHAT_API, GET_ALL_USER, NOTI_API } from "../../../router/ApiRoutes";
 import axios from "axios";
 import { useStateProvider } from "../../../context/StateContext";
 import { HiMiniKey } from "react-icons/hi2";
 import { reducerCases } from "../../../context/constants";
+import { toast } from "react-toastify";
 
 const ModalGroupMembers = ({
   showModalMembers,
@@ -14,20 +15,22 @@ const ModalGroupMembers = ({
 }) => {
   const [showOptions, setShowOptions] = useState({});
   const [selectedOptionPosition, setSelectedOptionPosition] = useState({});
-  const [{ userInfo, groups, currentChat, socket }, dispatch] =
-    useStateProvider();
-  const [friendList, setFriendList] = useState([]);
+  const [
+    { userInfo, groups, currentChat, socket, friendList, socket2 },
+    dispatch,
+  ] = useStateProvider();
+  const [user, setUser] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [currentMember, setCurrentMember] = useState(null);
-  const filteredFriendList = friendList.filter((friend) => {
-    return members.some((id) => id === friend.id);
+  const filteredParticipants = user.filter((user) => {
+    return members.some((id) => id === user.id);
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(GET_ALL_USER);
-        setFriendList(data.data);
+        setUser(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -113,6 +116,46 @@ const ModalGroupMembers = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const handleAddFriend = async (index, member) => {
+    const postData = {
+      isAccepted: false,
+      receiver: member.id,
+      sender: userInfo?.id,
+      profilePicture: userInfo?.avatar,
+      senderName: userInfo?.display_name,
+      receiverName: member.display_name,
+      requestId: null,
+    };
+    try {
+      const response = await axios.post(NOTI_API + "add", postData);
+      if (response) {
+        toast.success("Friend added successfully!");
+        toggleModalMembers();
+      }
+      socket2.current.emit("sendFriendRequest", postData);
+      if (postData.sender === userInfo?.id) {
+        dispatch({
+          type: reducerCases.ADD_INVITATION,
+          newSend: postData,
+        });
+      } else {
+        dispatch({
+          type: reducerCases.ADD_RECEIVE_INVITATION,
+          newReceive: postData,
+        });
+      }
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+    }
+  };
+  const checkIsFriend = (member) => {
+    if (member.id == userInfo.id) return true;
+    if (member && friendList) {
+      const isFriend = friendList.some((friend) => friend.id === member.id);
+      return isFriend;
+    }
+    return false;
+  };
 
   // const calculateOptionPosition = (buttonRect, parentRect) => {
   //     const top = buttonRect.top - parentRect.top + buttonRect.height + 50;
@@ -127,32 +170,63 @@ const ModalGroupMembers = ({
       </Modal.Header>
       <Modal.Body>
         <ul>
-          {filteredFriendList.map((member, index) => {
+          {filteredParticipants.map((member, index) => {
             const isOptionVisible = showOptions[index];
             return (
               <li
                 key={index}
-                className="tw-flex tw-justify-between align-items-center tw-my-2 tw-border-b-2 tw-border-gray-200 tw-px-2 tw-py-3"
+                className="tw-w-full tw-flex tw-justify-start align-items-center tw-my-2 tw-border-b-2 tw-border-gray-200 tw-px-2 tw-py-3"
               >
-                <div className="tw-flex items-center">
-                  <img
-                    src={member.profilePicture}
-                    alt={member.profilePicture}
-                    className="tw-w-8 tw-h-8 tw-rounded-full tw-mr-6"
-                  />
-                  <span className="tw-mr-6">{member.display_name}</span>
-                  {member.id === currentChat.managerId && (
-                    <HiMiniKey className="tw-text-yellow-400 " />
-                  )}
-                </div>
-                {member.id !== currentChat.managerId &&
-                  userInfo.id === currentChat.managerId && (
-                    <div onClick={() => handleShowOptions(index)}>
-                      <button className="tw-cursor-pointer tw-bg-white">
-                        <BsThreeDots />
-                      </button>
+                <div className="tw-w-full tw-flex tw-justify-center">
+                  <div className="tw-flex items-center tw-justify-start tw-w-5/12">
+                    <img
+                      src={member.profilePicture}
+                      alt={member.profilePicture}
+                      className="tw-w-8 tw-h-8 tw-rounded-full tw-mr-6"
+                    />
+                    <span className="tw-mr-6">{member.display_name}</span>
+                    {member.id === currentChat.managerId && (
+                      <HiMiniKey className="tw-text-yellow-400 " />
+                    )}
+                  </div>
+
+                  {member.id !== currentChat.managerId &&
+                  userInfo.id === currentChat.managerId ? (
+                    <div className="tw-w-7/12 tw-flex tw-justify-end tw-items-center">
+                      {!checkIsFriend(member) && (
+                        <div
+                          className=" tw-mr-3 "
+                          onClick={() => handleAddFriend(index, member)}
+                        >
+                          <button className="tw-cursor-pointer tw-bg-blue-200 tw-py-1 tw-px-2 tw-rounded-lg hover:tw-bg-blue-300">
+                            Add Friend
+                          </button>
+                        </div>
+                      )}
+                      <div onClick={() => handleShowOptions(index)}>
+                        <button className="tw-cursor-pointer tw-bg-white">
+                          <BsThreeDots />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="tw-w-7/12 tw-flex tw-justify-end tw-items-center">
+                      {!checkIsFriend(member) && (
+                        <div
+                          className=" tw-mr-7 "
+                          onClick={() => handleAddFriend(index, member)}
+                        >
+                          <button className="tw-cursor-pointer tw-bg-blue-200 tw-py-1 tw-px-2 tw-rounded-lg hover:tw-bg-blue-300">
+                            Add Friend
+                          </button>
+                        </div>
+                      )}
+                      <div onClick={() => handleShowOptions(index)}>
+                        <button className="tw-cursor-pointer tw-bg-white"></button>
+                      </div>
                     </div>
                   )}
+                </div>
 
                 {isOptionVisible && (
                   <div

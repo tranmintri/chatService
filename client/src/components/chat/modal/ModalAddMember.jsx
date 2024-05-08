@@ -136,6 +136,11 @@ const ModalAddMember = ({ showModalAddMember, handleCloseModalAddMember }) => {
               onChange={handleSearchTermChange}
             />
           </Form.Group>
+          <span>
+            <p className="tw-text-[12px]">
+              Note: The maximum number of group members is 20 people
+            </p>
+          </span>
           <div
             style={{
               maxHeight: "350px",
