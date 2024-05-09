@@ -114,7 +114,12 @@ const UserChat = () => {
                     ) : lastMessage.type == "record" ? (
                       `Friend sent a record for you`
                     ) : (
-                      <div className="text">{lastMessage.content}</div>
+                      <div className="tw-text-slate-400 tw-text-sm">
+                        {lastMessage.senderId === userInfo?.id
+                          ? "You : "
+                          : "Friend :"}
+                        {lastMessage.content}
+                      </div>
                     )}
                   </div>
                 </div>
