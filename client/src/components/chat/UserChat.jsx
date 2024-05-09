@@ -116,8 +116,8 @@ const UserChat = () => {
                     ) : (
                       <div className="tw-text-slate-400 tw-text-sm">
                         {lastMessage.senderId === userInfo?.id
-                          ? "You : "
-                          : "Friend :"}
+                          ? "You: "
+                          : "Friend: "}
                         {lastMessage.content}
                       </div>
                     )}
