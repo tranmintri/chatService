@@ -60,9 +60,9 @@ export const signIn = async (username, password) => {
 
 export const logout = async (tokenId) => {
   try {
-    return await axios.post("/logout", {
-      token_id: tokenId,
-    });
+    // return await axios.post("/logout", {
+    //   token_id: tokenId,
+    // });
   } catch (error) {
     throw error;
   }
