@@ -38,40 +38,17 @@ const AddFriendCard = ({
     fetchData();
   }, [userInfo?.id]);
 
-  // const handleAddFriend = async () => {
-  //   if (!searchResults) return;
-  //   const postData = {
-  //     isAccepted: false,
-  //     receiver: searchResults.id,
-  //     sender: userInfo?.id,
-  //     profilePicture: userInfo?.avatar,
-  //     senderName: userInfo?.display_name,
-  //     receiverName: searchResults.display_name,
-  //     requestId: null,
-  //   };
-  //   try {
-  //     const response = await axios.post(NOTI_API + "add", postData);
-  //     if (response) {
-  //       handleCloseModal();
-  //     }
-  //     socket2.current.emit("sendFriendRequest", postData);
-  //     if (postData.sender === userInfo?.id) {
-  //       dispatch({
-  //         type: reducerCases.ADD_INVITATION,
-  //         newSend: postData,
-  //       });
-  //     } else {
-  //       dispatch({
-  //         type: reducerCases.ADD_RECEIVE_INVITATION,
-  //         newReceive: postData,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error sending friend request:", error);
-  //   }
-  // };
   const [loading, setLoading] = useState(false);
 
+  const checkExistingInvitation = (postData) => {
+    // gom
+    const existingInvitation = [...sentInvitations, ...receivedInvitations].find(invitation => 
+      (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
+      (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+    );
+  
+    return existingInvitation;
+  };
   const handleAddFriend = async () => {
     if (!searchResults || loading) return;
   
@@ -86,18 +63,10 @@ const AddFriendCard = ({
       receiverName: searchResults.display_name,
       requestId: null,
     };
-    const existingSentInvitation = sentInvitations.find(invitation => 
-      invitation.sender === postData.sender && 
-      invitation.receiver === postData.receiver
-    );
   
-    const existingReceivedInvitation = receivedInvitations.find(invitation => 
-      invitation.sender === postData.sender && 
-      invitation.receiver === postData.receiver
-    );
-  
-    if (existingSentInvitation || existingReceivedInvitation) {
+    if (checkExistingInvitation(postData)) {
       console.error("Invitation already exists.");
+      toast.error("Invitation already exists.");
       setLoading(false);
       return;
     }
