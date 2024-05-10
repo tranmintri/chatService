@@ -277,22 +277,21 @@ const SideBar = () => {
                         alt="User Avatar"
                         className="tw-w-24 tw-h-24 tw-rounded-full tw-border tw-border-gray-500"
                       />
-                      <Button className="tw-absolute tw-bottom-0 tw-left-16 tw-w-8 tw-h-8 tw-rounded-full tw-bg-gray-300 tw-text-gray-500 tw-flex tw-items-center tw-justify-center tw-border-2 tw-border-white">
-                        <FontAwesomeIcon
-                          icon={faCamera}
-                          style={{ fontSize: "20px" }}
-                        />
-                      </Button>
                     </div>
-                    <div className="tw-ml-5 mt-2 tw-font-bold tw-text-xl">
-                      {userInfo?.display_name}
+                    <div className="tw-ml-5 mt-2 tw-text-xl">
+                      <div className=" tw-font-bold tw-mt-4">
+                        {userInfo?.display_name}
+                      </div>
+                      <div className="tw-text-sm tw-text-blue-500 tw-italic">
+                        @{userInfo?.username}
+                      </div>
                     </div>
                   </div>
                   <div>
-                    <div className="tw-pl-5 tw-font-bold">
+                    <div className="tw-pl-5 tw-font-bold tw-mt-2">
                       Personal Infomation
                     </div>
-                    <div className="tw-ml-5">
+                    <div className="tw-ml-5 tw-mt-1">
                       <div className="tw-flex tw-w-3/5 pt-2">
                         <div className="tw-flex-1 tw-text-gray-400">Email</div>
                         <div className="tw-flex-1">
@@ -302,9 +301,9 @@ const SideBar = () => {
                         </div>
                       </div>
 
-                      <div className="tw-flex tw-w-3/5 pt-2">
+                      <div className="tw-flex tw-w-3/5 pt-2 tw-pb-16">
                         <div className="tw-flex-1 tw-text-gray-400">
-                          Điện thoại
+                          Phone Number :
                         </div>
                         <div className="tw-flex-1">
                           +{userInfo?.phone ? userInfo?.phone : "123456789"}
@@ -313,18 +312,6 @@ const SideBar = () => {
                       <br />
                     </div>
                   </div>
-                </div>
-                <div className="tw-flex tw-justify-center tw-h-14 tw-border-t tw-border-gray-300">
-                  <button
-                    className="tw-rounded-lg tw-w-1/5"
-                    variant="primary"
-                    onClick={() => {
-                      handleOpenUpdateModal();
-                      handleCloseFormProfile();
-                    }}
-                  >
-                    Cập nhật
-                  </button>
                 </div>
               </Modal>
 
@@ -490,7 +477,7 @@ const SideBar = () => {
             </Nav.Item>
             <Nav.Item className="mt-auto">
               <Nav.Link>
-                <div className="d-flex align-item-center justify-content-center">
+                <div className="d-flex align-item-center justify-content-center tw-mb-3">
                   <FontAwesomeIcon
                     icon={faSignOutAlt}
                     style={{ fontSize: "26px" }}

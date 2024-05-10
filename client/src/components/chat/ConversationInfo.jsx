@@ -20,6 +20,7 @@ import ModalAddMember from "./modal/ModalAddMember";
 import ChangeRoleModal from "../contact/modal/ChangeRoleModal";
 import { current } from "@reduxjs/toolkit";
 import ModalLeaveConversation from "./modal/ModalLeaveConversation";
+import ChatImage from "../contact/card/ChatImage";
 
 const ConversationInfo = ({ chat }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
@@ -202,28 +203,30 @@ const ConversationInfo = ({ chat }) => {
               )}
             </div>
             <div className="mb-2 tw-border-b tw-ml-2">
-              <span className="tw-font-bold tw-text-[18px]">
-                Photos / Videos{" "}
+              <span className="tw-font-bold tw-text-[18px] tw-mt-3">
+                Photos / Videos
               </span>
-              <div className="tw-flex tw-flex-wrap tw-pr-7 tw-min-h-[25vh] tw-max-h-[25vh] tw-overflow-auto custom-scrollbar">
+              <div className="tw-flex tw-mt-3 tw-flex-wrap tw-pr-7 tw-min-h-[25vh] tw-max-h-[25vh] tw-overflow-auto custom-scrollbar">
                 {splitImage().map((image, index) => (
                   <div
                     key={index}
                     className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar"
                   >
-                    <img
-                      src={image}
-                      alt={image}
-                      className="w-full h-auto tw-mx-auto"
-                      style={{ maxHeight: "85px" }}
+                    <ChatImage
+                      imageUrl={image}
+                      size={100}
+                      alt="Image"
+                      className="w-full h-auto tw-mx-auto "
                     />
                   </div>
                 ))}
               </div>
             </div>
             <div className="mb-2 tw-border-b">
-              <span className="tw-font-bold tw-text-[18px] tw-ml-2">Files</span>
-              <ul className="tw-block tw-min-h-[30vh] tw-max-h-[30vh] tw-overflow-auto custom-scrollbar tw-pr-7">
+              <span className="tw-font-bold tw-text-[18px] tw-ml-2 tw-mt-3 ">
+                Files
+              </span>
+              <ul className="tw-block tw-mt-10 tw-min-h-[30vh] tw-max-h-[30vh] tw-overflow-auto custom-scrollbar tw-pr-7">
                 {splitFile().map((content, index) => {
                   const lastSlashIndex = content.split("?");
                   const filenameWithExtension = lastSlashIndex[0];

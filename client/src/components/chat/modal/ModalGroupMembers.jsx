@@ -201,6 +201,12 @@ const ModalGroupMembers = ({
                           <button className="tw-cursor-pointer tw-bg-blue-200 tw-py-1 tw-px-2 tw-rounded-lg hover:tw-bg-blue-300">
                             Add Friend
                           </button>
+                          {/* <button
+                            className=" tw-bg-gray-200 tw-py-1 tw-px-2 tw-rounded-l "
+                            disabled={true}
+                          >
+                            Sent
+                          </button> */}
                         </div>
                       )}
                       <div onClick={() => handleShowOptions(index)}>
@@ -219,6 +225,12 @@ const ModalGroupMembers = ({
                           <button className="tw-cursor-pointer tw-bg-blue-200 tw-py-1 tw-px-2 tw-rounded-lg hover:tw-bg-blue-300">
                             Add Friend
                           </button>
+                          {/* <button
+                            className=" tw-bg-gray-200 tw-py-1 tw-px-2 tw-rounded-l "
+                            disabled={true}
+                          >
+                            Sent
+                          </button> */}
                         </div>
                       )}
                       <div onClick={() => handleShowOptions(index)}>

@@ -86,7 +86,7 @@ const Box = () => {
           className="mb-4"
           style={{ fontSize: 15, textAlign: "center", fontWeight: "bold" }}
         >
-          Đăng ký tài khoản
+          Sign up for an account
         </div>
         {/* Họ và tên */}
         <div
@@ -224,7 +224,7 @@ const Box = () => {
             navigate("/login");
           }}
         >
-          &lt;&lt;Quay về đăng nhập
+          &lt;&lt;Back to login
         </a>
       </div>
       <div
@@ -241,7 +241,7 @@ const Box = () => {
           className="mb-4"
           style={{ fontSize: 15, textAlign: "center", fontWeight: "bold" }}
         >
-          Đăng ký tài khoản
+          Sign up for an account
         </div>
         {/* Nhập mã xác nhận */}
         <div
@@ -276,7 +276,7 @@ const Box = () => {
           className="mb-1"
           style={{ color: "#afafaf", fontSize: 13, textAlign: "center" }}
         >
-          Chúng tôi sẽ gửi mã xác nhận qua số điện thoại của bạn
+          We'll send a confirmation code via your phone number
         </div>
         {/* Nhập mật khẩu mới */}
         <div
@@ -352,7 +352,7 @@ const Box = () => {
             style={{ paddingRight: "110px", paddingLeft: "110px" }}
             onClick={CheckNewPassword}
           >
-            Đăng ký
+            Register
           </Button>
         </div>
       </div>
@@ -364,7 +364,7 @@ const Box = () => {
             setNextStep(true);
           }}
         >
-          &lt;&lt;Quay lại
+          &lt;&lt;Back
         </a>
       </div>
     </div>
@@ -403,11 +403,11 @@ const Register = () => {
             </a>
           </Row>
           <Row>
-            <a style={{ textAlign: "center" }}>Đăng ký tài khoản Zalo</a>
+            <a style={{ textAlign: "center" }}>Register Zalo account</a>
           </Row>
           <Row>
             <a style={{ textAlign: "center" }}>
-              để kết nối với ứng dụng Zalo Web
+              to connect to Zalo Web application
             </a>
           </Row>
           <Row style={{ marginTop: 10 }}>

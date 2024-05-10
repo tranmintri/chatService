@@ -521,9 +521,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     }
   }, [messages, scrollToMessageId]); // useEffect sẽ chạy lại khi messages hoặc scrollToMessageId thay đổi
 
-  const closeAudioRecorder = () => {
-    setShowAudioRecorder(false);
-  };
   const handleSearch = () => {
     dispatch({
       type: reducerCases.SET_SEARCH,
@@ -542,6 +539,15 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     dispatch({
       type: reducerCases.SET_END_DATE,
       searchEndDate: null,
+    });
+    dispatch({
+      type: reducerCases.SET_FILTER_NAME,
+      filterName: "",
+    });
+
+    dispatch({
+      type: reducerCases.SET_SEARCH_VALUE,
+      searchValue: "",
     });
   };
   const handleInputChange = (event) => {
@@ -1382,7 +1388,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                   }`}
                                                                   style={{
                                                                     width:
-                                                                      "32px",
+                                                                      "150px",
                                                                     height:
                                                                       "32px",
                                                                   }}
@@ -1462,6 +1468,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                       imageUrl={content}
                                                       alt="Image"
                                                       className="tw-mb-2 tw-mr-1 "
+                                                      size={230}
                                                     />
                                                   ) : (
                                                     <span>{content}</span>
