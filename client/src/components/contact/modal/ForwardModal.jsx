@@ -51,7 +51,7 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
     const shareData = {
       selectedGroups: selectedGroups,
       shareMessage: {
-        type: "text", // Đây là trường type của newMessage
+        type: shareMessage.type, // Đây là trường type của newMessage
         senderId: userInfo?.id,
         senderName: userInfo?.display_name,
         senderPicture: userInfo?.avatar,

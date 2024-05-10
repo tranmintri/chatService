@@ -1261,7 +1261,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                     forwarded a message
                                                   </span>
                                                 </div>
-                                                <div></div>
                                               </div>
                                             ) : message.senderId ==
                                               userInfo?.id ? (
@@ -1746,7 +1745,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   </div>
                                                 </div>
                                               ) : (
-                                                message.type === "record" && (
+                                                message.type.includes(
+                                                  "record"
+                                                ) && (
                                                   <RecordCard
                                                     message={message}
                                                   />
