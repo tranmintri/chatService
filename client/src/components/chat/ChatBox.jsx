@@ -1452,7 +1452,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               .split("|")
                                               .map((content, index) => (
                                                 <div
-                                                  className="tw-flex"
+                                                  className="tw-flex tw-mb-1"
                                                   key={index}
                                                 >
                                                   {content.startsWith(
@@ -1461,7 +1461,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                     <ChatImage
                                                       imageUrl={content}
                                                       alt="Image"
-                                                      className="tw-mb-1 tw-mr-1"
+                                                      className="tw-mb-2 tw-mr-1 "
                                                     />
                                                   ) : (
                                                     <span>{content}</span>
@@ -1470,9 +1470,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               ))
                                           ) : message.type === "reply" ? (
                                             <div className="">
-                                              <div className="tw-bg-blue-200 tw-px-2 tw-pt-2 tw-pb-1 tw-rounded-lg">
+                                              <div className="tw-bg-blue-200 tw-px-2 tw-pt-2 tw-pb-2 tw-rounded-lg tw-mb-3">
                                                 <div
-                                                  className="tw-border-l-4 tw-border-blue-500 tw-pl-3 tw-mb-2 "
+                                                  className="tw-border-l-4 tw-border-blue-500 tw-pl-3 "
                                                   onClick={() =>
                                                     handleClickReply(
                                                       message.messageId
@@ -1484,7 +1484,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                       message.senderId ==
                                                       userInfo?.id
                                                         ? "tw-text-black"
-                                                        : "tw-text-white"
+                                                        : "tw-text-black"
                                                     }  tw-text-sm`}
                                                   >
                                                     {findMessageById(
@@ -1538,7 +1538,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                 {content.startsWith(
                                                                   "https://"
                                                                 ) ? (
-                                                                  <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
+                                                                  <div className="tw-flex tw-justify-start tw-mb-1 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
                                                                     <div className="tw-mr-3">
                                                                       {extension ===
                                                                         ".doc" && (
@@ -1709,7 +1709,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   message.senderId ==
                                                   userInfo?.id
                                                     ? "tw-text-black"
-                                                    : "tw-text-white"
+                                                    : "tw-text-black"
                                                 }`}
                                               >
                                                 {message.content}
@@ -1747,10 +1747,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               )}
                                             </div>
                                           )}
-                                          <br />
-                                          <span className="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
-                                            {calculateTime(message.timestamp)}
-                                          </span>
+                                          <div class="tw-flex tw-flex-col tw-mt-2">
+                                            <span class="tw-text-bubble-meta tw-text-[10px] tw-pt-1 tw-min-w-fit">
+                                              {calculateTime(message.timestamp)}
+                                            </span>
+                                          </div>
 
                                           {reactionList.length > 0 &&
                                             reactionList.filter(

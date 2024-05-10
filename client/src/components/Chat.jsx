@@ -95,120 +95,6 @@ const Chat = () => {
     });
   };
 
-  const images = [
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 1",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-    {
-      url: "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      alt: "Hình ảnh 2",
-    },
-  ];
-
-  const files = [
-    {
-      name: "file1.ppt",
-      size: "2MB",
-      date: "2024-04-15",
-      imageUrl:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      fileType: "ppt",
-    },
-    {
-      name: "file2.docx",
-      size: "1.5MB",
-      date: "2024-04-16",
-      imageUrl:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      fileType: "docx",
-    },
-    {
-      name: "file3.txt",
-      size: "500KB",
-      date: "2024-04-17",
-      imageUrl:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      fileType: "txt",
-    },
-    {
-      name: "file3.txt",
-      size: "500KB",
-      date: "2024-04-17",
-      imageUrl:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-      fileType: "txt",
-    },
-    // Thêm các đối tượng file khác vào đây
-  ];
-  const links = [
-    {
-      title: "Google",
-      url: "https://www.google.com",
-      description: "A popular search engine.",
-    },
-    {
-      title: "OpenAI",
-      url: "https://www.openai.com",
-      description: "A leading AI research lab.",
-    },
-    {
-      title: "GitHub",
-      url: "https://www.github.com",
-      description: "A platform for hosting and collaborating on code.",
-    },
-    // Thêm các đối tượng liên kết khác vào đây
-  ];
-  const members = [
-    {
-      id: 1,
-      name: "Trú Nghi",
-      avatar:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-    },
-    {
-      id: 2,
-      name: "Cu Ngảnh",
-      avatar:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-    },
-    {
-      id: 3,
-      name: "Hủ Ngai",
-      avatar:
-        "https://scontent.fsgn2-7.fna.fbcdn.net/v/t39.30808-6/428624993_405250445378343_6788722697735108244_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=gubRbnp_JuIAb7g2xV9&_nc_ht=scontent.fsgn2-7.fna&oh=00_AfAxJ7CNqizhJ1sk-QlgMiHxR0HkN2lpOUR611DLLHZ88Q&oe=661F45C1",
-    },
-    // Các thành viên khác...
-  ];
-
   return (
     <div className="d-flex w-100">
       {incomingVoiceCall && incomingVoiceCall.receiveId == userInfo?.id && (
@@ -294,13 +180,7 @@ const Chat = () => {
               />
             </div>
             <div className="col-4">
-              <ConversationInfo
-                chat={currentChat}
-                images={images}
-                files={files}
-                links={links}
-                members={members}
-              />
+              <ConversationInfo chat={currentChat} />
             </div>
           </div>
         ) : (

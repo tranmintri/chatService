@@ -2,7 +2,7 @@ import { Stack } from "react-bootstrap";
 import avatar from "../../assets/2Q.png";
 import { useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
-import { calculateTime } from "../../utils/CalculateTime";
+import { calculateTimeUserChat } from "../../utils/CalculateTimeUserChat";
 import { reducerCases } from "../../context/constants";
 import { useEffect } from "react";
 import axios from "axios";
@@ -125,7 +125,7 @@ const UserChat = () => {
                 </div>
                 <div className="d-flex flex-column align-items-end">
                   <div className="date">
-                    {calculateTime(lastMessage.timestamp)}
+                    {calculateTimeUserChat(lastMessage.timestamp)}
                   </div>
                   {/* <div className="this-user-notifications">{1}</div> */}
                   {chat.type === "private" &&
