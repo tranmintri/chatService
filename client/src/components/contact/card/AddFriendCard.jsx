@@ -40,14 +40,27 @@ const AddFriendCard = ({
 
   const [loading, setLoading] = useState(false);
 
+  // const checkExistingInvitation = (postData) => {
+  //   // gom
+  //   const existingInvitation = [...sentInvitations, ...receivedInvitations].find(invitation => 
+  //     (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
+  //     (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+  //   );
+  
+  //   return existingInvitation;
+  // };
   const checkExistingInvitation = (postData) => {
-    // gom
-    const existingInvitation = [...sentInvitations, ...receivedInvitations].find(invitation => 
-      (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
+    const existingSentInvitation = sentInvitations.find(invitation => 
+      (invitation.sender === postData.sender && invitation.receiver === postData.receiver)
+      // (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+    );
+  
+    const existingReceivedInvitation = receivedInvitations.find(invitation => 
+      // (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
       (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
     );
   
-    return existingInvitation;
+    return existingSentInvitation || existingReceivedInvitation;
   };
   const handleAddFriend = async () => {
     if (!searchResults || loading) return;
