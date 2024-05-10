@@ -1156,7 +1156,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                   width={70}
                                   height={70}
                                   alt=""
-                                  className="-tw-mt-8 tw-rounded-full tw-p-1 tw-z-20 -tw-mr-3 tw-border-white"
+                                  className="-tw-mt-8  tw-rounded-full tw-p-1 tw-z-20 -tw-mr-3 tw-border-white"
                                 />
                                 <img
                                   src={convertPicture()}
@@ -1183,7 +1183,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                         ) : (
                           <div>
                             {
-                              <div className="tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center">
+                              <div className="tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center ">
                                 <div
                                   key={index}
                                   className={`tw-w-full tw-min-h-11 ${
@@ -1200,14 +1200,14 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                   {message.status == "removed" &&
                                   message.senderId == userInfo?.id ? (
                                     <div
-                                      className={`tw-rounded-lg tw-italic  tw-px-3 ${
+                                      className={`tw-rounded-lg tw-italic  tw-shadow-lg tw-px-3 l ${
                                         message.senderId == userInfo?.id
                                           ? "tw-bg-[#e5efff] align-self-end"
-                                          : "tw-bg-black tw-text-white align-self-start tw-text-"
+                                          : "tw-bg-black tw-text-white align-self-start"
                                       }`}
                                       onClick={() => scrollToMessage(index)}
                                     >
-                                      <span className=" tw-text-sm ">
+                                      <span className=" tw-text-sm">
                                         message has been recovered
                                       </span>
                                       <div>
@@ -1226,7 +1226,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                           src={message.senderPicture}
                                           alt="avt"
                                           title={message.senderName}
-                                          className="tw-rounded-full tw-mr-2 tw-justify-start"
+                                          className="tw-rounded-full tw-mr-2 tw-justify-start "
                                           width={35}
                                           height={35}
                                         />
@@ -1234,11 +1234,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                       <div
                                         className={`tw-flex ${
                                           message.senderId == userInfo?.id
-                                            ? " tw-justify-end tw-bg-blue-100 tw-order-2"
+                                            ? " tw-justify-end tw-bg-blue-100 tw-order-2 "
                                             : "tw-justify-start tw-bg-white tw-text-black  tw-order-1"
-                                        } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg tw-py-2`}
+                                        } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg tw-py-2 tw-shadow-lg`}
                                       >
-                                        <div className="tw-break-words tw-max-w-[40vh]">
+                                        <div className="tw-break-words tw-max-w-[40vh] ">
                                           <div
                                             className={`tw-right-1 tw-font-bold tw-text-gray-500 ${
                                               message.senderId == userInfo?.id
@@ -1250,7 +1250,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             {message.type.includes("share") ? (
                                               <div>
                                                 <div
-                                                  className={`tw-flex tw-justify-items-center tw-items-center`}
+                                                  className={`tw-flex tw-justify-items-center tw-items-center tw-shadow-2xl`}
                                                 >
                                                   <IoIosRedo className="tw-mr-2" />
                                                   <span>
@@ -1317,7 +1317,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                         {content.startsWith(
                                                           "https://"
                                                         ) ? (
-                                                          <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-200 tw-w-full tw-p-3 tw-rounded-lg">
+                                                          <div className="tw-flex tw-justify-start tw-mb-3 tw-bg-blue-200 tw-w-full tw-p-3 tw-rounded-lg ">
                                                             <div className=" tw-w-2/12">
                                                               {extension ===
                                                                 ".doc" && (
@@ -1458,7 +1458,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               .split("|")
                                               .map((content, index) => (
                                                 <div
-                                                  className="tw-flex tw-mb-1"
+                                                  className="tw-flex tw-mb-1 "
                                                   key={index}
                                                 >
                                                   {content.startsWith(

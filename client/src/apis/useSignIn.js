@@ -16,7 +16,7 @@ export const useSignIn = () => {
       const data = res.data;
       saveToken(data);
       saveUser(data.user_info);
-      toast.success("Đăng nhập thành công");
+      toast.success("Login successfully");
       dispatch({
         type: reducerCases.SET_USER_INFO,
         userInfo: data.user_info,

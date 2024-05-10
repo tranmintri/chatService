@@ -24,7 +24,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
     mutationFn: (data) => updateUserInfo(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.GET_USER_INFO] });
-      toast.info("Cập nhật tên đăng nhập thành công");
+      toast.info("Update username successfully");
       setOpen(false);
     },
     onError: (errors) => {
@@ -101,10 +101,10 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                           type="text"
                           className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
                           {...register("username", {
-                            required: "Vui lòng nhập tên đăng nhập mới",
+                            required: "Please enter a new username",
                             validate: (value) =>
                               value !== userInfo?.username ||
-                              "Tên đăng nhập giống với tên đăng nhập hiện tại",
+                              "The username is the same as the current username",
                           })}
                         />
                       </div>

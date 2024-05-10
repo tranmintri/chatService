@@ -255,7 +255,7 @@ const Box = () => {
           href=""
           style={{ color: "black", textDecoration: "none" }}
           onClick={() => {
-            navigate("/login");
+            navigate("/signin");
           }}
         >
           <div className="tw-flex tw-justify-center tw-items-center tw-cursor-pointer">
