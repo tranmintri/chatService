@@ -21,7 +21,7 @@ import ChangeRoleModal from "../contact/modal/ChangeRoleModal";
 import { current } from "@reduxjs/toolkit";
 import ModalLeaveConversation from "./modal/ModalLeaveConversation";
 
-const ConversationInfo = ({ chat, images, files, links, members }) => {
+const ConversationInfo = ({ chat }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
     useStateProvider();
   const [showAllImage, setShowAllImage] = useState(false);
@@ -69,14 +69,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
   const toggleShowAllImage = () => {
     setShowAllImage(!showAllImage);
   };
-  const toggleShowAllFile = () => {
-    setShowAllFile(!showAllFile);
-  };
 
-  const toggleShowAllLink = () => {
-    setShowAllLink(!showAllLink);
-  };
-  const limitedLinks = showAllLink ? links : links.slice(0, 3);
   const convertName = () => {
     if (chat.type == "private") {
       const splitName = chat.name.split("/");
@@ -91,22 +84,19 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     window.alert("xoas ruif nef");
   };
 
-  const [showMemberList, setShowMemberList] = useState(false);
-
-  const toggleMemberList = () => {
-    setShowMemberList(!showMemberList);
-  };
   const splitImage = () => {
     let url = "";
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
       currentChat.messages.forEach((element) => {
         if (element.type === "image") {
-          url += element.content.toString(); // Thêm "|" để phân biệt các URL
+          // console.log(element.content);
+          url += element.content.toString() + "|"; // Thêm "|" để phân biệt các URL
         }
       });
     }
-
-    return url.split("|");
+    const urlSplit = url.split("|").filter((url) => url.startsWith("https://"));
+    console.log("url", url);
+    return urlSplit;
   };
   const convertImage = () => {
     if (chat.type == "private") {
@@ -123,7 +113,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
       currentChat.messages.forEach((element) => {
         if (element.type === "files") {
-          url += element.content.toString(); // Thêm "|" để phân biệt các URL
+          url += element.content.toString() + "|"; // Thêm "|" để phân biệt các URL
         }
       });
     }
@@ -379,7 +369,7 @@ const ConversationInfo = ({ chat, images, files, links, members }) => {
                     <button
                       onClick={handleShowChangeRole}
                       className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full"
-                      style={{ height: "40px", color: "#b2b2b2" }}
+                      style={{ height: "40px", color: "red" }}
                     >
                       <div className="tw-flex align-items-center">
                         <MdLogout size={20} color="red" />
