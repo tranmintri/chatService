@@ -38,8 +38,35 @@ const AddFriendCard = ({
     fetchData();
   }, [userInfo?.id]);
 
+  const [loading, setLoading] = useState(false);
+
+  // const checkExistingInvitation = (postData) => {
+  //   // gom
+  //   const existingInvitation = [...sentInvitations, ...receivedInvitations].find(invitation => 
+  //     (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
+  //     (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+  //   );
+  
+  //   return existingInvitation;
+  // };
+  const checkExistingInvitation = (postData) => {
+    const existingSentInvitation = sentInvitations.find(invitation => 
+      (invitation.sender === postData.sender && invitation.receiver === postData.receiver)
+      // (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+    );
+  
+    const existingReceivedInvitation = receivedInvitations.find(invitation => 
+      // (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
+      (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+    );
+  
+    return existingSentInvitation || existingReceivedInvitation;
+  };
   const handleAddFriend = async () => {
-    if (!searchResults) return;
+    if (!searchResults || loading) return;
+  
+    setLoading(true);
+  
     const postData = {
       isAccepted: false,
       receiver: searchResults.id,
@@ -49,13 +76,21 @@ const AddFriendCard = ({
       receiverName: searchResults.display_name,
       requestId: null,
     };
+  
+    if (checkExistingInvitation(postData)) {
+      console.error("Invitation already exists.");
+      toast.error("Invitation already exists.");
+      setLoading(false);
+      return;
+    }
+  
     try {
       const response = await axios.post(NOTI_API + "add", postData);
       if (response) {
         handleCloseModal();
       }
       socket2.current.emit("sendFriendRequest", postData);
-      if (postData.sender === userInfo?.id) {
+      if (postData.sender === userInfo?.id) { 
         dispatch({
           type: reducerCases.ADD_INVITATION,
           newSend: postData,
@@ -68,9 +103,10 @@ const AddFriendCard = ({
       }
     } catch (error) {
       console.error("Error sending friend request:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
   const isFriendInArray = (friendList, searchResults) => {
     if (!friendList || !Array.isArray(friendList) || friendList.length === 0) {
       return false; // Return false if friendList is undefined, not an array, or empty
