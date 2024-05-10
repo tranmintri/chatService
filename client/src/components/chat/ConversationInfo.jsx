@@ -89,7 +89,7 @@ const ConversationInfo = ({ chat }) => {
     let url = "";
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
       currentChat.messages.forEach((element) => {
-        if (element.type === "image") {
+        if (element.type.includes("image")) {
           // console.log(element.content);
           url += element.content.toString() + "|"; // Thêm "|" để phân biệt các URL
         }
@@ -113,7 +113,7 @@ const ConversationInfo = ({ chat }) => {
     let url = "";
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
       currentChat.messages.forEach((element) => {
-        if (element.type === "files") {
+        if (element.type.includes("files")) {
           url += element.content.toString() + "|"; // Thêm "|" để phân biệt các URL
         }
       });
@@ -210,7 +210,7 @@ const ConversationInfo = ({ chat }) => {
                 {splitImage().map((image, index) => (
                   <div
                     key={index}
-                    className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar"
+                    className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 px-4 mb-4 tw-overflow-auto tw-max-h-40 custom-scrollbar tw-cursor-pointer"
                   >
                     <ChatImage
                       imageUrl={image}

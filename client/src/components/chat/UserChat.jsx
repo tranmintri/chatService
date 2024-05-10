@@ -107,11 +107,11 @@ const UserChat = () => {
                   </div>
                   <div className="text-content">
                     <div className="name">{convertName()}</div>
-                    {lastMessage.type == "image" ? (
+                    {lastMessage.type.includes("image") ? (
                       `Friend sent some image for you`
-                    ) : lastMessage.type == "files" ? (
+                    ) : lastMessage.type.includes("files") ? (
                       `Friend sent some file for you`
-                    ) : lastMessage.type == "record" ? (
+                    ) : lastMessage.type.includes("record") ? (
                       `Friend sent a record for you`
                     ) : (
                       <div className="tw-text-slate-400 tw-text-sm">
