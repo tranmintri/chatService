@@ -70,23 +70,12 @@ const reducer = (state, action) => {
         ...state,
         sentInvitations: action.send,
       };
-    // case reducerCases.ADD_INVITATION:
-    //   return {
-    //     ...state,
-    //     sentInvitations: [...state.sentInvitations, action.newSend],
-    //   };
     case reducerCases.ADD_INVITATION:
-      const existingInvitation = state.sentInvitations.find(invitation =>
-        invitation.sender === action.newSend.sender &&
-        invitation.receiver === action.newSend.receiver
-      );
-      if (existingInvitation) {
-        return state;
-      }
       return {
         ...state,
         sentInvitations: [...state.sentInvitations, action.newSend],
       };
+
     case reducerCases.REMOVE_SENT_INVITATION:
       return {
         ...state,
@@ -99,25 +88,12 @@ const reducer = (state, action) => {
         ...state,
         receivedInvitations: action.receive,
       };
-    // case reducerCases.ADD_RECEIVE_INVITATION:
-    //   return {
-    //     ...state,
-    //     receivedInvitations: [...state.receivedInvitations, action.newReceive],
-    //   };
     case reducerCases.ADD_RECEIVE_INVITATION:
-      const existingRCInvitation = state.receivedInvitations.find(invitation =>
-        invitation.sender === action.newReceive.sender &&
-        invitation.receiver === action.newReceive.receiver
-      );
-
-      if (existingRCInvitation) {
-        return state;
-      }
-
       return {
         ...state,
         receivedInvitations: [...state.receivedInvitations, action.newReceive],
       };
+
     case reducerCases.REMOVE_RECEIVE_INVITATION:
       return {
         ...state,
