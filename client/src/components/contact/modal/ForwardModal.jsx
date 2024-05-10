@@ -144,7 +144,7 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
         <span className="tw-font-semibold">Content</span>
         <div className="tw-p-3 tw-flex tw-justify-between">
           <div className="tw-bg-slate-100 tw-flex">
-            {shareMessage.type == "files" ? (
+            {shareMessage.type && shareMessage.type.includes("files") ? (
               <div>
                 {shareMessage.content &&
                   shareMessage.content.split("|").map((content, index) => {
@@ -261,7 +261,7 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
               </div>
             ) : (
               <div className="">
-                {shareMessage.type == "image" ? (
+                {shareMessage.type && shareMessage.type.includes("image") ? (
                   <div className="tw-flex tw-flex-wrap tw-max-h-[20vh] tw-overflow-auto custom-scrollbar tw-px-2 tw-py-3">
                     {shareMessage.content &&
                       shareMessage.content.split("|").map((content, index) => (
