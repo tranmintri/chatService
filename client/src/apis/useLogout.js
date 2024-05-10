@@ -11,7 +11,7 @@ export const useLogout = () => {
     mutationFn: (tokenId) => logout(tokenId),
     onSuccess: (res) => {
       removeUser();
-      toast.success("Đăng xuất thành công");
+      toast.success("Logout successfully");
       navigate(Page.SIGN_IN_PAGE.path, { replace: true });
     },
     onError: (error) => {
@@ -20,4 +20,3 @@ export const useLogout = () => {
   });
   return logoutMutate;
 };
-

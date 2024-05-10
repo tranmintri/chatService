@@ -31,7 +31,7 @@ export const useSignUpWithGoogle = () => {
 
               saveUser(data.user_info);
 
-              toast.success("Đăng kí tài khoản thành công");
+              toast.success("Signup successfully");
               dispatch({
                 type: reducerCases.SET_USER_INFO,
                 userInfo: data.user_info,
