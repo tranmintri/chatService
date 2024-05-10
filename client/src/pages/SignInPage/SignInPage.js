@@ -79,7 +79,10 @@ const SignInPage = () => {
                 </p>
               )}
               <div className="tw-mt-1">
-                <Link className="tw-text-blue-1 tw-text-sm" to="/">
+                <Link
+                  className="tw-text-blue-1 tw-text-sm"
+                  to="/forgotpassword"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -93,7 +96,7 @@ const SignInPage = () => {
           </form>
 
           <div className="tw-text-dark-2 tw-text-sm tw-text-center">
-            <span>Dont have an account? </span>
+            <span>Don't have an account? </span>
             <Link
               className="tw-text-blue-1"
               to={Page.SIGN_UP_PAGE.path}

@@ -124,7 +124,7 @@ const UserChat = () => {
                   </div>
                 </div>
                 <div className="d-flex flex-column align-items-end">
-                  <div className="date">
+                  <div className="date ">
                     {calculateTimeUserChat(lastMessage.timestamp)}
                   </div>
                   {/* <div className="this-user-notifications">{1}</div> */}

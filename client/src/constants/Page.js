@@ -4,24 +4,31 @@ import SignUpSuccessPage from "../pages/SignUpSuccessPage/SignUpSuccessPage";
 import Main from "../pages/Main";
 import UserSettingPage from "../pages/UserSettingPage/UserSettingPage";
 import MyAccountPage from "../pages/UserSettingPage/MyAccountPage/MyAccountPage";
+import ForgotPassword from "../pages/ForgotPassword";
 
 const SIGN_UP_PAGE = {
   name: "SIGN_UP_PAGE",
-  displayName: "Đăng kí",
+  displayName: "Signup",
   path: "/signup",
   element: <SignUpPage />,
+};
+const FORGOT_PASSWORD_PAGE = {
+  name: "FORGOT_PASSWORD_PAGE",
+  displayName: "Forgotpassword",
+  path: "/forgotpassword",
+  element: <ForgotPassword />,
 };
 
 const SIGN_UP_SUCCESS_PAGE = {
   name: "SIGN_UP_SUCCESS_PAGE",
-  displayName: "Đăng kí thành công",
+  displayName: "Signup successfully",
   path: "/signup/success",
   element: <SignUpSuccessPage />,
 };
 
 const SIGN_IN_PAGE = {
   name: "SIGN_IN_PAGE",
-  displayName: "Đăng nhập",
+  displayName: "Signin",
   path: "/signin",
   element: <SignInPage />,
 };
@@ -53,6 +60,7 @@ const Page = {
   MAIN_PAGE,
   USER_SETTING_PAGE,
   MY_ACCOUNT_PAGE,
+  FORGOT_PASSWORD_PAGE,
 };
 
 export default Page;

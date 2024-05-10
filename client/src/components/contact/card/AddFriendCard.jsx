@@ -38,41 +38,6 @@ const AddFriendCard = ({
     fetchData();
   }, [userInfo?.id]);
 
-  // const handleAddFriend = async () => {
-  //     if (!searchResults) return;
-  //     const postData = {
-  //         isAccepted: false,
-  //         receiver: searchResults.id,
-  //         sender: userInfo?.id,
-  //         profilePicture: userInfo?.avatar,
-  //         senderName: userInfo?.display_name,
-  //         receiverName: searchResults.display_name,
-  //         requestId: null,
-  //     }
-  //     try {
-  //         socket2.current.emit("sendFriendRequest", postData);
-  //         if (postData.sender === userInfo?.id) {
-  //             const response = await axios.post(NOTI_API + "add", postData);
-  //             if (response) {
-  //                 toast.success('Friend added successfully!');
-  //                 handleCloseModal();
-  //             }
-  //             dispatch({
-  //                 type: reducerCases.ADD_INVITATION,
-  //                 newSend: postData,
-  //             });
-  //         }
-  //         else {
-  //             dispatch({
-  //                 type: reducerCases.ADD_RECEIVE_INVITATION,
-  //                 newReceive: postData,
-  //             });
-  //         }
-  //     }
-  //     catch (error) {
-  //         console.error('Error sending friend request:', error);
-  //     }
-  // };
   const handleAddFriend = async () => {
     if (!searchResults) return;
     const postData = {
@@ -87,7 +52,6 @@ const AddFriendCard = ({
     try {
       const response = await axios.post(NOTI_API + "add", postData);
       if (response) {
-        toast.success("Friend added successfully!");
         handleCloseModal();
       }
       socket2.current.emit("sendFriendRequest", postData);
@@ -123,13 +87,13 @@ const AddFriendCard = ({
         <p>No results found.</p>
       ) : (
         <ListGroup className="mt-3">
-          <ListGroup.Item>
-            <div className="d-flex justify-content-between align-items-center">
+          <ListGroup.Item style={{ background: "#e7e7e7" }}>
+            <div className="d-flex justify-content-between align-items-center ">
               <Col md={3}>
                 <img
                   src={searchResults.profilePicture}
                   className="me-2"
-                  height="65px"
+                  width={50}
                   style={{ borderRadius: "50%" }}
                   alt="Avatar"
                 />
@@ -138,25 +102,29 @@ const AddFriendCard = ({
                 <div style={{ fontSize: "18px" }}>
                   <strong>{searchResults.display_name}</strong>
                 </div>
-                <div style={{ fontSize: "14px" }}>
-                  ({selectedCountryCode}) {searchResults.phone}
-                </div>
+                <div style={{ fontSize: "14px" }}>{searchResults.phone}</div>
               </Col>
               <Col md={3}>
-                <Button
-                  variant="success"
-                  onClick={handleAddFriend}
-                  disabled={isFriendInArray(friends, searchResults)}
-                >
-                  {isFriendInArray(friends, searchResults) ? (
-                    <FaCheck />
-                  ) : (
-                    "Add Friend"
-                  )}
-                </Button>
-                {/* <Button variant="success" onClick={handleAddFriend} disabled={false}>
-                                {!true ? <FaCheck /> : "Add Friend"}
-                            </Button> */}
+                {false ? (
+                  <button
+                    className=" tw-bg-gray-200 tw-py-2 tw-px-3 tw-rounded-lg"
+                    disabled={true}
+                  >
+                    Sent
+                  </button>
+                ) : (
+                  <Button
+                    variant="success"
+                    onClick={handleAddFriend}
+                    disabled={isFriendInArray(friends, searchResults)}
+                  >
+                    {isFriendInArray(friends, searchResults) ? (
+                      <FaCheck />
+                    ) : (
+                      "Add Friend"
+                    )}
+                  </Button>
+                )}
               </Col>
             </div>
           </ListGroup.Item>

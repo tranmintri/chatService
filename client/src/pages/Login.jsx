@@ -120,7 +120,7 @@ const PhoneBox = () => {
           style={{ paddingRight: "50px", paddingLeft: "50px" }}
           onClick={clickLogin}
         >
-          Đăng nhập với mật khẩu
+          Sign in with password
         </Button>
       </div>
       {/* Đăng nhập bằng thiets bị di động */}
@@ -136,7 +136,7 @@ const PhoneBox = () => {
             setVisibleLoginWithMyPhone(false);
           }}
         >
-          Đăng nhập bằng thiết bị di động
+          Sign in with your mobile device
         </Button>
       </div>
       {/* Đăng ký */}
@@ -148,7 +148,7 @@ const PhoneBox = () => {
             navigate("/register");
           }}
         >
-          Tạo tài khoản
+          Create an account
         </a>
       </div>
       {/* Quên mật khẩu */}
@@ -160,7 +160,7 @@ const PhoneBox = () => {
             navigate("/forgotpassword");
           }}
         >
-          Quên mật khẩu?
+          Forgot your password?
         </a>
       </div>
 
@@ -171,15 +171,14 @@ const PhoneBox = () => {
         style={{ color: "#afafaf", fontSize: 13, textAlign: "center" }}
         hidden={isVisibleLoginWithMyPhone}
       >
-        Chúng tôi sẽ gửi một yêu cầu đăng nhập đến ứng dụng Zalo trên thiết bị
-        của bạn.
+        We will send a login request to the Zalo app on your device.
       </div>
       <div style={{ paddingBottom: 10 }} hidden={isVisibleLoginWithMyPhone}>
         <Button
           style={{ paddingRight: "110px", paddingLeft: "110px" }}
           onClick={clickLogin}
         >
-          Đồng ý
+          Agree
         </Button>
       </div>
       <div hidden={isVisibleLoginWithMyPhone}>
@@ -190,7 +189,7 @@ const PhoneBox = () => {
             setVisibleLoginWithMyPhone(true);
           }}
         >
-          Quay lại
+          Back
         </a>
       </div>
     </div>
@@ -228,11 +227,11 @@ const Login = () => {
           </a>
         </Row>
         <Row>
-          <a style={{ textAlign: "center" }}>Đăng nhập tài khoản Zalo</a>
+          <a style={{ textAlign: "center" }}>Log in to your Zalo account</a>
         </Row>
         <Row>
           <a style={{ textAlign: "center" }}>
-            để kết nối với ứng dụng Zalo Web
+            to connect to Zalo Web application
           </a>
         </Row>
         <Row style={{ marginTop: 10 }}>
@@ -256,7 +255,7 @@ const Login = () => {
               >
                 <Tab
                   eventKey="QR"
-                  title={<span style={{ color: "black" }}>Quét mã QR</span>}
+                  title={<span style={{ color: "black" }}>Scan QR Code</span>}
                 >
                   <div
                     style={{
@@ -269,7 +268,7 @@ const Login = () => {
                 <Tab
                   eventKey="Phone"
                   title={
-                    <span style={{ color: "black" }}>Với số điện thoại</span>
+                    <span style={{ color: "black" }}>With phone number</span>
                   }
                 >
                   <PhoneBox />

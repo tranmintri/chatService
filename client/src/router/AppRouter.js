@@ -20,6 +20,10 @@ const AppRouter = () => {
           path={Page.SIGN_UP_SUCCESS_PAGE.path}
           element={Page.SIGN_UP_SUCCESS_PAGE.element}
         />
+        <Route
+          path={Page.FORGOT_PASSWORD_PAGE.path}
+          element={Page.FORGOT_PASSWORD_PAGE.element}
+        />
         <Route path={Page.MAIN_PAGE.path} element={Page.MAIN_PAGE.element} />
         <Route
           path={Page.USER_SETTING_PAGE.path}
