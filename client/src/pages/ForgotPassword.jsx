@@ -1,328 +1,160 @@
-import {
-  faMobileScreen,
-  faLock,
-  faEnvelope,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
-import { Col, Row, Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { IoMdArrowBack } from "react-icons/io";
-
-const Box = () => {
-  const navigate = useNavigate();
-
-  const [isPhoneNumber, setPhoneNumber] = useState("");
-  const [isNewPassword, setNewPassword] = useState("");
-  const [isConfirmNewPassword, setConfirmNewPassword] = useState("");
-  const [isVerificationOnForm, setVerificationOnForm] = useState("");
-  const [isNextStep, setNextStep] = useState(true);
-  const [isCheckValidPhone, setCheckValidPhone] = useState("");
-  const [isCheckValidNewPassword, setCheckValidNewPassWord] = useState("");
-  const [isCheckValidConfirmNewPassword, setCheckValidConfirmNewPassWord] =
-    useState("");
-
-  function CheckValidPhone() {
-    if (isPhoneNumber.length === 0) {
-      setCheckValidPhone("Không được để trống");
-      return;
-    }
-    if (!isPhoneNumber.startsWith("0")) {
-      setCheckValidPhone("Số điện thoại phải bắt đầu bằng số 0");
-      return;
-    }
-    if (isPhoneNumber.length !== 10) {
-      setCheckValidPhone("Số điện thoại phải có 10 số");
-      return;
-    }
-    setCheckValidPhone("");
-    setNextStep(false);
-  }
-  function CheckNewPassword() {
-    if (isNewPassword.length === 0) {
-      setCheckValidNewPassWord("Không được để trống");
-      return;
-    }
-    if (isNewPassword.length < 6) {
-      setCheckValidNewPassWord("Mật khẩu phải có 6 kí tự trở lên");
-      return;
-    }
-    setCheckValidNewPassWord("");
-    if (isNewPassword !== isConfirmNewPassword) {
-      setCheckValidConfirmNewPassWord("Xác nhận mật khẩu không giống");
-      return;
-    }
-    setCheckValidConfirmNewPassWord("");
-    navigate("/login");
-  }
-
-  return (
-    <div>
-      {/* Nhập số điện thoại */}
-      <div
-        hidden={!isNextStep}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: 40,
-        }}
-      >
-        <div className="mb-4" style={{ fontSize: 15, textAlign: "center" }}>
-          Nhập số điện thoại của bạn
-        </div>
-        <div
-          className="mb-3"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            flex: 1,
-            width: "100%",
-            borderBottom: "0.5px solid silver",
-            paddingBottom: 2,
-          }}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={faMobileScreen}
-              style={{ fontSize: 20, marginRight: 10 }}
-            />
-          </div>
-          <div style={{ display: "flex", flex: 1 }}>
-            <Form.Control
-              type="text"
-              placeholder="Số điện thoại"
-              style={{ border: "none", with: "100%" }}
-              value={isPhoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="mb-1">
-          <a style={{ color: "red", fontSize: 13 }}>{isCheckValidPhone}</a>
-        </div>
-        <div style={{ paddingBottom: 15 }}>
-          <Button
-            style={{ paddingRight: "110px", paddingLeft: "110px" }}
-            onClick={CheckValidPhone}
-          >
-            Tiếp tục
-          </Button>
-        </div>
-      </div>
-      <div
-        hidden={isNextStep}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: 40,
-        }}
-      >
-        <div className="mb-4" style={{ fontSize: 15, textAlign: "center" }}>
-          Thay đổi mật khẩu
-        </div>
-        {/* Nhập mã xác nhận */}
-        <div
-          className="mb-3"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            flex: 1,
-            width: "100%",
-            borderBottom: "0.5px solid silver",
-            paddingBottom: 2,
-          }}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={faEnvelope}
-              style={{ fontSize: 20, marginRight: 10 }}
-            />
-          </div>
-          <div style={{ display: "flex", flex: 1 }}>
-            <Form.Control
-              type="text"
-              placeholder="Mã xác nhận"
-              style={{ border: "none", with: "100%" }}
-              value={isVerificationOnForm}
-              onChange={(e) => setVerificationOnForm(e.target.value)}
-            ></Form.Control>
-          </div>
-        </div>
-        <div
-          className="mb-1"
-          style={{ color: "#afafaf", fontSize: 13, textAlign: "center" }}
-        >
-          Chúng tôi sẽ gửi mã xác nhận qua số điện thoại của bạn
-        </div>
-        {/* Nhập mật khẩu mới */}
-        <div
-          className="mb-3"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            flex: 1,
-            width: "100%",
-            borderBottom: "0.5px solid silver",
-            paddingBottom: 2,
-          }}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={faLock}
-              style={{ fontSize: 20, marginRight: 10 }}
-            />
-          </div>
-          <div style={{ display: "flex", flex: 1 }}>
-            <Form.Control
-              type="password"
-              placeholder="Mật khẩu mới"
-              style={{ border: "none", with: "100%" }}
-              value={isNewPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="mb-1">
-          <a style={{ color: "red", fontSize: 13 }}>
-            {isCheckValidNewPassword}
-          </a>
-        </div>
-        {/* Xác nhận mật khẩu mới */}
-        <div
-          className="mb-3"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            flex: 1,
-            width: "100%",
-            borderBottom: "0.5px solid silver",
-            paddingBottom: 2,
-          }}
-        >
-          <div>
-            <FontAwesomeIcon
-              icon={faLock}
-              style={{ fontSize: 20, marginRight: 10 }}
-            />
-          </div>
-          <div style={{ display: "flex", flex: 1 }}>
-            <Form.Control
-              type="password"
-              placeholder="Xác nhận mật khẩu mới"
-              style={{ border: "none", with: "100%" }}
-              value={isConfirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
-            ></Form.Control>
-          </div>
-        </div>
-        <div className="mb-1">
-          <a style={{ color: "red", fontSize: 13 }}>
-            {isCheckValidConfirmNewPassword}
-          </a>
-        </div>
-        <div style={{ paddingBottom: 15 }}>
-          <Button
-            style={{ paddingRight: "110px", paddingLeft: "110px" }}
-            onClick={CheckNewPassword}
-          >
-            Xác nhận
-          </Button>
-        </div>
-      </div>
-      <div hidden={isNextStep} style={{ display: "flex" }}>
-        <a
-          href=""
-          style={{ color: "black", textDecoration: "none" }}
-          onClick={() => {
-            setNextStep(true);
-          }}
-        >
-          <div className="tw-flex tw-justify-center tw-items-center tw-cursor-pointer">
-            <IoMdArrowBack className=" tw-mr-3" /> Back
-          </div>
-        </a>
-      </div>
-      <div hidden={!isNextStep} style={{ display: "flex" }}>
-        <a
-          href=""
-          style={{ color: "black", textDecoration: "none" }}
-          onClick={() => {
-            navigate("/signin");
-          }}
-        >
-          <div className="tw-flex tw-justify-center tw-items-center tw-cursor-pointer">
-            <IoMdArrowBack className=" tw-mr-3" /> Back to login
-          </div>
-        </a>
-      </div>
-    </div>
-  );
-};
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Page from '../constants/Page';
 
 const ForgotPassword = () => {
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleContinue = (e) => {
+    e.preventDefault();
+    if (step === 1) {
+      // Kiểm tra và xử lý hợp lệ email
+      // Nếu hợp lệ, chuyển sang bước 2
+      setStep(2);
+    } else if (step === 2) {
+      // Kiểm tra và xử lý hợp lệ OTP
+      // Nếu hợp lệ, chuyển sang bước 3
+      setStep(3);
+    } else if (step === 3) {
+      // Kiểm tra và xử lý hợp lệ mật khẩu mới và xác nhận mật khẩu
+      // Nếu hợp lệ, gửi yêu cầu thay đổi mật khẩu
+      setSuccess(true);
+      setStep(4);
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#aad6ff",
-      }}
-    >
-      <div
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          width: "500px",
-          marginTop: "5%",
-        }}
-      >
-        <Row>
-          <a
-            style={{
-              fontSize: 50,
-              fontWeight: "bold",
-              color: "#0e6af6",
-              textAlign: "center",
-            }}
-          >
-            ZALO
-          </a>
-        </Row>
-        <Row>
-          <a style={{ textAlign: "center" }}>Khôi phục mật khẩu Zalo</a>
-        </Row>
-        <Row>
-          <a style={{ textAlign: "center" }}>
-            để kết nối với ứng dụng Zalo Web
-          </a>
-        </Row>
-        <Row style={{ marginTop: 10 }}>
-          <Col></Col>
-          <Col
-            xs={9}
-            style={{
-              display: "flex",
-              with: "100%",
-              backgroundColor: "white",
-              paddingTop: 10,
-              paddingBottom: 20,
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <Box></Box>
+    <div className="signin-page tw-w-full tw-min-w-screen tw-h-full tw-min-h-screen tw-flex tw-items-center tw-justify-center">
+      <div className="tw-w-[30rem] md:tw-w-auto tw-bg-dark-1 tw-px-7 tw-py-10 tw-m-5 tw-rounded-md tw-font-medium tw-block md:tw-flex tw-gap-14">
+        <div className="md:tw-w-[25rem]">
+          <p className="tw-mb-8 tw-text-dark-1 tw-text-xl tw-font-bold tw-text-center">
+            {step === 1 ? 'DraFi password recovery' : step === 2 ? 'Enter OTP' : step === 3 ? 'Enter new password' : 'Password Recovery Successfull'}
+          </p>
+          {success ? (
+            <div className="tw-mb-5 tw-text-center tw-text-white ">
+              <i className="fa-solid fa-circle-check fa-2xl tw-text-[4rem] tw-text-green-600 "></i>
+              <p className='tw-pt-5'>Password reset successful!</p>
+              <button className="tw-w-full tw-px-4 tw-py-2 tw-rounded-sm tw-font-semibold tw-bg-blue-1 tw-text-dark-1">
+                <Link
+                  className="tw-text-white"
+                  style={{ textDecoration: 'none' }}
+                  to={Page.SIGN_IN_PAGE.path}
+                  replace={true}
+                >
+                  Back to Sign In
+                </Link>
+              </button>
             </div>
-          </Col>
-          <Col></Col>
-        </Row>
+          ) : (
+            <form onSubmit={handleContinue}>
+              {step === 1 && (
+                <div className="tw-mb-5">
+                  <div className="tw-mb-1">
+                    <label
+                      htmlFor="username"
+                      className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                    >
+                      Enter your account registration email
+                    </label>
+                  </div>
+                  <input
+                    id="username"
+                    className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              )}
+              {step === 2 && (
+                <div className="tw-mb-5">
+                  <div className="tw-mb-5">
+                    <div className="tw-mb-1">
+                      <label
+                        htmlFor="otp"
+                        className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                      >
+                        Enter the OTP sent to your email
+                      </label>
+                    </div>
+                    <input
+                      id="otp"
+                      className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+              {step === 3 && (
+                <div className="tw-mb-5">
+                  <div className="tw-mb-5">
+                    <div className="tw-mb-5">
+                      <div className="tw-mb-1">
+                        <label
+                          htmlFor="otp"
+                          className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                        >
+                          Enter new password
+                        </label>
+                      </div>
+                      <input
+                        id="newpassword"
+                        className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                        type="text"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="tw-mb-5">
+                      <div className="tw-mb-1">
+                        <label
+                          htmlFor="confirmewpassword"
+                          className="tw-uppercase tw-text-dark-2 tw-text-xs tw-font-bold"
+                        >
+                          Confirm new password
+                        </label>
+                      </div>
+                      <input
+                        id="confirmnewpassword"
+                        className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                        type="text"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <hr className="tw-text-white" />
+              <div className="tw-mb-5">
+                <button type="submit" className="tw-w-full tw-px-4 tw-py-2 tw-rounded-sm tw-font-semibold tw-bg-blue-1 tw-text-dark-1">
+                  {step < 3 ? 'Continue' : 'Confirm'}
+                </button>
+              </div>
+              {step == 1 && (
+                <div className="tw-mb-3">
+                  <button className="tw-w-full tw-px-4 tw-py-2 tw-rounded-sm tw-font-semibold tw-bg-gray-500 tw-text-dark-1">
+                    <Link
+                      className="tw-text-white"
+                      style={{ textDecoration: 'none' }}
+                      to={Page.SIGN_IN_PAGE.path}
+                      replace={true}
+                    >
+                      Back to Sign In
+                    </Link>
+                  </button>
+                </div>
+              )}
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
