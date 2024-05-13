@@ -30,7 +30,7 @@ const SignUpPage = () => {
 
   return (
     <div className="signup-page tw-w-full tw-min-w-screen tw-h-full tw-min-h-screen tw-flex tw-items-center tw-justify-center">
-      <div className="tw-w-[30rem] tw-bg-dark-1 tw-px-7 tw-py-10 tw-m-5 tw-rounded-md tw-font-medium">
+      <div className="tw-w-[30rem] tw-bg-dark-1 tw-px-7 tw-py-10 tw-m-5 tw-rounded-md tw-font-medium tw-max-h-[94vh]">
         <p className="tw-mb-5 tw-text-dark-1 tw-text-xl tw-font-bold tw-text-center">
           Create an account
         </p>
@@ -45,7 +45,7 @@ const SignUpPage = () => {
                 </label>
               </div>
               <input
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-text-black"
                 type="text"
                 {...register("displayName", {
                   required: "Please enter Display Name",
@@ -66,7 +66,7 @@ const SignUpPage = () => {
                 </label>
               </div>
               <input
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-text-black"
                 type="text"
                 {...register("email", { required: "Please enter Email" })}
               />
@@ -85,7 +85,7 @@ const SignUpPage = () => {
                 </label>
               </div>
               <input
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-text-black"
                 type="text"
                 {...register("username", { required: "Please enter Username" })}
               />
@@ -104,7 +104,7 @@ const SignUpPage = () => {
                 </label>
               </div>
               <input
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-outline-none tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-outline-none tw-text-black"
                 type="password"
                 {...register("password", { required: "Please enter Password" })}
               />
@@ -123,7 +123,7 @@ const SignUpPage = () => {
                 </label>
               </div>
               <input
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-outline-none tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-outline-none tw-text-black"
                 type="password"
                 {...register("confirmPassword", {
                   required: "Please enter Confirm Password",

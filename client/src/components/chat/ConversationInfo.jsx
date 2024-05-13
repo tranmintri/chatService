@@ -26,8 +26,6 @@ const ConversationInfo = ({ chat }) => {
   const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
     useStateProvider();
   const [showAllImage, setShowAllImage] = useState(false);
-  const [showAllFile, setShowAllFile] = useState(false);
-  const [showAllLink, setShowAllLink] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [showModalInfo, setShowModalInfo] = useState(false);
   const [menberCount, setMemberCount] = useState(0);
@@ -36,6 +34,7 @@ const ConversationInfo = ({ chat }) => {
   const [showFormChangeRole, setShowFormChangeRole] = useState(false);
   const [showFormLeaveConversation, setShowLeaveConversation] = useState(false);
   const [selectChangeRole, setSelectChangeRole] = useState();
+  const [showModalDeleteChat, setShowModalDeleteChat] = useState(false);
   const handleLeaveConversation = () => {
     setShowLeaveConversation(!showFormLeaveConversation);
   };
@@ -83,6 +82,10 @@ const ConversationInfo = ({ chat }) => {
   };
   const onDeleteHistory = () => {
     window.alert("xoas ruif nef");
+  };
+  const onDeleteChat = () => {
+    alert("xóa chat");
+    setShowModalDeleteChat(true);
   };
 
   const splitImage = () => {
@@ -341,6 +344,20 @@ const ConversationInfo = ({ chat }) => {
             </div>
 
             <div className="mb-2 tw-ml-2 ">
+              {/* {currentChat.managerId == userInfo?.id && (
+                <button
+                  className="tw-block tw-mt-2 tw-mx-auto tw-mb-4 underline tw-w-full tw-cursor-pointer"
+                  style={{ height: "40px", color: "red" }}
+                >
+                  <div
+                    className="tw-flex  align-items-center"
+                    onClick={() => onDeleteChat()}
+                  >
+                    <FaRegTrashCan size={20} color="red" />
+                    <span className="tw-pl-5">Delete Chat</span>
+                  </div>
+                </button>
+              )} */}
               {currentChat.type == "private" && (
                 <button
                   onClick={onDeleteHistory}
@@ -397,6 +414,7 @@ const ConversationInfo = ({ chat }) => {
           </div>
         </div>
       </div>
+
       {showFormChangeRole && currentChat.managerId === userInfo?.id ? (
         <ChangeRoleModal
           showFormChangeRole={showFormChangeRole}

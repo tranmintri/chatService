@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { FaCircleExclamation } from "react-icons/fa6";
 import {
   Button,
   Col,
@@ -205,6 +206,9 @@ const SideBar = () => {
     console.log("logout ne");
     logOut(data);
   };
+  const showUserInfo = () => {
+    console.log(userInfo);
+  };
 
   useEffect(() => {
     // Nếu contactsPage là true, chọn tab "second", ngược lại chọn tab "first"
@@ -226,6 +230,7 @@ const SideBar = () => {
             height: "100vh",
             overflowY: "auto",
             backgroundColor: "#1e1f22",
+            // backgroundColor: "#ffffff",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -249,6 +254,14 @@ const SideBar = () => {
                     style={{ border: "2px solid black" }}
                   />
                 </div>
+                {!userInfo?.phone && (
+                  <div className="tw-flex tw-justify-center tw-items-center tw-absolute tw-left-[60px] tw-top-[75px] tw-w-5 tw-h-5 tw-rounded-full tw-bg-white">
+                    <FaCircleExclamation
+                      className="tw-text-red-500 tw-text-[20px] "
+                      onClick={() => showUserInfo()}
+                    />
+                  </div>
+                )}
               </Nav.Link>
 
               <Modal
@@ -613,25 +626,31 @@ const SideBar = () => {
               ref={ref}
               style={{ zIndex: 999 }}
             >
-              <div className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-border-b tw-font-bold">
+              <div className="tw-h-[25%] tw-pr-3 tw-pl-2 tw-flex tw-text-lg tw-items-center tw-border-b tw-font-bold">
                 {userInfo?.display_name}
               </div>
-              <div style={{ height: "50%" }}>
+              <div style={{ height: "50%" }} className="tw-pr-3 tw-pl-2">
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200"
+                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-border-b  tw-cursor-pointer hover:tw-bg-gray-200"
                   onClick={handleShowFormProfile}
                 >
                   Your profile
                 </div>
                 <div
-                  className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200"
+                  className="tw-h-[50%]  tw-flex tw-text-lg tw-items-center tw-justify-between tw-cursor-pointer hover:tw-bg-gray-200"
                   onClick={handleShowFormSetting1}
                 >
                   Setting
+                  {!userInfo?.phone && (
+                    <FaCircleExclamation
+                      className="tw-text-red-500 tw-text-[20px] "
+                      onClick={() => showUserInfo()}
+                    />
+                  )}
                 </div>
               </div>
               <div
-                className="tw-h-[25%] tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200 tw-border-t"
+                className="tw-h-[25%] tw-pr-3 tw-pl-2 tw-flex tw-text-lg tw-items-center tw-cursor-pointer hover:tw-bg-gray-200 tw-border-t"
                 onClick={handleShowFormLogOut}
               >
                 Sign Out
