@@ -44,7 +44,7 @@ const SignInPage = () => {
               </div>
               <input
                 id="username"
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-text-black"
                 type="text"
                 {...register("username", {
                   required: "Please enter Email or Phone Number",
@@ -69,7 +69,7 @@ const SignInPage = () => {
               </div>
               <input
                 id="password"
-                className="tw-w-full tw-px-4 tw-py-2 tw-bg-dark-2 tw-rounded-sm tw-text-white"
+                className="tw-w-full tw-px-4 tw-py-2  tw-rounded-sm tw-text-black"
                 type="password"
                 {...register("password", { required: "Please enter password" })}
               />

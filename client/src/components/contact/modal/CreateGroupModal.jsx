@@ -90,7 +90,7 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group controlId="formGroupName" className="mb-3">
+          <Form.Group controlId="formGroupName" className="mb-3  ">
             <Form.Control
               type="text"
               placeholder="Enter group name"
@@ -115,9 +115,9 @@ const CreateGroupModal = ({ showModal, handleCloseModal }) => {
           </span>
           <div
             style={{
-              maxHeight: "350px",
+              maxHeight: "300px",
               overflowY: "scroll",
-              minHeight: "350px",
+              minHeight: "300px",
             }}
           >
             {/* Check if friendList is defined */}

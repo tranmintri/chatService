@@ -11,6 +11,7 @@ import ChangeAvatarModal from "../../../components/ChangeAvatarModal/ChangeAvata
 import { useStateProvider } from "../../../context/StateContext";
 import { reducerCases } from "../../../context/constants";
 import axios from "axios";
+import { FaCircleExclamation } from "react-icons/fa6";
 import { GET_ALL_USER } from "../../../router/ApiRoutes";
 
 const MyAccountPage = () => {
@@ -187,7 +188,7 @@ const MyAccountPage = () => {
                 <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs">
                   Email
                 </label>
-                <p>{userInfo?.email || "Bạn chưa thêm Email nào cả"}</p>
+                <p>{userInfo?.email || "You haven't added any emails"}</p>
               </div>
               <div className="text-end">
                 <button
@@ -199,10 +200,20 @@ const MyAccountPage = () => {
               </div>
 
               <div>
-                <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs">
-                  Phone Number
-                </label>
-                <p>{userInfo?.phone || "Bạn chưa thêm số điện thoại nào cả"}</p>
+                <div className="tw-flex">
+                  <label className="tw-font-bold tw-text-dark-2 tw-uppercase tw-text-xs tw-mr-3">
+                    Phone Number
+                  </label>
+                  {!userInfo?.phone && (
+                    <div className="tw-flex tw-justify-center tw-items-center tw-w-5 tw-h-5 tw-rounded-full tw-bg-white">
+                      <FaCircleExclamation className="tw-text-red-500 tw-text-[20px] " />
+                    </div>
+                  )}
+                </div>
+
+                <p>
+                  {userInfo?.phone || "You haven't added a phone number at all"}
+                </p>
               </div>
               <div className="text-end">
                 <button

@@ -14,6 +14,7 @@ import doc from "../../../assets/doc.png";
 import docx from "../../../assets/docx.png";
 import ppt from "../../../assets/ppt.png";
 import ChatImage from "../card/ChatImage";
+import RecordCard from "../card/RecordCard";
 
 const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
   const [{ userInfo, groups, currentChat }, dispatch] = useStateProvider();
@@ -280,7 +281,16 @@ const ForwardModal = ({ showModal, handleCloseModal, shareMessage }) => {
                       ))}
                   </div>
                 ) : (
-                  <div>{shareMessage.content}</div>
+                  <div>
+                    {shareMessage.type &&
+                    shareMessage.type.includes("record") ? (
+                      <div>
+                        <RecordCard message={shareMessage} />
+                      </div>
+                    ) : (
+                      <div>{shareMessage.content}</div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
