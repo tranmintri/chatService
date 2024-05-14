@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Row, Col, Stack, Button } from "react-bootstrap";
 import UserChat from "./chat/UserChat";
 import ChatBox from "./chat/ChatBox";
@@ -10,12 +10,13 @@ import {
   CLIENT_HOST,
   GET_CHAT_BY_PARTICIPANTS,
 } from "../router/ApiRoutes";
-
+import nhacchuong from '../assets/Nhac-chuong-cuoc-goi-Facebook-Messenger.mp3'
 import { FaPhone } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import axios from "axios";
 import { reducerCases } from "../context/constants";
 import MessageResultCard from "./contact/card/MessageResultCard";
+import { Howl } from 'howler';
 
 const Chat = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -94,10 +95,39 @@ const Chat = () => {
       incomingVoiceCall: undefined,
     });
   };
+  const [isRinging, setIsRinging] = useState(false);
 
+  // Khởi tạo âm thanh chờ với Howl
+  const ringbackTone = useRef(
+    new Howl({
+      src: [nhacchuong], // Thay bằng đường dẫn đến tệp âm thanh chờ của bạn
+      loop: true,
+      volume: 1.0,
+    })
+  );
+
+  useEffect(() => {
+    if (incomingVoiceCall && incomingVoiceCall.receiveId === userInfo?.id) {
+      // Phát âm thanh chờ khi có cuộc gọi đến
+      ringbackTone.current.play();
+      setIsRinging(true);
+      console.log('Playing ringback tone');
+      console.log(nhacchuong); // Kiểm tra xem đường dẫn âm thanh đã được import đúng chưa
+    } else {
+      // Dừng âm thanh khi không có cuộc gọi
+      ringbackTone.current.stop();
+      setIsRinging(false);
+      console.log('Stopped ringback tone');
+    }
+
+    return () => {
+      // Dừng âm thanh khi component bị unmount
+      ringbackTone.current.stop();
+    };
+  }, [incomingVoiceCall, userInfo]);
   return (
     <div className="d-flex w-100">
-      {incomingVoiceCall && incomingVoiceCall.receiveId == userInfo?.id && (
+      {incomingVoiceCall && incomingVoiceCall.receiveId === userInfo?.id && (
         <div className="d-flex justify-content-center align-items-center fixed-top tw-w-full tw-min-h-screen z-50 blur-bg">
           <div className="tw-py-4 tw-px-1 tw-w-[300px] bg-amber-300 tw-min-h-80 flex-wrap centẻ tw-bg-slate-950 tw-shadow-2xl tw-rounded-lg">
             <div className="tw-w-full tw-text-center">
@@ -113,7 +143,7 @@ const Chat = () => {
               />
             </div>
             <div className="tw-w-full tw-text-center tw-text-white tw-mt-3 tw-px-1">
-              <span className="tw-text-2xl">Tri is calling you</span>
+              <span className="tw-text-2xl">{incomingVoiceCall.senderName} is calling you</span>
             </div>
             <div className="tw-w-full tw-text-center tw-text-white tw-mt-3 tw-px-10">
               <span className="tw-text-sm tw-text-gray-300">
@@ -126,7 +156,12 @@ const Chat = () => {
                 <div>
                   <div
                     className="tw-bg-red-500 tw-rounded-full tw-w-full tw-min-h-11 tw-cursor-pointer tw-flex tw-justify-center tw-items-center"
-                    onClick={() => handleCancelVoiceCall()}
+                    onClick={() => {
+                      handleCancelVoiceCall();
+                      ringbackTone.current.stop(); // Dừng âm thanh khi hủy cuộc gọi
+                      setIsRinging(false);
+                      console.log('Cancelled call');
+                    }}
                   >
                     <IoMdClose className="tw-cursor-pointer tw-text-white tw-text-2xl tw-shadow-2xl" />
                   </div>
@@ -137,7 +172,12 @@ const Chat = () => {
                 <div>
                   <div
                     className="tw-bg-green-500 tw-rounded-full tw-w-full tw-min-h-11 tw-cursor-pointer tw-flex tw-justify-center tw-items-center"
-                    onClick={() => handleAcceptVoiceCall()}
+                    onClick={() => {
+                      handleAcceptVoiceCall();
+                      ringbackTone.current.stop(); // Dừng âm thanh khi chấp nhận cuộc gọi
+                      setIsRinging(false);
+                      console.log('Accepted call');
+                    }}
                   >
                     <FaPhone className="tw-cursor-pointer tw-text-white tw-text-xl tw-shadow-2xl" />
                   </div>
