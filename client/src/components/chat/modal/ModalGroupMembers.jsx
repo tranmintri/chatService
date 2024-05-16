@@ -16,9 +16,19 @@ const ModalGroupMembers = ({
   const [showOptions, setShowOptions] = useState({});
   const [selectedOptionPosition, setSelectedOptionPosition] = useState({});
   const [
-    { userInfo, groups, currentChat, socket, friendList, socket2 },
+    {
+      userInfo,
+      groups,
+      currentChat,
+      socket,
+      friendList,
+      socket2,
+      sentInvitations,
+      receivedInvitations,
+    },
     dispatch,
   ] = useStateProvider();
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [currentMember, setCurrentMember] = useState(null);
@@ -52,6 +62,29 @@ const ModalGroupMembers = ({
     if (ref.current && !ref.current.contains(event.target)) {
       setShowOptions({});
     }
+  };
+  const checkExistingInvitation = (postData) => {
+    let existingSentInvitation = false;
+    let existingReceivedInvitation = false;
+    console.log(sentInvitations);
+
+    if (sentInvitations) {
+      existingSentInvitation = sentInvitations.some(
+        (invitation) =>
+          invitation.sender === postData.sender &&
+          invitation.receiver === postData.receiver
+      );
+    }
+
+    if (receivedInvitations) {
+      existingReceivedInvitation = receivedInvitations.some(
+        (invitation) =>
+          invitation.sender === postData.receiver &&
+          invitation.receiver === postData.sender
+      );
+    }
+
+    return existingSentInvitation || existingReceivedInvitation;
   };
 
   const changeRole = async (member) => {
@@ -117,6 +150,14 @@ const ModalGroupMembers = ({
     };
   }, []);
   const handleAddFriend = async (index, member) => {
+    if (!userInfo.phone) {
+      toast.error("Please add your phone number in the profile section.");
+      return;
+    }
+    if (loading) return;
+
+    setLoading(true);
+
     const postData = {
       isAccepted: false,
       receiver: member.id,
@@ -126,10 +167,17 @@ const ModalGroupMembers = ({
       receiverName: member.display_name,
       requestId: null,
     };
+
+    if (checkExistingInvitation(postData)) {
+      console.error("Invitation already exists.");
+      toast.error("Invitation already exists.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(NOTI_API + "add", postData);
       if (response) {
-        toast.success("Friend added successfully!");
         toggleModalMembers();
       }
       socket2.current.emit("sendFriendRequest", postData);
@@ -146,6 +194,8 @@ const ModalGroupMembers = ({
       }
     } catch (error) {
       console.error("Error sending friend request:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const checkIsFriend = (member) => {

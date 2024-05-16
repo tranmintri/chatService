@@ -190,7 +190,7 @@ const ListAddFriend = () => {
                     <Button
                       variant="danger"
                       onClick={() => handleRejectInvite(invitation)}
-                      style={{ width: "100%" }}
+                      style={{ width: "100%", marginLeft: "5px" }}
                     >
                       Reject
                     </Button>
