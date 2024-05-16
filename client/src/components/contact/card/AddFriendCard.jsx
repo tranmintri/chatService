@@ -62,7 +62,56 @@ const AddFriendCard = ({
   
     return existingSentInvitation || existingReceivedInvitation;
   };
+  // const handleAddFriend = async () => {
+  //   if (!searchResults || loading) return;
+  
+  //   setLoading(true);
+  
+  //   const postData = {
+  //     isAccepted: false,
+  //     receiver: searchResults.id,
+  //     sender: userInfo?.id,
+  //     profilePicture: userInfo?.avatar,
+  //     senderName: userInfo?.display_name,
+  //     receiverName: searchResults.display_name,
+  //     requestId: null,
+  //   };
+  
+  //   if (checkExistingInvitation(postData)) {
+  //     console.error("Invitation already exists.");
+  //     toast.error("Invitation already exists.");
+  //     setLoading(false);
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await axios.post(NOTI_API + "add", postData);
+  //     if (response) {
+  //       handleCloseModal();
+  //     }
+  //     socket2.current.emit("sendFriendRequest", postData);
+  //     if (postData.sender === userInfo?.id) { 
+  //       dispatch({
+  //         type: reducerCases.ADD_INVITATION,
+  //         newSend: postData,
+  //       });
+  //     } else {
+  //       dispatch({
+  //         type: reducerCases.ADD_RECEIVE_INVITATION,
+  //         newReceive: postData,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error sending friend request:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleAddFriend = async () => {
+    if (!userInfo.phone) {
+      toast.error("Please add your phone number in the profile section.");
+      return
+    }
     if (!searchResults || loading) return;
   
     setLoading(true);
