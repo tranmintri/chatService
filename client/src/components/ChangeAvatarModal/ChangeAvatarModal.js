@@ -50,8 +50,6 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
       const dataUrl = cropRef.current.getImage().toDataURL();
       const result = await fetch(dataUrl);
       const blob = await result.blob();
-      // setPreview(URL.createObjectURL(blob));
-      // setModalOpen(false);
       updateMutation.mutate({
         id: userInfo.id,
         avatar: blob,
@@ -112,7 +110,6 @@ const ChangeAvatarModal = ({ open = false, setOpen, userInfo }) => {
                         <AvatarEditor
                           ref={cropRef}
                           className="tw-col-span-9 tw-mx-auto tw-mb-5"
-                          // style={{ width: "100%", height: "100%" }}
                           image={URL.createObjectURL(file)}
                           width={320}
                           height={320}

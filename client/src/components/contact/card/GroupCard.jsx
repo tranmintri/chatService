@@ -12,9 +12,6 @@ const GroupCard = ({ chat }) => {
     dispatch,
   ] = useStateProvider();
 
-  const DeleteFriend = () => {
-    console.log("delete");
-  };
   const StartChat = async () => {
     socket.current.emit("joinRoom", chat.chatId);
     dispatch({

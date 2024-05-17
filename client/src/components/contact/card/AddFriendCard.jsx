@@ -39,83 +39,31 @@ const AddFriendCard = ({
   }, [userInfo?.id]);
 
   const [loading, setLoading] = useState(false);
-
-  // const checkExistingInvitation = (postData) => {
-  //   // gom
-  //   const existingInvitation = [...sentInvitations, ...receivedInvitations].find(invitation => 
-  //     (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
-  //     (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
-  //   );
-  
-  //   return existingInvitation;
-  // };
   const checkExistingInvitation = (postData) => {
-    const existingSentInvitation = sentInvitations.find(invitation => 
-      (invitation.sender === postData.sender && invitation.receiver === postData.receiver)
-      // (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+    const existingSentInvitation = sentInvitations.find(
+      (invitation) =>
+        invitation.sender === postData.sender &&
+        invitation.receiver === postData.receiver
     );
-  
-    const existingReceivedInvitation = receivedInvitations.find(invitation => 
-      // (invitation.sender === postData.sender && invitation.receiver === postData.receiver) ||
-      (invitation.sender === postData.receiver && invitation.receiver === postData.sender)
+
+    const existingReceivedInvitation = receivedInvitations.find(
+      (invitation) =>
+        invitation.sender === postData.receiver &&
+        invitation.receiver === postData.sender
     );
-  
+
     return existingSentInvitation || existingReceivedInvitation;
   };
-  // const handleAddFriend = async () => {
-  //   if (!searchResults || loading) return;
-  
-  //   setLoading(true);
-  
-  //   const postData = {
-  //     isAccepted: false,
-  //     receiver: searchResults.id,
-  //     sender: userInfo?.id,
-  //     profilePicture: userInfo?.avatar,
-  //     senderName: userInfo?.display_name,
-  //     receiverName: searchResults.display_name,
-  //     requestId: null,
-  //   };
-  
-  //   if (checkExistingInvitation(postData)) {
-  //     console.error("Invitation already exists.");
-  //     toast.error("Invitation already exists.");
-  //     setLoading(false);
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await axios.post(NOTI_API + "add", postData);
-  //     if (response) {
-  //       handleCloseModal();
-  //     }
-  //     socket2.current.emit("sendFriendRequest", postData);
-  //     if (postData.sender === userInfo?.id) { 
-  //       dispatch({
-  //         type: reducerCases.ADD_INVITATION,
-  //         newSend: postData,
-  //       });
-  //     } else {
-  //       dispatch({
-  //         type: reducerCases.ADD_RECEIVE_INVITATION,
-  //         newReceive: postData,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error sending friend request:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+
   const handleAddFriend = async () => {
     if (!userInfo.phone) {
       toast.error("Please add your phone number in the profile section.");
-      return
+      return;
     }
     if (!searchResults || loading) return;
-  
+
     setLoading(true);
-  
+
     const postData = {
       isAccepted: false,
       receiver: searchResults.id,
@@ -125,21 +73,21 @@ const AddFriendCard = ({
       receiverName: searchResults.display_name,
       requestId: null,
     };
-  
+
     if (checkExistingInvitation(postData)) {
       console.error("Invitation already exists.");
       toast.error("Invitation already exists.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await axios.post(NOTI_API + "add", postData);
       if (response) {
         handleCloseModal();
       }
       socket2.current.emit("sendFriendRequest", postData);
-      if (postData.sender === userInfo?.id) { 
+      if (postData.sender === userInfo?.id) {
         dispatch({
           type: reducerCases.ADD_INVITATION,
           newSend: postData,

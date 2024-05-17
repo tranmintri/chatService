@@ -46,12 +46,7 @@ const ChatImage = ({ imageUrl, size }) => {
           </Button>
         </Modal.Header>
         <div className="tw-flex tw-justify-center tw-items-center">
-          <img
-            src={imageUrl}
-            alt="Image"
-            className="tw-max-w-[50vh]"
-            // style={{ maxHeight: "100px", maxWidth: "100px" }}
-          />
+          <img src={imageUrl} alt="Image" className="tw-max-w-[50vh]" />
         </div>
       </Modal>
     </div>

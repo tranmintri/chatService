@@ -133,7 +133,7 @@ const reducer = (state, action) => {
         ...state,
         search: action.search,
       };
-    //start
+
     case reducerCases.SET_INCOMING_VOICE_CALL:
       return {
         ...state,
@@ -146,7 +146,6 @@ const reducer = (state, action) => {
         callAccepted: action.callAccepted,
       };
 
-    //end
     case reducerCases.CHANGE_CURRENT_CHAT_USER:
       return {
         ...state,

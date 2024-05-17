@@ -3,12 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import {
   Button,
-  Container,
   Dropdown,
   DropdownButton,
   Form,
   FormControl,
-  ListGroup,
 } from "react-bootstrap";
 import { useStateProvider } from "../../context/StateContext";
 import GroupCard from "./card/GroupCard";

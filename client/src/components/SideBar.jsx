@@ -1,6 +1,5 @@
 import {
   faAddressBook,
-  faCamera,
   faMessage,
   faSignOutAlt,
   faUserPlus,
@@ -76,8 +75,6 @@ const SideBar = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const [showSearchTable, setShowSearchTable] = useState(false);
-  // const [showUpdateModal, setShowUpdateModal] = useState(false);
-  // const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const [receiveFriendData, setReceiveFriendData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -89,9 +86,6 @@ const SideBar = () => {
   const filteredGroups = groups.filter((group) =>
     group.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const handleOpenUpdateModal = () => {
-    setShowUpdateModal(true);
-  };
 
   const handleCloseUpdateModal = () => {
     setShowUpdateModal(false);
@@ -203,11 +197,8 @@ const SideBar = () => {
   const logOut = useLogout();
   const onLogout = () => {
     const data = localStorage.getItem("accessToken");
-    console.log("logout ne");
+
     logOut(data);
-  };
-  const showUserInfo = () => {
-    console.log(userInfo);
   };
 
   useEffect(() => {
@@ -230,7 +221,6 @@ const SideBar = () => {
             height: "100vh",
             overflowY: "auto",
             backgroundColor: "#1e1f22",
-            // backgroundColor: "#ffffff",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -256,10 +246,7 @@ const SideBar = () => {
                 </div>
                 {!userInfo?.phone && (
                   <div className="tw-flex tw-justify-center tw-items-center tw-absolute tw-left-[60px] tw-top-[75px] tw-w-5 tw-h-5 tw-rounded-full tw-bg-white">
-                    <FaCircleExclamation
-                      className="tw-text-red-500 tw-text-[20px] "
-                      onClick={() => showUserInfo()}
-                    />
+                    <FaCircleExclamation className="tw-text-red-500 tw-text-[20px] " />
                   </div>
                 )}
               </Nav.Link>
@@ -642,10 +629,7 @@ const SideBar = () => {
                 >
                   Setting
                   {!userInfo?.phone && (
-                    <FaCircleExclamation
-                      className="tw-text-red-500 tw-text-[20px] "
-                      onClick={() => showUserInfo()}
-                    />
+                    <FaCircleExclamation className="tw-text-red-500 tw-text-[20px] " />
                   )}
                 </div>
               </div>

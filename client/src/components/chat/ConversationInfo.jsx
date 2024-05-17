@@ -13,18 +13,16 @@ import pdf from "../../assets/pdf.png";
 import doc from "../../assets/doc.png";
 import docx from "../../assets/docx.png";
 import ppt from "../../assets/ppt.png";
-import { GET_ALL_USER } from "../../router/ApiRoutes";
-import { Modal, Button } from "react-bootstrap";
+
 import { AiOutlineUserAdd } from "react-icons/ai";
 import ModalAddMember from "./modal/ModalAddMember";
 import ChangeRoleModal from "../contact/modal/ChangeRoleModal";
-import { current } from "@reduxjs/toolkit";
+
 import ModalLeaveConversation from "./modal/ModalLeaveConversation";
 import ChatImage from "../contact/card/ChatImage";
 
 const ConversationInfo = ({ chat }) => {
-  const [{ messages, userInfo, currentChat, groups, socket }, dispatch] =
-    useStateProvider();
+  const [{ userInfo, currentChat }, dispatch] = useStateProvider();
   const [showAllImage, setShowAllImage] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [showModalInfo, setShowModalInfo] = useState(false);
@@ -47,10 +45,6 @@ const ConversationInfo = ({ chat }) => {
   };
   const handleShowChangeRole = () => setShowFormChangeRole(true);
 
-  const handleSubmitChangeRole = () => {
-    setShowLeaveConversation(true);
-  };
-
   const handleCloseModalAddMember = () => {
     setShowModalAddMember(!showModalAddMember);
   };
@@ -64,10 +58,6 @@ const ConversationInfo = ({ chat }) => {
 
   const toggleModalMembers = () => {
     setShowModalMembers(!showModalMembers);
-  };
-
-  const toggleShowAllImage = () => {
-    setShowAllImage(!showAllImage);
   };
 
   const convertName = () => {
@@ -93,13 +83,12 @@ const ConversationInfo = ({ chat }) => {
     if (currentChat.messages && Array.isArray(currentChat.messages)) {
       currentChat.messages.forEach((element) => {
         if (element.type.includes("image")) {
-          // console.log(element.content);
           url += element.content.toString() + "|"; // Thêm "|" để phân biệt các URL
         }
       });
     }
     const urlSplit = url.split("|").filter((url) => url.startsWith("https://"));
-    console.log("url", url);
+
     return urlSplit;
   };
   const convertImage = () => {
@@ -125,7 +114,6 @@ const ConversationInfo = ({ chat }) => {
 
     return urlSplit;
   };
-  // tw-max-h-[32.5vh]
 
   return (
     <div className="tw-w-full tw-h-full">

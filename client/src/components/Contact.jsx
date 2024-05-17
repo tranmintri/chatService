@@ -9,40 +9,13 @@ import ListContact from "./contact/ListContact";
 import ListAddFriend from "./contact/ListAddFriend";
 import ListGroups from "./contact/ListGroups";
 import { useState } from "react";
-import AddFriendModal from "./contact/modal/AddFriendModal";
-import CreateGroupModal from "./contact/modal/CreateGroupModal";
-import avatar from "../assets/2Q.png";
 import { useEffect } from "react";
 import { reducerCases } from "../context/constants";
 import { useStateProvider } from "../context/StateContext";
 import { GET_CHAT_BY_PARTICIPANTS } from "../router/ApiRoutes";
 import axios from "axios";
 const Contact = ({ data }) => {
-  const [showAddFriendModal, setShowAddFriendModal] = useState(false);
-  const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
   const [{ userInfo, receivedInvitations }, dispatch] = useStateProvider();
-  const handleAddFriend = () => {
-    setShowAddFriendModal(true);
-  };
-
-  const handleCloseAddFriendModal = () => {
-    setShowAddFriendModal(false);
-  };
-
-  const handleCreateGroup = () => {
-    setShowCreateGroupModal(true);
-  };
-
-  const handleCloseCreateGroupModal = () => {
-    setShowCreateGroupModal(false);
-  };
-
-  const handleSendInvite = () => {
-    console.log("Gửi lời mời kết bạn");
-  };
-  const handleSearch = () => {
-    console.log("Searching...");
-  };
 
   const [activeTab, setActiveTab] = useState("first");
   useEffect(() => {
@@ -147,7 +120,9 @@ const Contact = ({ data }) => {
                   />
                   <span>Friend requests</span>
                   {receivedInvitations.length > 0 && (
-                    <div className="request-notifications tw-absolute tw-right-0 tw-top-1">{receivedInvitations.length}</div>
+                    <div className="request-notifications tw-absolute tw-right-0 tw-top-1">
+                      {receivedInvitations.length}
+                    </div>
                   )}
                 </div>
               </Nav.Link>

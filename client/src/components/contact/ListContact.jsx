@@ -24,26 +24,6 @@ const ListContact = ({ data }) => {
   const [currentFriendId, setCurrentFriendId] = useState(null);
   const [{ userInfo, socket2, friendList }, dispatch] = useStateProvider();
 
-  // const fetchData = useCallback(async () => {
-  //   try {
-  //     const { data } = await axios.get(GET_ALL_USER);
-  //     // const {data} =  []
-  //     const userData = data.data.find((user) => user.id === userInfo.id);
-  //     // Dispatch an action to set the friends list in your global state
-  //     const newFriends = userData.friends ? userData.friends : [];
-  //     dispatch({
-  //       type: reducerCases.SET_FRIENDS,
-  //       friends: newFriends,
-  //     });
-  //     // setFriends(newFriends);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // }, [userInfo.id]);
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [friendList]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -60,14 +40,6 @@ const ListContact = ({ data }) => {
     };
     fetchData();
   }, [userInfo?.id]);
-
-  // useEffect(() => {
-  //   // Filter friends based on search term
-  //   const results = friends?.filter((friend) =>
-  //     friend.displayName.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-  //   setSearchResults(results);
-  // }, [searchTerm, friends]);
 
   useEffect(() => {
     // Filter friends based on search term
