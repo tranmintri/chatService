@@ -15,7 +15,6 @@ const ModalReactionInfo = ({
   handleCloseModal,
   reactionInfo,
 }) => {
-  const [{ reactionList }] = useStateProvider();
   const [userByType, setUserByType] = useState([]);
   const [active, setActive] = useState(-2);
   const uniqueTypeCounts = {};
@@ -47,7 +46,6 @@ const ModalReactionInfo = ({
 
   const getAllUserByType = async (type, index) => {
     // Lọc các phản ứng theo type
-    console.log(index);
     setActive(index);
     if (type == "All") {
       try {
@@ -56,7 +54,6 @@ const ModalReactionInfo = ({
         const filteredUsers = response.data.data.filter((user) =>
           reactionInfo.some((reaction) => reaction.senderId === user.id)
         );
-        console.log(filteredUsers);
         setUserByType(filteredUsers);
       } catch (error) {
         console.error("Error fetching user list:", error);
@@ -71,7 +68,6 @@ const ModalReactionInfo = ({
         const filteredUsers = response.data.data.filter((user) =>
           filteredReactions.some((reaction) => reaction.senderId === user.id)
         );
-        console.log(filteredUsers);
         setUserByType(filteredUsers);
       } catch (error) {
         console.error("Error fetching user list:", error);

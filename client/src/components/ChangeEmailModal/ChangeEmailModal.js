@@ -144,7 +144,6 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                     <button
                       type="submit"
                       className="tw-px-6 tw-py-2.5 tw-text-sm tw-text-dark-1 tw-bg-blue-1 tw-rounded-sm"
-                      // onClick={() => setOpen(false)}
                     >
                       Confirm
                     </button>

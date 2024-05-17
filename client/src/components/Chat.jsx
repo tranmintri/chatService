@@ -10,13 +10,13 @@ import {
   CLIENT_HOST,
   GET_CHAT_BY_PARTICIPANTS,
 } from "../router/ApiRoutes";
-import nhacchuong from '../assets/Nhac-chuong-cuoc-goi-Facebook-Messenger.mp3'
+import nhacchuong from "../assets/Nhac-chuong-cuoc-goi-Facebook-Messenger.mp3";
 import { FaPhone } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import axios from "axios";
 import { reducerCases } from "../context/constants";
 import MessageResultCard from "./contact/card/MessageResultCard";
-import { Howl } from 'howler';
+import { Howl } from "howler";
 
 const Chat = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -55,9 +55,6 @@ const Chat = () => {
     fetchChatData(); // Gọi hàm để fetch dữ liệu chat khi component được render
   }, []);
 
-  // useEffect(() => {
-  //   setChat // Cập nhật giá trị của chat khi currentChat thay đổi
-  // }, [chats]);
   const toggleConversationInfo = () => {
     setShowInfo(!showInfo);
   };
@@ -111,13 +108,10 @@ const Chat = () => {
       // Phát âm thanh chờ khi có cuộc gọi đến
       ringbackTone.current.play();
       setIsRinging(true);
-      console.log('Playing ringback tone');
-      console.log(nhacchuong); // Kiểm tra xem đường dẫn âm thanh đã được import đúng chưa
     } else {
       // Dừng âm thanh khi không có cuộc gọi
       ringbackTone.current.stop();
       setIsRinging(false);
-      console.log('Stopped ringback tone');
     }
 
     return () => {
@@ -143,7 +137,9 @@ const Chat = () => {
               />
             </div>
             <div className="tw-w-full tw-text-center tw-text-white tw-mt-3 tw-px-1">
-              <span className="tw-text-2xl">{incomingVoiceCall.senderName} is calling you</span>
+              <span className="tw-text-2xl">
+                {incomingVoiceCall.senderName} is calling you
+              </span>
             </div>
             <div className="tw-w-full tw-text-center tw-text-white tw-mt-3 tw-px-10">
               <span className="tw-text-sm tw-text-gray-300">
@@ -160,7 +156,6 @@ const Chat = () => {
                       handleCancelVoiceCall();
                       ringbackTone.current.stop(); // Dừng âm thanh khi hủy cuộc gọi
                       setIsRinging(false);
-                      console.log('Cancelled call');
                     }}
                   >
                     <IoMdClose className="tw-cursor-pointer tw-text-white tw-text-2xl tw-shadow-2xl" />
@@ -176,7 +171,6 @@ const Chat = () => {
                       handleAcceptVoiceCall();
                       ringbackTone.current.stop(); // Dừng âm thanh khi chấp nhận cuộc gọi
                       setIsRinging(false);
-                      console.log('Accepted call');
                     }}
                   >
                     <FaPhone className="tw-cursor-pointer tw-text-white tw-text-xl tw-shadow-2xl" />
@@ -231,7 +225,6 @@ const Chat = () => {
               showInfo={showInfo}
             />
           </div>
-          // <div>aaaaaa</div>
         )
       ) : (
         <div className="col-9 tw-z-0">

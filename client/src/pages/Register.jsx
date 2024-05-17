@@ -158,8 +158,6 @@ const Box = () => {
               type="text"
               placeholder="Ngày sinh"
               style={{ border: "none", with: "100%" }}
-              // value={isSoDienThoai}
-              // onChange={(e) =>setSoDienThoai(e.target.value)}
             ></Form.Control>
           </div>
         </div>

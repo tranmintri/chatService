@@ -3,14 +3,12 @@ import {
   FileImageOutlined,
   SmileOutlined,
   LinkOutlined,
-  SendOutlined,
   AudioOutlined,
   DownOutlined,
 } from "@ant-design/icons";
 
-import { IoIosSend } from "react-icons/io";
 import { BiSend } from "react-icons/bi";
-import { IoMdSearch, IoIosCall, IoIosVideocam } from "react-icons/io";
+import { IoMdSearch, IoIosCall } from "react-icons/io";
 import { VscLayoutSidebarRightOff } from "react-icons/vsc";
 import React, { useEffect, useRef, useState } from "react";
 import { useStateProvider } from "../../context/StateContext";
@@ -43,12 +41,11 @@ import angry from "../../assets/angry.png";
 import EmojiPicker from "emoji-picker-react";
 import { SlReload } from "react-icons/sl";
 import { IoIosRedo } from "react-icons/io";
-import { BiPhone, BiSolidQuoteRight } from "react-icons/bi";
+import { BiSolidQuoteRight } from "react-icons/bi";
 import { BiSolidQuoteAltRight } from "react-icons/bi";
 import { v4 as uuidv4 } from "uuid";
 import ForwardModal from "../contact/modal/ForwardModal";
-import { FaMicrophone } from "react-icons/fa6";
-import { CiMicrophoneOn } from "react-icons/ci";
+
 import CaptureAudio from "./CaptureAudio";
 import RemoveMessageModal from "../contact/modal/RemoveMessageModal";
 import RecordCard from "../contact/card/RecordCard";
@@ -249,9 +246,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
         type = "reply";
         messageId = replyMessage.messageId;
       }
-      console.log(sendMessages.length);
+
       try {
-        console.log(type);
         if (
           (sendMessages.length > 0 &&
             sendMessages.trim().length > 0 &&
@@ -260,9 +256,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           type == "reply" ||
           type == "image"
         ) {
-          console.log(type);
           content += sendMessages;
-          console.log(content);
+
           const { data } = await axios.put(
             CHAT_API + currentChat?.chatId + "/messages",
             {
@@ -329,7 +324,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           setSelectedImages([]);
           setSendMessages([]);
         } else {
-          console.log("else");
           setSendMessages([]);
         }
       } catch (error) {
@@ -365,12 +359,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       return "";
     }
   };
-  // const openNewWindow = (chatId) => {
-
-  //   return () => {
-  //     socket.current.emit("get-browser", chatId);
-  //   };
-  // };
 
   const handleFileInputChange = (e) => {
     const files = Array.from(e.target.files);
@@ -380,20 +368,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  // const handleAttachFiles = () => {
-  //   document.getElementById('file-input').click();
-  // };
-
-  // const handleVoiceCall = () => {
-  //   if (currentChat.type === "private") {
-
-  //     socket.current.emit("request-to-voice-call-private", {
-  //       receiveId: receiveId,
-  //       senderId: userInfo?.id,
-  //       senderName: userInfo?.display_name
-  //     });
-  //   }
-  // };
   const handleClickOpenTab = () => {
     let receiverId = undefined;
     let receiverName = undefined;
@@ -760,7 +734,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
           reactionNumber = 0;
       }
     }
-    console.log(reactionNumber);
+
     setIsClickReaction(reactionNumber);
     setOpenReactionMenu(true);
     setActiveIndex(index);
@@ -768,7 +742,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
 
   const handleReactionDetail_function = async (message, number, type) => {
     if (isClickReaction == 0) {
-      console.log("isClickReaction : " + isClickReaction);
       const reactionId = uuidv4();
       const reactionData = {
         chatId: currentChat.chatId,
@@ -789,8 +762,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       });
     }
     if (isClickReaction != number) {
-      console.log("isClickReaction != : " + number);
-      console.log(type);
       const reactionUpdate = reactionList.find(
         (reaction) =>
           reaction.chatId === currentChat.chatId &&
@@ -826,15 +797,13 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
       }
     }
     if (isClickReaction == number) {
-      console.log("isClickReaction : " + number);
-      console.log(type);
       const reactionUpdate = reactionList.find(
         (reaction) =>
           reaction.chatId === currentChat.chatId &&
           reaction.messageId === message.messageId &&
           reaction.senderId === userInfo?.id
       );
-      console.log(reactionUpdate);
+
       if (reactionUpdate) {
         const result = await axios.delete(
           REACTION_API + reactionUpdate.reactionId
@@ -1034,16 +1003,6 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
             color="black"
             title="Call"
             onClick={() => handleClickOpenTab()}
-            // onClick={() =>
-            //   sendVoiceCallRequest(
-            //     chat.type == "private"
-            //       ? chat.participants[0] == userInfo?.id
-            //         ? chat.participants[1]
-            //         : chat.participants[0]
-            //       : chat.chatId,
-            //     userInfo?.id
-            //   )
-            // }
           />
           {/* <IoIosCall className="chat-header-icon px-2 bg-white" color="black" title="Call" onClick={handleVoiceCall} /> */}
           {/* <IoIosVideocam className="chat-header-icon px-2 bg-white" color="black" title="Video Call" onClick={handleVideoCall} /> */}

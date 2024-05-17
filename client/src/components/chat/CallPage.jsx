@@ -9,7 +9,6 @@ import { BiMicrophone } from "react-icons/bi";
 import { v4 as uuidv4 } from "uuid";
 import { CHAT_API } from "../../router/ApiRoutes";
 import axios from "axios";
-// import io from 'socket.io-client';
 
 const CallPage = () => {
   const [
@@ -140,18 +139,12 @@ const CallPage = () => {
         </div>
         <div className="tw-bg-slate-950 tw-w-full tw-min-h-[20vh] tw-flex tw-justify-center tw-items-center">
           <div>
-            <div
-              className="tw-bg-gray-700 tw-rounded-full tw-w-10 tw-min-h-10 tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-mr-5"
-              // onClick={() => handleCancelVoiceCall()}
-            >
+            <div className="tw-bg-gray-700 tw-rounded-full tw-w-10 tw-min-h-10 tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-mr-5">
               <MdScreenShare className="tw-cursor-pointer tw-text-gray-400 tw-text-2xl tw-shadow-2xl" />
             </div>
           </div>
           <div>
-            <div
-              className="tw-bg-gray-700 tw-rounded-full tw-w-10 tw-min-h-10 tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-mr-5"
-              // onClick={() => handleCancelVoiceCall()}
-            >
+            <div className="tw-bg-gray-700 tw-rounded-full tw-w-10 tw-min-h-10 tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-mr-5">
               <BiMicrophone className="tw-cursor-pointer tw-text-gray-400 tw-text-2xl tw-shadow-2xl" />
             </div>
           </div>

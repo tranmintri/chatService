@@ -66,7 +66,6 @@ const ModalGroupMembers = ({
   const checkExistingInvitation = (postData) => {
     let existingSentInvitation = false;
     let existingReceivedInvitation = false;
-    console.log(sentInvitations);
 
     if (sentInvitations) {
       existingSentInvitation = sentInvitations.some(
@@ -206,12 +205,6 @@ const ModalGroupMembers = ({
     }
     return false;
   };
-
-  // const calculateOptionPosition = (buttonRect, parentRect) => {
-  //     const top = buttonRect.top - parentRect.top + buttonRect.height + 50;
-  //     const left = buttonRect.left - parentRect.left + buttonRect.width + 60;
-  //     return { top, left };
-  // };
 
   return (
     <Modal show={showModalMembers} onHide={toggleModalMembers} centered>

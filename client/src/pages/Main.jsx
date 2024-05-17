@@ -285,11 +285,10 @@ const Main = () => {
     if (socket2.current && !socketEvent2) {
       socket2.current.on("acceptFriend", async (data) => {
         toast.success("Your friend request accpeted by " + data.display_name);
-        console.log("accept ", GET_CHAT_BY_PARTICIPANTS + userInfo?.id);
+
         const response = await axios.get(
           GET_CHAT_BY_PARTICIPANTS + userInfo?.id
         );
-        console.log(response);
 
         if (response) {
           dispatch({

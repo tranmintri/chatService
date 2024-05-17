@@ -24,7 +24,7 @@ const ChangePhoneModal = ({ open, setOpen, userInfo }) => {
 
   const updateMutation = useMutation({
     mutationFn: (data) => updateUserInfo(data),
-    // userInfo?.phone = data,
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.GET_USER_INFO] });
       toast.info("Cập nhật số điện thoại thành công");
@@ -148,7 +148,6 @@ const ChangePhoneModal = ({ open, setOpen, userInfo }) => {
                     <button
                       type="submit"
                       className="tw-px-6 tw-py-2.5 tw-text-sm tw-text-dark-1 tw-bg-blue-1 tw-rounded-sm"
-                      // onClick={() => setOpen(false)}
                     >
                       Confirm
                     </button>
