@@ -1,4 +1,3 @@
-import { getUser } from "../utils/UserStorage";
 import axios from "./axiosConfig";
 
 export const checkUserExists = async (emailOrPhone) => {
@@ -34,6 +33,16 @@ export const signInWithGoogle = async (token) => {
   }
 };
 
+export const signInWithQRCode = async (token) => {
+  try {
+    return await axios.post("/signin/qr", {
+      token: token,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const signUp = async (displayName, email, username, password) => {
   try {
     return await axios.post("/signup", {
@@ -61,7 +70,7 @@ export const signIn = async (username, password) => {
 export const logout = async (tokenId) => {
   try {
     // return await axios.post("/logout", {
-    //   token_id: tokenId,
+    //     token_id: tokenId,
     // });
   } catch (error) {
     throw error;
@@ -72,6 +81,39 @@ export const sendVerifyEmail = async (email) => {
   try {
     return await axios.post("/verify/email/send", {
       email: email,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const verifyEmail = async (token) => {
+  try {
+    return await axios.get("/verify/email", {
+      params: {
+        token: token,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    return await axios.post("/forgot-password", {
+      email: email,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    return await axios.post("/reset-password", {
+      token: token,
+      password: newPassword,
     });
   } catch (error) {
     throw error;

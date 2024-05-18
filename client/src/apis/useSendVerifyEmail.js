@@ -6,7 +6,7 @@ export const useSendVerifyEmail = () => {
     const { mutate: sendVerifyEmailMutate } = useMutation({
         mutationFn: (email) => sendVerifyEmail(email),
         onSuccess: (res => {
-            toast.success('Gui email xac thuc thanh cong');
+            toast('Send verify email success!');
         }),
         onError: (error => {
             console.error(error);
