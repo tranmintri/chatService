@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import {signIn} from "./authApi";
+import {signInWithQRCode} from "./authApi";
 import {saveUser} from "../utils/UserStorage";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -8,11 +8,11 @@ import {saveToken} from "../utils/TokenStorage";
 import {reducerCases} from "../context/constants";
 import {useStateProvider} from "../context/StateContext";
 
-export const useSignIn = () => {
+export const useSignInWithQRCode = () => {
     const navigate = useNavigate();
     const [{userInfo, socket}, dispatch] = useStateProvider();
-    const {mutate: signInMutate} = useMutation({
-        mutationFn: ({username, password}) => signIn(username, password),
+    const {mutate: signInWithQRCodeMutate} = useMutation({
+        mutationFn: (token) => signInWithQRCode(token),
         onSuccess: (res) => {
             const data = res.data;
             const userInfo = data.user_info;
@@ -36,5 +36,5 @@ export const useSignIn = () => {
             toast.error(error.response.data);
         },
     });
-    return signInMutate;
+    return signInWithQRCodeMutate;
 };
