@@ -158,11 +158,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
   const receiveId =
     currentChat?.participants.length == 2
       ? currentChat?.participants.reduce((acc, participantId) => {
-          if (participantId !== userInfo?.id) {
-            acc = participantId;
-          }
-          return acc;
-        }, null)
+        if (participantId !== userInfo?.id) {
+          acc = participantId;
+        }
+        return acc;
+      }, null)
       : "";
   const handleSendMessage = async () => {
     if (
@@ -1146,11 +1146,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                               <div className="tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center ">
                                 <div
                                   key={index}
-                                  className={`tw-w-full tw-min-h-11 ${
-                                    message.senderId == userInfo?.id
+                                  className={`tw-w-full tw-min-h-11 ${message.senderId == userInfo?.id
                                       ? "  tw-justify-end tw-order-2"
                                       : "  tw-justify-start tw-order-1"
-                                  } tw-flex tw-items-end tw-py-2 tw-break-words`}
+                                    } tw-flex tw-items-end tw-py-2 tw-break-words`}
                                   onMouseEnter={() => handleMouseEnter(index)}
                                   onMouseLeave={handleMouseLeave}
                                   ref={(element) =>
@@ -1158,13 +1157,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                   }
                                 >
                                   {message.status == "removed" &&
-                                  message.senderId == userInfo?.id ? (
+                                    message.senderId == userInfo?.id ? (
                                     <div
-                                      className={`tw-rounded-lg tw-italic  tw-shadow-lg tw-px-3 l ${
-                                        message.senderId == userInfo?.id
+                                      className={`tw-rounded-lg tw-italic  tw-shadow-lg tw-px-3 l ${message.senderId == userInfo?.id
                                           ? "tw-bg-[#e5efff] align-self-end"
                                           : "tw-bg-black tw-text-white align-self-start"
-                                      }`}
+                                        }`}
                                       onClick={() => scrollToMessage(index)}
                                     >
                                       <span className=" tw-text-sm">
@@ -1192,19 +1190,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                         />
                                       )}
                                       <div
-                                        className={`tw-flex ${
-                                          message.senderId == userInfo?.id
+                                        className={`tw-flex ${message.senderId == userInfo?.id
                                             ? " tw-justify-end tw-bg-blue-100 tw-order-2 "
                                             : "tw-justify-start tw-bg-white tw-text-black  tw-order-1"
-                                        } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg tw-py-2 tw-shadow-lg`}
+                                          } flex-grow-0 tw-break-words tw-max-w-[50vh] tw-px-3 tw-rounded-lg tw-py-2 tw-shadow-lg`}
                                       >
                                         <div className="tw-break-words tw-max-w-[40vh] ">
                                           <div
-                                            className={`tw-right-1 tw-font-bold tw-text-gray-500 ${
-                                              message.senderId == userInfo?.id
+                                            className={`tw-right-1 tw-font-bold tw-text-gray-500 ${message.senderId == userInfo?.id
                                                 ? "tw-text-end"
                                                 : "tw-text-start"
-                                            }`}
+                                              }`}
                                             style={{ fontSize: "13px" }}
                                           >
                                             {message.type.includes("share") ? (
@@ -1215,7 +1211,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   <IoIosRedo className="tw-mr-2" />
                                                   <span>
                                                     {message.senderId ==
-                                                    userInfo?.id
+                                                      userInfo?.id
                                                       ? "You've"
                                                       : "Your friend"}{" "}
                                                     forwarded a message
@@ -1251,8 +1247,8 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                       );
                                                     const filenameWithExtension1 =
                                                       lastSlashIndex1[
-                                                        lastSlashIndex1.length -
-                                                          1
+                                                      lastSlashIndex1.length -
+                                                      1
                                                       ];
 
                                                     const lastDotIndex =
@@ -1280,107 +1276,100 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                             <div className=" tw-w-2/12">
                                                               {extension ===
                                                                 ".doc" && (
-                                                                <img
-                                                                  src={doc}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={doc}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "32px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".xls" && (
-                                                                <img
-                                                                  src={xls}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={xls}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "32px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".xlsx" && (
-                                                                <img
-                                                                  src={xlsx}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={xlsx}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "32px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".pdf" && (
-                                                                <img
-                                                                  src={pdf}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={pdf}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "32px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".txt" && (
-                                                                <img
-                                                                  src={txt}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "150px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={txt}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "150px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".docx" && (
-                                                                <img
-                                                                  src={docx}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "32px",
-                                                                    height:
-                                                                      "32px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={docx}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "32px",
+                                                                      height:
+                                                                        "32px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                               {extension ===
                                                                 ".pptx" && (
-                                                                <img
-                                                                  src={ppt}
-                                                                  alt={`Document ${
-                                                                    index + 1
-                                                                  }`}
-                                                                  style={{
-                                                                    width:
-                                                                      "200px",
-                                                                  }}
-                                                                />
-                                                              )}
+                                                                  <img
+                                                                    src={ppt}
+                                                                    alt={`Document ${index + 1
+                                                                      }`}
+                                                                    style={{
+                                                                      width:
+                                                                        "200px",
+                                                                    }}
+                                                                  />
+                                                                )}
                                                             </div>
                                                             <span className="tw-flex tw-justify-start tw-items-center  tw-w-10/12  tw-pr-2">
                                                               <a
@@ -1446,12 +1435,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   }
                                                 >
                                                   <span
-                                                    className={`${
-                                                      message.senderId ==
-                                                      userInfo?.id
+                                                    className={`${message.senderId ==
+                                                        userInfo?.id
                                                         ? "tw-text-black"
                                                         : "tw-text-black"
-                                                    }  tw-text-sm`}
+                                                      }  tw-text-sm`}
                                                   >
                                                     {findMessageById(
                                                       message.messageId
@@ -1479,7 +1467,7 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                             const filenameWithExtension1 =
                                                               filenameWithExtension.substring(
                                                                 lastSlashIndex1 +
-                                                                  1
+                                                                1
                                                               );
 
                                                             const lastDotIndex =
@@ -1504,22 +1492,22 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                 {content.startsWith(
                                                                   "https://"
                                                                 ) &&
-                                                                !(
-                                                                  extension ===
+                                                                  !(
+                                                                    extension ===
                                                                     ".doc" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".docx" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".xlsx" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".xls" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".txt" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".pdf" ||
-                                                                  extension ===
+                                                                    extension ===
                                                                     ".pptx"
-                                                                ) ? (
+                                                                  ) ? (
                                                                   <ChatImage
                                                                     imageUrl={
                                                                       content
@@ -1533,129 +1521,18 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                     {content.startsWith(
                                                                       "https://"
                                                                     ) &&
-                                                                    extension ? (
+                                                                      extension ? (
                                                                       <div className="tw-flex tw-justify-start tw-mb-1 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
                                                                         <div className="tw-mr-3">
                                                                           {extension ===
                                                                             ".doc" && (
-                                                                            <img
-                                                                              src={
-                                                                                doc
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".xls" && (
-                                                                            <img
-                                                                              src={
-                                                                                xls
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".xlsx" && (
-                                                                            <img
-                                                                              src={
-                                                                                xlsx
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".pdf" && (
-                                                                            <img
-                                                                              src={
-                                                                                pdf
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".txt" && (
-                                                                            <img
-                                                                              src={
-                                                                                txt
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".docx" && (
-                                                                            <img
-                                                                              src={
-                                                                                docx
-                                                                              }
-                                                                              alt={`Document ${
-                                                                                index +
-                                                                                1
-                                                                              }`}
-                                                                              style={{
-                                                                                width:
-                                                                                  "32px",
-                                                                                height:
-                                                                                  "32px",
-                                                                              }}
-                                                                            />
-                                                                          )}
-                                                                          {extension ===
-                                                                            ".pptx" ||
-                                                                            (extension ===
-                                                                              ".ppt" && (
                                                                               <img
                                                                                 src={
-                                                                                  ppt
+                                                                                  doc
                                                                                 }
-                                                                                alt={`Document ${
-                                                                                  index +
+                                                                                alt={`Document ${index +
                                                                                   1
-                                                                                }`}
+                                                                                  }`}
                                                                                 style={{
                                                                                   width:
                                                                                     "32px",
@@ -1663,7 +1540,111 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                                     "32px",
                                                                                 }}
                                                                               />
-                                                                            ))}
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".xls" && (
+                                                                              <img
+                                                                                src={
+                                                                                  xls
+                                                                                }
+                                                                                alt={`Document ${index +
+                                                                                  1
+                                                                                  }`}
+                                                                                style={{
+                                                                                  width:
+                                                                                    "32px",
+                                                                                  height:
+                                                                                    "32px",
+                                                                                }}
+                                                                              />
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".xlsx" && (
+                                                                              <img
+                                                                                src={
+                                                                                  xlsx
+                                                                                }
+                                                                                alt={`Document ${index +
+                                                                                  1
+                                                                                  }`}
+                                                                                style={{
+                                                                                  width:
+                                                                                    "32px",
+                                                                                  height:
+                                                                                    "32px",
+                                                                                }}
+                                                                              />
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".pdf" && (
+                                                                              <img
+                                                                                src={
+                                                                                  pdf
+                                                                                }
+                                                                                alt={`Document ${index +
+                                                                                  1
+                                                                                  }`}
+                                                                                style={{
+                                                                                  width:
+                                                                                    "32px",
+                                                                                  height:
+                                                                                    "32px",
+                                                                                }}
+                                                                              />
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".txt" && (
+                                                                              <img
+                                                                                src={
+                                                                                  txt
+                                                                                }
+                                                                                alt={`Document ${index +
+                                                                                  1
+                                                                                  }`}
+                                                                                style={{
+                                                                                  width:
+                                                                                    "32px",
+                                                                                  height:
+                                                                                    "32px",
+                                                                                }}
+                                                                              />
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".docx" && (
+                                                                              <img
+                                                                                src={
+                                                                                  docx
+                                                                                }
+                                                                                alt={`Document ${index +
+                                                                                  1
+                                                                                  }`}
+                                                                                style={{
+                                                                                  width:
+                                                                                    "32px",
+                                                                                  height:
+                                                                                    "32px",
+                                                                                }}
+                                                                              />
+                                                                            )}
+                                                                          {extension ===
+                                                                            ".pptx" ||
+                                                                            (extension ===
+                                                                              ".ppt" && (
+                                                                                <img
+                                                                                  src={
+                                                                                    ppt
+                                                                                  }
+                                                                                  alt={`Document ${index +
+                                                                                    1
+                                                                                    }`}
+                                                                                  style={{
+                                                                                    width:
+                                                                                      "32px",
+                                                                                    height:
+                                                                                      "32px",
+                                                                                  }}
+                                                                                />
+                                                                              ))}
                                                                         </div>
                                                                         <span>
                                                                           <a
@@ -1707,12 +1688,11 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                 </div>
                                               </div>
                                               <span
-                                                className={`${
-                                                  message.senderId ==
-                                                  userInfo?.id
+                                                className={`${message.senderId ==
+                                                    userInfo?.id
                                                     ? "tw-text-black"
                                                     : "tw-text-black"
-                                                }`}
+                                                  }`}
                                               >
                                                 {message.content}
                                               </span>
@@ -1729,12 +1709,12 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                   <div className="tw-flex tw-justify-center tw-items-center tw-flex-wrap tw-break-words">
                                                     <span className="tw-break-words">
                                                       {message.senderId !=
-                                                      userInfo?.id
+                                                        userInfo?.id
                                                         ? "You"
                                                         : convertName()}{" "}
                                                       {message.content}{" "}
                                                       {message.senderId ==
-                                                      userInfo?.id
+                                                        userInfo?.id
                                                         ? "You"
                                                         : convertName()}
                                                     </span>
@@ -1783,59 +1763,59 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                         message.messageId
                                                     ).length > 3
                                                       ? reactionList
-                                                          .filter(
-                                                            (reaction) =>
-                                                              reaction.messageId ==
-                                                              message.messageId
+                                                        .filter(
+                                                          (reaction) =>
+                                                            reaction.messageId ==
+                                                            message.messageId
+                                                        )
+                                                        .slice(0, 3)
+                                                        .map(
+                                                          (
+                                                            reaction,
+                                                            index
+                                                          ) => (
+                                                            <div>
+                                                              <img
+                                                                src={convertType(
+                                                                  reaction.type
+                                                                )}
+                                                                width={14}
+                                                                height={14}
+                                                                className="tw-mr-[2px] "
+                                                              />
+                                                            </div>
                                                           )
-                                                          .slice(0, 3)
-                                                          .map(
-                                                            (
-                                                              reaction,
-                                                              index
-                                                            ) => (
-                                                              <div>
-                                                                <img
-                                                                  src={convertType(
-                                                                    reaction.type
-                                                                  )}
-                                                                  width={14}
-                                                                  height={14}
-                                                                  className="tw-mr-[2px] "
-                                                                />
-                                                              </div>
-                                                            )
-                                                          )
+                                                        )
                                                       : reactionList
-                                                          .filter(
-                                                            (reaction) =>
-                                                              reaction.messageId ==
-                                                              message.messageId
+                                                        .filter(
+                                                          (reaction) =>
+                                                            reaction.messageId ==
+                                                            message.messageId
+                                                        )
+                                                        .map(
+                                                          (
+                                                            reaction,
+                                                            index
+                                                          ) => (
+                                                            <div>
+                                                              <img
+                                                                src={convertType(
+                                                                  reaction.type
+                                                                )}
+                                                                width={14}
+                                                                height={14}
+                                                                className="tw-mr-[2px] "
+                                                              />
+                                                            </div>
                                                           )
-                                                          .map(
-                                                            (
-                                                              reaction,
-                                                              index
-                                                            ) => (
-                                                              <div>
-                                                                <img
-                                                                  src={convertType(
-                                                                    reaction.type
-                                                                  )}
-                                                                  width={14}
-                                                                  height={14}
-                                                                  className="tw-mr-[2px] "
-                                                                />
-                                                              </div>
-                                                            )
-                                                          )}
+                                                        )}
                                                     <span className="tw-text-[11px] tw-font-thin">
                                                       {handleCountReactionOfMessage(
                                                         message.messageId
                                                       ).length > 0
                                                         ? handleCountReactionOfMessage(
-                                                            message.messageId
-                                                          ).length
+                                                          message.messageId
+                                                        ).length
                                                         : ""}
                                                     </span>
                                                   </div>
@@ -1849,19 +1829,17 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                         activeIndex !== null &&
                                         activeIndex == index && (
                                           <div
-                                            className={`tw-bg-slate-100 tw-py-1 tw-px-2 tw-rounded-lg tw-flex tw-shadow-lg  ${
-                                              message.senderId != userInfo?.id
+                                            className={`tw-bg-slate-100 tw-py-1 tw-px-2 tw-rounded-lg tw-flex tw-shadow-lg  ${message.senderId != userInfo?.id
                                                 ? "tw-order-3 tw-mb-16 tw-z-100 -tw-ml-20 tw-relative"
                                                 : "-tw-mr-20 tw-mb-16 tw-z-50"
-                                            }`}
+                                              }`}
                                           >
                                             <img
                                               src={heart}
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 1
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 1
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
@@ -1872,11 +1850,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             />
                                             <img
                                               src={smile}
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 2
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 2
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
@@ -1887,11 +1864,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             />
                                             <img
                                               src={supprise}
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 3
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 3
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
@@ -1902,11 +1878,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             />
                                             <img
                                               src={sad}
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 4
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 4
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
@@ -1917,11 +1892,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             />
                                             <img
                                               src={angry}
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 5
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 5
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               onClick={() =>
                                                 handleReactionDetail(
                                                   message,
@@ -1931,11 +1905,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                               width={28}
                                             />
                                             <img
-                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${
-                                                isClickReaction == 6
+                                              className={`tw-mr-2 hover:tw-bg-slate-400 tw-rounded-lg tw-p-1 ${isClickReaction == 6
                                                   ? "tw-bg-slate-400"
                                                   : ""
-                                              }`}
+                                                }`}
                                               src={like}
                                               onClick={() =>
                                                 handleReactionDetail(
@@ -1951,11 +1924,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                         message.status != "removed" &&
                                         userInfo?.id === message.senderId && (
                                           <div
-                                            className={`tw-mt-2 tw-flex ${
-                                              message.senderId == userInfo?.id
+                                            className={`tw-mt-2 tw-flex ${message.senderId == userInfo?.id
                                                 ? "tw-order-1 tw-mr-3"
                                                 : " tw-order-2 tw-ml-3"
-                                            } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
+                                              } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
                                           >
                                             <SmileOutlined
                                               className="tw-mx-1 hover:tw-text-blue-700"
@@ -1983,15 +1955,15 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             {!message.type.includes(
                                               "missing call"
                                             ) && (
-                                              <IoIosRedo
-                                                className="tw-mx-1 hover:tw-text-blue-700"
-                                                title="Forward"
-                                                onClick={() =>
-                                                  handleForward(message)
-                                                }
-                                                size={18}
-                                              />
-                                            )}
+                                                <IoIosRedo
+                                                  className="tw-mx-1 hover:tw-text-blue-700"
+                                                  title="Forward"
+                                                  onClick={() =>
+                                                    handleForward(message)
+                                                  }
+                                                  size={18}
+                                                />
+                                              )}
 
                                             <RemoveMessageModal
                                               showModal={showFormRemoveMessage}
@@ -2014,11 +1986,10 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                       {hoveredIndex === index &&
                                         userInfo?.id !== message.senderId && (
                                           <div
-                                            className={`tw-mt-2 tw-h-full  tw-flex ${
-                                              message.senderId == userInfo?.id
+                                            className={`tw-mt-2 tw-h-full  tw-flex ${message.senderId == userInfo?.id
                                                 ? " tw-order-1 tw-mr-3"
                                                 : "tw-order-2 tw-ml-3"
-                                            } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
+                                              } tw-items-center tw-justify-center tw-bg-slate-100 tw-p-1 tw-rounded-lg`}
                                           >
                                             <BiSolidQuoteRight
                                               className="tw-mx-1 hover:tw-text-blue-700"
@@ -2038,15 +2009,15 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                             {!message.type.includes(
                                               "missing call"
                                             ) && (
-                                              <IoIosRedo
-                                                className="tw-mx-1 hover:tw-text-blue-700"
-                                                title="Forward"
-                                                onClick={() =>
-                                                  handleForward(message)
-                                                }
-                                                size={18}
-                                              />
-                                            )}
+                                                <IoIosRedo
+                                                  className="tw-mx-1 hover:tw-text-blue-700"
+                                                  title="Forward"
+                                                  onClick={() =>
+                                                    handleForward(message)
+                                                  }
+                                                  size={18}
+                                                />
+                                              )}
 
                                             <RemoveMessageModal
                                               showModal={showFormRemoveMessage}
