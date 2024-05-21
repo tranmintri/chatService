@@ -123,7 +123,7 @@ const MyAccountPage = () => {
                     />
                     {/*<form>*/}
                     <button
-                      className="tw-hidden group-hover:tw-block tw-absolute tw-top-1/2 tw-left-1/2 -tw-translate-x-1/2 -tw-translate-y-1/2 tw-text-2xl tw-cursor-pointer"
+                      className="tw-text-gray-500 tw-hidden group-hover:tw-block tw-absolute tw-top-1/2 tw-left-1/2 -tw-translate-x-1/2 -tw-translate-y-1/2 tw-text-2xl tw-cursor-pointer"
                       onClick={handleBtnChangeAvatarClick}
                     >
                       <i className="fa-solid fa-camera"></i>

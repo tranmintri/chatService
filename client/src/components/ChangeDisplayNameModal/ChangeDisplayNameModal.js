@@ -99,7 +99,7 @@ const ChangeDisplayNameModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="text"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className=" tw-px-4 tw-py-1.5 tw-text-black tw-w-full tw-rounded-sm"
                           {...register("displayName", {
                             required: "Vui lòng nhập tên hiển thị",
                             validate: (value) =>
