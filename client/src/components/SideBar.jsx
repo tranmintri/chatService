@@ -306,7 +306,7 @@ const SideBar = () => {
                           Phone Number :
                         </div>
                         <div className="tw-flex-1">
-                          +{userInfo?.phone ? userInfo?.phone : "123456789"}
+                          {userInfo?.phone ? userInfo?.phone : "123456789"}
                         </div>
                       </div>
                       <br />
@@ -600,9 +600,11 @@ const SideBar = () => {
             </div>
           )}
           {showSearchTable && (
-            <div className="tw-bg-slate-100 tw-shadow-2xl tw-max-h-[40vh] tw-overflow-auto custom-scrollbar tw-absolute tw-z-50 col-3 tw-mt-16  tw-border-t tw-border-l tw-border-r">
+            <div className="tw-bg-gray-100 tw-shadow-xl tw-min-h-[50vh] tw-max-h-[50vh] tw-overflow-auto  tw-absolute tw-z-50 col-3 tw-mt-16  tw-border-t tw-border-l tw-border-r">
               {filteredGroups.map((chat, index) => (
-                <GroupCard chat={chat} />
+                <div>
+                  <GroupCard chat={chat} />
+                </div>
               ))}
             </div>
           )}
@@ -621,7 +623,7 @@ const SideBar = () => {
                   className="tw-h-[50%] tw-flex tw-text-lg tw-items-center tw-border-b  tw-cursor-pointer hover:tw-bg-gray-200"
                   onClick={handleShowFormProfile}
                 >
-                  Your profile
+                  Your Profile
                 </div>
                 <div
                   className="tw-h-[50%]  tw-flex tw-text-lg tw-items-center tw-justify-between tw-cursor-pointer hover:tw-bg-gray-200"

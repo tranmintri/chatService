@@ -80,28 +80,13 @@ const AddFriendModal = ({
           <Form.Group controlId="formFriendName">
             <Form.Label>Enter phone number:</Form.Label>
             <div className="input-group">
-              <DropdownButton
-                id="dropdown-area-code"
+              <Button
+                // id="dropdown-area-code"
                 title={selectedCountryCode}
-                className="mr-2"
+                className="mr-2 tw-text-white"
               >
-                <Dropdown.Menu
-                  style={{
-                    maxHeight: "200px",
-                    overflowY: "auto",
-                    marginTop: "-8px",
-                  }}
-                >
-                  {countryCodes.map((countryCode, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      onClick={() => handleSelectCountryCode(countryCode.code)}
-                    >
-                      {countryCode.code} ({countryCode.country})
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </DropdownButton>
+                {selectedCountryCode}
+              </Button>
               <Form.Control
                 type="text"
                 placeholder="Enter phone number"

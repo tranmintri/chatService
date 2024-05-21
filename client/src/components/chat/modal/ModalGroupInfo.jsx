@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { CiEdit } from "react-icons/ci";
 import { toast } from "react-toastify";
@@ -9,6 +9,11 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
   const [newImage, setNewImage] = useState(chat.picture);
   const [newName, setNewName] = useState(chat.name);
   const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    setNewImage(chat.picture);
+    setNewName(chat.name);
+  }, []);
 
   const handleGroupAvatarChange = (event) => {
     const selectedFile = event.target.files[0];

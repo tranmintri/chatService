@@ -67,7 +67,7 @@ const Contact = ({ data }) => {
                 eventKey="first"
                 style={{
                   textDecoration: "none",
-                  color: "black",
+                  color: activeTab === "first" ? "white" : " black",
                   backgroundColor:
                     activeTab === "first" ? "gray" : "transparent",
                 }}
@@ -78,7 +78,7 @@ const Contact = ({ data }) => {
                     style={{ fontSize: "22px", marginRight: 12 }}
                     color="black"
                   />
-                  <span className="ml-3">Friends list</span>
+                  <span className="ml-3">Friends List</span>
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -87,7 +87,7 @@ const Contact = ({ data }) => {
                 eventKey="second"
                 style={{
                   textDecoration: "none",
-                  color: "black",
+                  color: activeTab === "second" ? "white" : " black",
                   backgroundColor:
                     activeTab === "second" ? "gray" : "transparent",
                 }}
@@ -98,7 +98,7 @@ const Contact = ({ data }) => {
                     style={{ fontSize: "22px", marginRight: 12 }}
                     color="black"
                   />
-                  <span>Groups list</span>
+                  <span>Groups List</span>
                 </div>
               </Nav.Link>
             </Nav.Item>
@@ -107,7 +107,7 @@ const Contact = ({ data }) => {
                 eventKey="third"
                 style={{
                   textDecoration: "none",
-                  color: "black",
+                  color: activeTab === "third" ? "white" : "black",
                   backgroundColor:
                     activeTab === "third" ? "gray" : "transparent",
                 }}
@@ -118,7 +118,7 @@ const Contact = ({ data }) => {
                     style={{ fontSize: "22px", marginRight: 12 }}
                     color="black"
                   />
-                  <span>Friend requests</span>
+                  <span>Friend Requests</span>
                   {receivedInvitations.length > 0 && (
                     <div className="request-notifications tw-absolute tw-right-0 tw-top-1">
                       {receivedInvitations.length}

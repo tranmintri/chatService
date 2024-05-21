@@ -42,7 +42,7 @@ const ListGroups = ({ data }) => {
             style={{ fontSize: "22px", marginRight: 12 }}
             color="black"
           />{" "}
-          Group list
+          Group List
         </h2>
         <span>You can see your group list here</span>
       </div>
