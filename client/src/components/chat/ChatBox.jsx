@@ -1519,6 +1519,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                     ".pdf" ||
                                                                   extension ===
                                                                     ".pptx"
+                                                                ) &&
+                                                                !content.includes(
+                                                                  "/record/"
                                                                 ) ? (
                                                                   <ChatImage
                                                                     imageUrl={
@@ -1532,6 +1535,9 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                   <div>
                                                                     {content.startsWith(
                                                                       "https://"
+                                                                    ) &&
+                                                                    !content.includes(
+                                                                      "/record/"
                                                                     ) &&
                                                                     extension ? (
                                                                       <div className="tw-flex tw-justify-start tw-mb-1 tw-bg-blue-100 tw-w-full tw-p-3 tw-rounded-lg">
@@ -1691,11 +1697,26 @@ const ChatBox = ({ chat, toggleConversationInfo, showInfo }) => {
                                                                         </span>
                                                                       </div>
                                                                     ) : (
-                                                                      <span>
-                                                                        {
-                                                                          content
-                                                                        }
-                                                                      </span>
+                                                                      <div>
+                                                                        {content.includes(
+                                                                          "/record/"
+                                                                        ) &&
+                                                                        content.startsWith(
+                                                                          "https://"
+                                                                        ) ? (
+                                                                          <RecordCard
+                                                                            message={
+                                                                              content
+                                                                            }
+                                                                          />
+                                                                        ) : (
+                                                                          <span>
+                                                                            {
+                                                                              content
+                                                                            }
+                                                                          </span>
+                                                                        )}
+                                                                      </div>
                                                                     )}
                                                                   </div>
                                                                 )}
