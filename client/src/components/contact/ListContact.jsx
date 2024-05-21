@@ -111,7 +111,7 @@ const ListContact = ({ data }) => {
             style={{ fontSize: "22px", marginRight: 12 }}
             color="black"
           />
-          Friends list
+          Friends List
         </h2>
         <span>You can see your friends list here</span>
       </div>
@@ -151,7 +151,7 @@ const ListContact = ({ data }) => {
             <div>
               <img
                 src={friend.profilePicture}
-                className="tw-w-14"
+                className="tw-w-14 tw-rounded-full"
                 alt={friend.displayName}
               />
             </div>

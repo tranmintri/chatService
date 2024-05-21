@@ -146,7 +146,7 @@ const ConversationInfo = ({ chat }) => {
               <ModalGroupInfo
                 showModalInfo={showModalInfo}
                 toggleModalInfo={toggleModalInfo}
-                chat={chat}
+                chat={currentChat}
               />
               <div className="tw-flex tw-justify-center tw-items-center">
                 {currentChat.type == "public" && (
