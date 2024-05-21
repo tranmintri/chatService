@@ -99,7 +99,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="text"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className="tw-text-dark-2 tw-px-4 tw-py-1.5  tw-w-full tw-rounded-sm"
                           {...register("username", {
                             required: "Please enter a new username",
                             validate: (value) =>
@@ -126,7 +126,7 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="password"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className="tw-text-dark-2 tw-px-4 tw-py-1.5  tw-w-full tw-rounded-sm"
                           {...register("password", {
                             required: "Vui lòng nhập mật khẩu",
                           })}

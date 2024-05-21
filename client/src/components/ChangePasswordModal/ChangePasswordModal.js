@@ -98,7 +98,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="password"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className="tw-text-black tw-px-4 tw-py-1.5  tw-w-full tw-rounded-sm"
                           {...register("currentPassword", {
                             required: "Vui lòng nhập mật khẩu hiện tại",
                           })}
@@ -121,7 +121,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="password"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className="tw-text-black tw-px-4 tw-py-1.5  tw-w-full tw-rounded-sm"
                           {...register("newPassword", {
                             required: "Vui lòng nhập mật khẩu mới",
                             pattern:
@@ -201,7 +201,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                       <div>
                         <input
                           type="password"
-                          className="tw-text-dark-2 tw-px-4 tw-py-1.5 tw-bg-dark-2 tw-w-full tw-rounded-sm"
+                          className="tw-text-black tw-px-4 tw-py-1.5  tw-w-full tw-rounded-sm"
                           {...register("reEnterNewPassword", {
                             required: "Please confirm new password",
                             validate: (value) =>
@@ -224,7 +224,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                       type="submit"
                       className="tw-px-6 tw-py-2.5 tw-text-sm tw-text-dark-1 tw-bg-blue-1 tw-rounded-sm"
                     >
-                      Xác nhận
+                      Confirm
                     </button>
                     <button
                       type="button"
@@ -232,7 +232,7 @@ const ChangePasswordModal = ({ open, setOpen, userInfo }) => {
                       onClick={() => setOpen(false)}
                       ref={cancelButtonRef}
                     >
-                      Hủy bỏ
+                      Cancel
                     </button>
                   </div>
                 </form>
