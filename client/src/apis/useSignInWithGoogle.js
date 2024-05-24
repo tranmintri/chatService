@@ -31,8 +31,8 @@ export const useSignInWithGoogle = () => {
             type: reducerCases.SET_USER_INFO,
             userInfo: data.user_info,
           });
-          socket.current.emit("request-get-all-friend-online", userInfo);
-          socket.current.emit("request-connect-user", userInfo);
+          // socket.current.emit("request-get-all-friend-online", userInfo);
+          // socket.current.emit("request-connect-user", userInfo);
           navigate(Page.MAIN_PAGE.path, { replace: true });
         })
         .catch((error) => {
