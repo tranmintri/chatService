@@ -145,12 +145,13 @@ const ResetPasswordPage = () => {
                                 placeholder="Confirm New Password"
                                 {...register("confirmNewPassword", {
                                     required: "Please confirm new password",
-                                    validate: value => newPassword === value || "Confirm password not match",
+                                    validate: (value) =>
+                                        newPassword === value || "Confirm password not match",
                                 })}
                             />
                             {errors?.confirmNewPassword && (
                                 <p className="tw-text-red-500 tw-text-sm tw-mt-1">
-                                    {errors.confimNewPassword.message}
+                                    {errors.confirmNewPassword.message}
                                 </p>
                             )}
                         </div>
