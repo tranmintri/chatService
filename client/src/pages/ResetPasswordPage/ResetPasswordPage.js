@@ -145,6 +145,7 @@ const ResetPasswordPage = () => {
                                 placeholder="Confirm New Password"
                                 {...register("confirmNewPassword", {
                                     required: "Please confirm new password",
+                                    validate: value => newPassword === value || "Confirm password not match",
                                 })}
                             />
                             {errors?.confirmNewPassword && (
