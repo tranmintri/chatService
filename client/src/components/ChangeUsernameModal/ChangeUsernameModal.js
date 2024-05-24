@@ -104,6 +104,10 @@ const ChangeUsernameModal = ({ open, setOpen, userInfo }) => {
                                                         validate: (value) =>
                                                             value !== userInfo?.username ||
                                                             "The username is the same as the current username",
+                                                        minLength: {
+                                                            value: 6,
+                                                            message: "Username must be at least 6 characters",
+                                                        }
                                                     })}
                                                 />
                                             </div>

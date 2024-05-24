@@ -105,6 +105,10 @@ const ChangeDisplayNameModal = ({ open, setOpen, userInfo }) => {
                                                         validate: (value) =>
                                                             value !== userInfo?.display_name ||
                                                             "Tên hiển thị giống với tên hiển thị hiện tại",
+                                                        minLength: {
+                                                            value: 6,
+                                                            message: "Tên hiển thị phải có ít nhất 6 ký tự",
+                                                        }
                                                     })}
                                                 />
                                             </div>
