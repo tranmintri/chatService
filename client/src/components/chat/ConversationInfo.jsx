@@ -36,6 +36,7 @@ const ConversationInfo = ({ chat }) => {
   const handleLeaveConversation = () => {
     setShowLeaveConversation(!showFormLeaveConversation);
   };
+  
   const handleShowLeaveConversation = () => {
     // if (currentChat.participants.length == 2)
     setShowLeaveConversation(!showFormLeaveConversation);

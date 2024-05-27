@@ -1,0 +1,49 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /auth/api/v1
+
+spring:
+  application:
+    name: drafi-authentication-service
+  cloud:
+    config:
+      uri: https://config.ntt1102.xyz/config/v1
+
+    bus:
+      enabled: true
+      refresh:
+        enabled: true
+
+    stream:
+      kafka:
+        binder:
+          brokers: kafka.ntt1102.xyz:9092
+
+  config:
+    import: optional:configserver:https://config.ntt1102.xyz/config/v1
+
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#  health:
+#    ratelimiters:
+#      enabled: true
+#
+#resilience4j:
+#  ratelimiter:
+#    instances:
+#      drafi-authentication-service:
+#        limit-for-period: 100
+#        limit-refresh-period: 1s
+#        timeout-duration: 1s
+#        register-health-indicator: true

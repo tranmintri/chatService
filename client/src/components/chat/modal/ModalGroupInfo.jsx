@@ -10,11 +10,6 @@ const ModalGroupInfo = ({ showModalInfo, toggleModalInfo, chat }) => {
   const [newName, setNewName] = useState(chat.name);
   const [file, setFile] = useState(null);
 
-  useEffect(() => {
-    setNewImage(chat.picture);
-    setNewName(chat.name);
-  }, []);
-
   const handleGroupAvatarChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
